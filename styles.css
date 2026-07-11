@@ -400,9 +400,11 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .dot--ptc { background: var(--green); }
 .dot--school { background: var(--blue); }
 .cal-chip.is-active .dot--ptc, .cal-chip.is-active .dot--school { box-shadow: 0 0 0 2px #fff; }
+.cal-subs { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.cal-subs__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); }
 .cal-subscribe {
-  font-weight: 700; font-size: 0.92rem; color: var(--blue-deep); text-decoration: none;
-  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.9rem;
+  font-weight: 700; font-size: 0.9rem; color: var(--blue-deep); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.9rem;
   border: 1.5px solid var(--line); border-radius: 999px; transition: border-color 0.15s ease, background 0.15s ease;
 }
 .cal-subscribe:hover { border-color: var(--blue); background: var(--blue-tint); }

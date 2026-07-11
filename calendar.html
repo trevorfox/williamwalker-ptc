@@ -96,9 +96,15 @@
             <button type="button" class="cal-chip" data-filter="ptc" aria-pressed="false"><span class="dot dot--ptc" aria-hidden="true"></span> PTC</button>
             <button type="button" class="cal-chip" data-filter="school" aria-pressed="false"><span class="dot dot--school" aria-hidden="true"></span> School</button>
           </div>
-          <a class="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics">
-            <span aria-hidden="true">＋</span> Subscribe (school + PTC events)
-          </a>
+          <div class="cal-subs">
+            <span class="cal-subs__label">Subscribe:</span>
+            <a class="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics&only=ptc">
+              <span class="dot dot--ptc" aria-hidden="true"></span> PTC meetings
+            </a>
+            <a class="cal-subscribe" href="https://williamwalker.beaverton.k12.or.us/cf_calendar/cms_calendar_feeds.cfm?element_id=43556&calendar_ids=605,359&team_ids=" target="_blank" rel="noopener">
+              <span class="dot dot--school" aria-hidden="true"></span> School events <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>

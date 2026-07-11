@@ -23,6 +23,7 @@ const CACHE_MS = 60 * 60 * 1000;
 
 module.exports = async (req, res) => {
   const isIcs = /[?&]format=ics\b/.test(req.url || '');
+  const only = (/[?&]only=(ptc|school)\b/.exec(req.url || '') || [])[1]; // optional single-source feed
   try {
     let events;
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {
@@ -35,8 +36,11 @@ module.exports = async (req, res) => {
     }
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     if (isIcs) {
+      var feed = only ? events.filter(function (e) { return e.source === only; }) : events;
+      var name = only === 'ptc' ? 'William Walker PTC Meetings'
+        : only === 'school' ? 'William Walker — School' : 'William Walker PTC + School';
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-      res.status(200).send(buildICS(events));
+      res.status(200).send(buildICS(feed, name, !only));
     } else {
       const cut = isoOffset(FWD_PAGE);
       const page = events.filter((e) => e.date <= cut);
@@ -48,7 +52,7 @@ module.exports = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=300');
     if (isIcs) {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-      res.status(200).send(buildICS(fallback));
+      res.status(200).send(buildICS(fallback, 'William Walker PTC Meetings', false));
     } else {
       res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
     }
@@ -131,11 +135,11 @@ function ptcMeetings() {
 }
 
 /* ---------- build a subscribe-ready iCal feed ---------- */
-function buildICS(events) {
+function buildICS(events, name, prefixPtc) {
   const stamp = icsStamp(new Date());
   const out = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//William Walker PTC//Calendar//EN',
-    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:William Walker PTC + School',
+    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (name || 'William Walker PTC'),
   ];
   events.forEach((e, i) => {
     const uid = `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@williamwalkerptc.com`;
@@ -148,7 +152,7 @@ function buildICS(events) {
       out.push('DTSTART:' + e.date.replace(/-/g, '') + 'T' + e.startTime.replace(':', '') + '00');
       out.push('DTEND:' + e.date.replace(/-/g, '') + 'T' + end.replace(':', '') + '00');
     }
-    out.push('SUMMARY:' + escICS((e.source === 'ptc' ? 'PTC: ' : '') + e.title));
+    out.push('SUMMARY:' + escICS((prefixPtc && e.source === 'ptc' ? 'PTC: ' : '') + e.title));
     if (e.location) out.push('LOCATION:' + escICS(e.location));
     out.push('END:VEVENT');
   });
