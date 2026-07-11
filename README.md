@@ -26,13 +26,12 @@ npx serve .
 - Skip-to-content link, semantic landmarks, ARIA labels, visible focus rings,
   and `prefers-reduced-motion` support are built in.
 
-## Items to finish
+## Editing content
 
-Search the code for `TO ADD`. One thing left:
-
-### Meeting day / time
-In the **Meetings** section, find `<!-- TO ADD: the standing meeting day / time ... -->`
-and replace the `.note` box with the standing schedule.
+All copy lives in `index.html`. Common edits:
+- **Meeting schedule** — the `.meeting-card` in the `#meetings` section
+  (currently: First Wednesday, 6:00–7:30 PM, September–June).
+- **Programs / events** — the pill list and event cards in `#what-we-do`.
 
 ### Sign-up form
 The email signup is a PTC-owned Google Form embedded in the `#signup` section

@@ -288,7 +288,12 @@ body { top: 0 !important; }
   background: var(--blue-tint); border: 1px solid var(--line); border-radius: var(--radius);
   padding: clamp(1.4rem, 3.5vw, 2rem); box-shadow: var(--shadow-sm);
 }
-.meeting-card__label { font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.74rem; color: var(--blue-deep); margin-bottom: 0.9rem; }
+.meeting-card__label { font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.74rem; color: var(--blue-deep); margin-bottom: 0.6rem; }
+.meeting-card__when { font-family: var(--ff); font-weight: 900; font-size: 1.5rem; line-height: 1.1; color: var(--blue-dark); margin: 0 0 1rem; }
+.meeting-card__when span { display: block; font-size: 0.95rem; font-weight: 600; color: var(--ink-soft); margin-top: 0.15rem; }
+.meeting-card__facts { list-style: none; margin: 0 0 1rem; padding: 0.9rem 0 0; border-top: 1px solid var(--line); display: grid; gap: 0.5rem; }
+.meeting-card__facts li { font-weight: 700; color: var(--blue-dark); font-size: 1.02rem; }
+.meeting-card__k { display: inline-block; min-width: 4.5rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; color: var(--blue-deep); }
 .meeting-card__fallback { font-size: 0.94rem; color: var(--ink-soft); margin: 1rem 0 0; }
 
 /* ---------- Connect (on blue) ---------- */
