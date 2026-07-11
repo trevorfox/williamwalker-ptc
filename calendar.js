@@ -14,7 +14,10 @@
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   var allEvents = [];
-  var filter = 'all';
+  var filter = (function () {
+    var s = new URLSearchParams(location.search).get('show');
+    return (s === 'ptc' || s === 'school') ? s : 'all';
+  })();
 
   function todayISO() {
     var d = new Date();
@@ -167,6 +170,12 @@
       bodyEl && bodyEl.setAttribute('aria-busy', 'false');
       bindFilters();
       bindAddMenus();
+      // reflect ?show= filter on the chips
+      document.querySelectorAll('.cal-chip').forEach(function (c) {
+        var on = c.getAttribute('data-filter') === filter;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-pressed', String(on));
+      });
       render();
       if (data && data.ok === false) {
         statusEl.hidden = false;

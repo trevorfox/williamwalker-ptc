@@ -270,13 +270,13 @@ body { top: 0 !important; }
 .way__num { font-weight: 900; font-size: 1.7rem; color: #fff; opacity: 0.85; }
 .way h3 { font-size: 1.22rem; margin: 0.4rem 0 0.5rem; color: #fff; }
 .way p { color: rgba(255,255,255,0.9); margin: 0; font-size: 0.98rem; }
-.way__donate {
+.way__link {
   display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1rem;
-  background: #fff; color: var(--green-deep); font-weight: 800; font-size: 0.95rem;
-  text-decoration: none; padding: 0.6rem 1.15rem; border-radius: 999px;
-  transition: transform 0.15s ease, background 0.15s ease;
+  color: #fff; font-weight: 700; font-size: 0.98rem; text-decoration: none;
+  border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 2px;
+  transition: border-color 0.15s ease, gap 0.15s ease;
 }
-.way__donate:hover { transform: translateY(-2px); background: var(--green-tint); }
+.way__link:hover { border-color: #fff; gap: 0.6rem; }
 
 .signup {
   display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(1.4rem, 4vw, 3rem); align-items: start;
