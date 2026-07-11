@@ -41,8 +41,11 @@ replaced, swap the `src` on both the iframe and the fallback link in `index.html
 
 ## Deploy
 
-Connected to Vercel — pushing to the GitHub `main` branch auto-deploys.
+Connected to Vercel — pushing to the GitHub `main` branch auto-deploys to
+production at https://williamwalkerptc.com. Use **one** path per change; don't
+also run a manual CLI deploy for the same commit (it creates a redundant
+deployment).
 
 ```bash
-vercel --prod   # manual production deploy
+vercel --prod   # manual fallback, only if a push doesn't auto-deploy
 ```
