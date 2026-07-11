@@ -2,6 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
+      "destination": "https://williamwalkerptc.com/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
       "destination": "https://williamwalkerptc.com/:path*",
