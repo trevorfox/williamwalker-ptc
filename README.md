@@ -34,10 +34,11 @@ Search the code for `TO ADD`. One thing left:
 In the **Meetings** section, find `<!-- TO ADD: the standing meeting day / time ... -->`
 and replace the `.note` box with the standing schedule.
 
-### Sign-up form (pending)
-A Google Form is being finalized under the PTC's own account. Once ready, replace the
-`.note` in the `#signup` section with its embed iframe (see the `TO ADD` comment there);
-`.signup__iframe` styling is already in `styles.css`.
+### Sign-up form
+The email signup is a PTC-owned Google Form embedded in the `#signup` section
+(`.signup__iframe`), with an "open in a new tab" fallback link. To change questions,
+edit the form in Google Forms — the embed updates automatically. If the form is ever
+replaced, swap the `src` on both the iframe and the fallback link in `index.html`.
 
 ## Deploy
 

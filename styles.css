@@ -279,6 +279,8 @@ body { top: 0 !important; }
 .signup__intro h3 { font-size: 1.55rem; color: #fff; margin-bottom: 0.6rem; }
 .signup__intro p { color: rgba(255,255,255,0.9); margin: 0; }
 .signup__iframe { display: block; width: 100%; border: 0; border-radius: 12px; background: #fff; box-shadow: var(--shadow); }
+.signup__fallback { margin: 0.9rem 0 0; font-size: 0.9rem; color: rgba(255,255,255,0.9); text-align: center; }
+.signup__fallback a { color: #fff; font-weight: 700; text-underline-offset: 3px; }
 
 /* ---------- Meetings (white) ---------- */
 .meetings-wrap { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: clamp(1.5rem, 5vw, 3.5rem); align-items: center; }
