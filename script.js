@@ -117,25 +117,32 @@
       it.setAttribute('aria-checked', String(it.getAttribute('data-lang') === code));
     });
   }
-  function clearGoogtrans() {
+  function cookieScopes() {
     var host = location.hostname;
-    var variants = ['', '; domain=' + host, '; domain=.' + host];
-    variants.forEach(function (d) {
+    var scopes = ['']; /* path only — works on localhost */
+    if (host && host.indexOf('.') !== -1) {
+      scopes.push('; domain=' + host);
+      scopes.push('; domain=.' + host);
+    }
+    return scopes;
+  }
+  function clearGoogtrans() {
+    cookieScopes().forEach(function (d) {
       document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
     });
   }
+  function setGoogtrans(val) {
+    cookieScopes().forEach(function (d) {
+      document.cookie = 'googtrans=' + val + '; path=/' + d;
+    });
+  }
+  /* Reliable switch: set the googtrans cookie the widget reads on load, then reload.
+     (Driving the hidden <select> via a synthetic event is ignored by the widget.) */
   function setLang(code) {
     markLang(code);
-    if (code === 'en') { clearGoogtrans(); location.reload(); return; }
-    var tries = 0;
-    var t = setInterval(function () {
-      var combo = document.querySelector('.goog-te-combo');
-      if (combo) {
-        combo.value = code;
-        combo.dispatchEvent(new Event('change'));
-        clearInterval(t);
-      } else if (++tries > 40) { clearInterval(t); }
-    }, 200);
+    clearGoogtrans();
+    if (code !== 'en') setGoogtrans('/en/' + code);
+    location.reload();
   }
   langItems.forEach(function (it) {
     it.addEventListener('click', function () {
