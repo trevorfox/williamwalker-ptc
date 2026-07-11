@@ -12,6 +12,9 @@
   var root = document.documentElement;
   var STORE = 'wwptc-a11y';
 
+  /* GA4 event helper — no-op if analytics is blocked/absent */
+  function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
+
   /* ---------- load saved preferences ---------- */
   var prefs = { step: 1, hc: false, ul: false };
   try {
@@ -149,6 +152,7 @@
      (Driving the hidden <select> via a synthetic event is ignored by the widget.) */
   function setLang(code) {
     markLang(code);
+    track('language_change', { language: code });
     clearGoogtrans();
     if (code !== 'en') setGoogtrans('/en/' + code);
     location.reload();
@@ -160,6 +164,19 @@
     });
   });
   markLang(currentLang()); /* reflect saved language on load */
+
+  /* ---------- GA4: donate + sign-up intent ---------- */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var label = (a.textContent || '').trim().slice(0, 60);
+    if (href.indexOf('paypal.com') !== -1) {
+      track('donate', { link_text: label });
+    } else if (href === '#get-involved' || href === '/#get-involved' || href === '#signup') {
+      track('signup_click', { link_text: label });
+    }
+  });
 
   /* ---------- scroll reveal ---------- */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

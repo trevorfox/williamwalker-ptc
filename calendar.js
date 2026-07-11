@@ -5,6 +5,8 @@
 (function () {
   'use strict';
 
+  function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
+
   var listEl = document.getElementById('cal-list');
   var statusEl = document.getElementById('cal-status');
   var bodyEl = document.querySelector('.cal-body');
@@ -136,10 +138,18 @@
           c.classList.toggle('is-active', on);
           c.setAttribute('aria-pressed', String(on));
         });
+        track('calendar_filter', { filter: filter });
         render();
       });
     });
   }
+
+  // subscribe-link clicks (static in the HTML)
+  document.querySelectorAll('.cal-subscribe').forEach(function (a) {
+    a.addEventListener('click', function () {
+      track('calendar_subscribe', { feed: a.href.indexOf('only=ptc') !== -1 ? 'ptc' : 'school' });
+    });
+  });
 
   function closeAddMenus() {
     listEl.querySelectorAll('.cal-add__menu:not([hidden])').forEach(function (m) { m.hidden = true; });
@@ -157,7 +167,16 @@
         if (!wasOpen) { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
         return;
       }
-      if (e.target.closest('.cal-add__menu a')) closeAddMenus(); // picked an option
+      var link = e.target.closest('.cal-add__menu a');
+      if (link) {
+        var row = link.closest('.cal-event');
+        var titleEl = row && row.querySelector('.cal-event__title');
+        track('add_to_calendar', {
+          method: link.href.indexOf('calendar.google.com') !== -1 ? 'google' : 'ics',
+          event_title: titleEl ? titleEl.textContent : '',
+        });
+        closeAddMenus();
+      }
     });
     document.addEventListener('click', function (e) { if (!e.target.closest('.cal-add')) closeAddMenus(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAddMenus(); });
