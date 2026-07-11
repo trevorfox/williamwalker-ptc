@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>William Walker Elementary PTC — Wildcat Families</title>
+  <title>William Walker Elementary PTC — Home of the Wildcats</title>
   <meta name="description" content="The William Walker Elementary Parent Teacher Club (PTC) — a parent- and staff-run nonprofit supporting every Wildcat through volunteering and fundraising. Sign up for updates and get involved." />
 
   <meta property="og:title" content="William Walker Elementary PTC" />
   <meta property="og:description" content="A parent- and staff-run nonprofit supporting every Wildcat at William Walker Elementary. Volunteer, give, and stay in the loop." />
+  <meta property="og:image" content="assets/logo.png" />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#2F67B2" />
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%232F67B2'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle' fill='%23FEE582' font-family='Georgia,serif' font-weight='bold'%3EW%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="assets/logo.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -42,7 +43,6 @@
 
       <div class="a11y-group a11y-group--translate">
         <span class="a11y-label" aria-hidden="true">Language</span>
-        <!-- Google Translate mounts here -->
         <div id="google_translate_element" aria-label="Translate this page"></div>
       </div>
     </div>
@@ -51,11 +51,9 @@
   <!-- ============ HEADER / NAV ============ -->
   <header class="site-header">
     <a class="brand" href="#top" aria-label="William Walker PTC home">
-      <span class="brand__mark" aria-hidden="true">W</span>
-      <span class="brand__text">
-        <span class="brand__name">William Walker PTC</span>
-        <span class="brand__tag">Wildcat Families</span>
-      </span>
+      <img class="brand__logo" src="assets/logo.png" width="226" height="223"
+           alt="William Walker Elementary — Home of the Wildcats" />
+      <span class="brand__text">Parent Teacher Club</span>
     </a>
     <nav class="main-nav" aria-label="Primary">
       <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle menu">
@@ -76,44 +74,32 @@
 
     <!-- ============ HERO ============ -->
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero__pennants" aria-hidden="true">
-        <span class="pennant pennant--blue"></span>
-        <span class="pennant pennant--gold"></span>
-        <span class="pennant pennant--red"></span>
-        <span class="pennant pennant--green"></span>
-      </div>
       <div class="hero__inner">
-        <p class="hero__eyebrow">We Are Wildcats</p>
+        <img class="hero__logo" src="assets/logo.png" width="226" height="223"
+             alt="" />
+        <p class="hero__eyebrow">Home of the Wildcats</p>
         <h1 id="hero-title" class="hero__title">
-          The William Walker<br /><em>Parent&nbsp;Teacher&nbsp;Club</em>
+          William Walker<br />Parent Teacher Club
         </h1>
         <p class="hero__lede">
           A parent- and staff-run nonprofit that supports every student at
           William Walker Elementary — powered by volunteers, funded by families.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#get-involved">Sign up for updates</a>
-          <a class="btn btn--ghost" href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener">
+          <a class="btn btn--blue" href="#get-involved">Sign up for updates</a>
+          <a class="btn btn--green" href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener">
             Follow on Facebook <span aria-hidden="true">↗</span>
           </a>
         </div>
       </div>
-      <div class="hero__scroll" aria-hidden="true">
-        <span>Meet your PTC</span>
-        <span class="hero__arrow">↓</span>
-      </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
-    <section id="about" class="section section--about" aria-labelledby="about-title">
+    <!-- ============ ABOUT (white) ============ -->
+    <section id="about" class="block block--white" aria-labelledby="about-title">
       <div class="wrap">
-        <p class="kicker"><span class="kicker__paw" aria-hidden="true">✦</span> About the PTC</p>
+        <p class="kicker kicker--blue">About the PTC</p>
         <div class="about-grid">
-          <div>
-            <h2 id="about-title" class="section-title">
-              Family &amp; community support for every Wildcat.
-            </h2>
-          </div>
+          <h2 id="about-title" class="section-title">Family &amp; community support for every Wildcat.</h2>
           <div class="about-body">
             <p class="lead">
               The William Walker Parent Teacher Club is a nonprofit
@@ -136,69 +122,64 @@
       </div>
     </section>
 
-    <!-- ============ WHAT WE DO ============ -->
-    <section id="what-we-do" class="section section--do" aria-labelledby="do-title">
+    <!-- ============ WHAT WE DO (blue block) ============ -->
+    <section id="what-we-do" class="block block--blue" aria-labelledby="do-title">
       <div class="wrap">
-        <p class="kicker"><span class="kicker__paw" aria-hidden="true">✦</span> What We Do</p>
-        <h2 id="do-title" class="section-title">Where your support goes.</h2>
-        <p class="lead lead--wide">
+        <p class="kicker kicker--onblue">What We Do</p>
+        <h2 id="do-title" class="section-title section-title--light">Where your support goes.</h2>
+        <p class="lead lead--light lead--wide">
           Every dollar we raise and every hour volunteered goes right back to the
           classroom. Here's some of what the PTC funds and hosts each year.
         </p>
 
-        <div class="do-panel">
-          <h3 class="do-panel__head">Programs &amp; enrichment we fund</h3>
-          <ul class="pill-list" aria-label="Programs and enrichment funded by the PTC">
-            <li class="pill">Art Literacy</li>
-            <li class="pill">Mystery Science</li>
-            <li class="pill">Oregon Battle of the Books</li>
-            <li class="pill">Reading Week</li>
-            <li class="pill">Field Day</li>
-            <li class="pill">SPED Track &amp; Field Day</li>
-            <li class="pill">Field Trips</li>
-            <li class="pill">Teacher Discretionary Funds</li>
-            <li class="pill">SEL Fund</li>
-            <li class="pill">PTC Grant Program</li>
-            <li class="pill">Kinder Pumpkin Patch</li>
-            <li class="pill">Staff Appreciation</li>
-            <li class="pill">Staff PD Expenses</li>
-            <li class="pill">Kindness Fund</li>
-          </ul>
-        </div>
+        <h3 class="subhead subhead--light">Programs &amp; enrichment we fund</h3>
+        <ul class="pill-list" aria-label="Programs and enrichment funded by the PTC">
+          <li class="pill">Art Literacy</li>
+          <li class="pill">Mystery Science</li>
+          <li class="pill">Oregon Battle of the Books</li>
+          <li class="pill">Reading Week</li>
+          <li class="pill">Field Day</li>
+          <li class="pill">SPED Track &amp; Field Day</li>
+          <li class="pill">Field Trips</li>
+          <li class="pill">Teacher Discretionary Funds</li>
+          <li class="pill">SEL Fund</li>
+          <li class="pill">PTC Grant Program</li>
+          <li class="pill">Kinder Pumpkin Patch</li>
+          <li class="pill">Staff Appreciation</li>
+          <li class="pill">Staff PD Expenses</li>
+          <li class="pill">Kindness Fund</li>
+        </ul>
 
-        <div class="do-panel do-panel--events">
-          <h3 class="do-panel__head">Events we host</h3>
-          <div class="event-grid">
-            <article class="event-card event-card--star">
-              <span class="event-card__tag">Our big one</span>
-              <h4>Walkerthon</h4>
-              <p>Our signature fall fundraiser — the whole school runs, laps get counted, and the community rallies behind our Wildcats.</p>
-            </article>
-            <article class="event-card">
-              <h4>Trunk or Treat</h4>
-              <p>A safe, festive fall evening of decorated trunks and treats for our families.</p>
-            </article>
-            <article class="event-card">
-              <h4>Multicultural Night</h4>
-              <p>A beloved tradition celebrating the rich diversity of the William Walker community.</p>
-            </article>
-            <article class="event-card">
-              <h4>Back to School Night</h4>
-              <p>We're there to welcome families, answer questions, and sign up new volunteers.</p>
-            </article>
-            <article class="event-card">
-              <h4>End-of-Year &amp; 5th Grade Parties</h4>
-              <p>Celebrating a great year — and sending our 5th graders off in style.</p>
-            </article>
-          </div>
+        <h3 class="subhead subhead--light">Events we host</h3>
+        <div class="event-grid">
+          <article class="event-card">
+            <h4>Walkerthon</h4>
+            <p>Our signature fall fundraiser — the whole school runs, laps get counted, and the community rallies behind our Wildcats.</p>
+          </article>
+          <article class="event-card">
+            <h4>Trunk or Treat</h4>
+            <p>A safe, festive fall evening of decorated trunks and treats for our families.</p>
+          </article>
+          <article class="event-card">
+            <h4>Multicultural Night</h4>
+            <p>A beloved tradition celebrating the rich diversity of the William Walker community.</p>
+          </article>
+          <article class="event-card">
+            <h4>Back to School Night</h4>
+            <p>We're there to welcome families, answer questions, and sign up new volunteers.</p>
+          </article>
+          <article class="event-card">
+            <h4>End-of-Year &amp; 5th Grade Parties</h4>
+            <p>Celebrating a great year — and sending our 5th graders off in style.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- ============ GET INVOLVED + SIGNUP ============ -->
-    <section id="get-involved" class="section section--involved" aria-labelledby="involved-title">
+    <!-- ============ GET INVOLVED + SIGNUP (green block) ============ -->
+    <section id="get-involved" class="block block--green" aria-labelledby="involved-title">
       <div class="wrap">
-        <p class="kicker kicker--light"><span class="kicker__paw" aria-hidden="true">✦</span> Get Involved</p>
+        <p class="kicker kicker--ongreen">Get Involved</p>
         <h2 id="involved-title" class="section-title section-title--light">
           There's a place for everyone — an hour or a whole season.
         </h2>
@@ -227,22 +208,22 @@
             <p>Tell us you're interested and we'll keep you posted on meetings, events, and volunteer opportunities. No spam — just Wildcat news.</p>
           </div>
           <div class="signup__form">
-            <!-- TBD: Replace this placeholder with the embedded Google Form iframe -->
-            <div class="tbd tbd--block" role="note">
-              <span class="tbd__tag">TBD</span>
-              <p><strong>Google Form goes here.</strong> Create the interest / newsletter form, then paste its <em>embed&nbsp;(&lt;&nbsp;/&nbsp;&gt;)</em> iframe and it drops right into this box.</p>
-              <p class="tbd__hint">Suggested fields: Name · Email (required) · “I'm interested in…” (Volunteering, Events, Fundraising, Joining the board, Just the newsletter) · Child's grade(s) · Anything you'd like us to know.</p>
+            <!-- TO ADD: paste the Google Form embed <iframe> here to replace this placeholder -->
+            <div class="note" role="note">
+              <span class="note__tag">To add</span>
+              <p><strong>Interest &amp; newsletter sign-up form.</strong> Create a Google Form, then paste its embed (&lt;&nbsp;/&nbsp;&gt;) iframe here.</p>
+              <p class="note__hint">Suggested fields: Name · Email (required) · “I'm interested in…” (Volunteering, Events, Fundraising, Joining the board, Just the newsletter) · Child's grade(s) · Anything you'd like us to know.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ MEETINGS ============ -->
-    <section id="meetings" class="section section--meetings" aria-labelledby="meetings-title">
+    <!-- ============ MEETINGS (white) ============ -->
+    <section id="meetings" class="block block--white" aria-labelledby="meetings-title">
       <div class="wrap meetings-wrap">
         <div>
-          <p class="kicker"><span class="kicker__paw" aria-hidden="true">✦</span> Meetings &amp; Membership</p>
+          <p class="kicker kicker--blue">Meetings &amp; Membership</p>
           <h2 id="meetings-title" class="section-title">Everyone's invited to the table.</h2>
           <p class="lead">
             The PTC meets once a month from September through June. Come see what
@@ -252,23 +233,23 @@
         </div>
         <div class="meeting-card">
           <p class="meeting-card__label">Next meeting</p>
-          <!-- TBD: add the current meeting day / time / location -->
-          <div class="tbd" role="note">
-            <span class="tbd__tag">TBD</span>
-            <p><strong>Meeting day &amp; time.</strong> Add the standing schedule (e.g. “3rd Tuesday, 6:30&nbsp;pm — School Library”).</p>
+          <!-- TO ADD: the standing meeting day / time / location -->
+          <div class="note" role="note">
+            <span class="note__tag">To add</span>
+            <p><strong>Meeting day &amp; time.</strong> e.g. “3rd Tuesday, 6:30&nbsp;pm — School Library.”</p>
           </div>
           <p class="meeting-card__fallback">
-            Until then, the latest schedule is always posted on our
+            The latest schedule is always posted on our
             <a href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener">Facebook page ↗</a>.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- ============ CONNECT ============ -->
-    <section id="connect" class="section section--connect" aria-labelledby="connect-title">
+    <!-- ============ CONNECT (blue block) ============ -->
+    <section id="connect" class="block block--blue" aria-labelledby="connect-title">
       <div class="wrap">
-        <p class="kicker kicker--light"><span class="kicker__paw" aria-hidden="true">✦</span> Connect</p>
+        <p class="kicker kicker--onblue">Connect</p>
         <h2 id="connect-title" class="section-title section-title--light">Stay in touch with your PTC.</h2>
         <ul class="connect-grid" aria-label="Ways to connect with the PTC">
           <li>
@@ -280,16 +261,6 @@
               </span>
               <span class="connect-card__arrow" aria-hidden="true">↗</span>
             </a>
-          </li>
-          <li>
-            <!-- TBD: Instagram handle + link -->
-            <div class="connect-card connect-card--tbd">
-              <span class="connect-card__icon" aria-hidden="true">◎</span>
-              <span class="connect-card__body">
-                <span class="connect-card__name">Instagram</span>
-                <span class="connect-card__meta"><span class="tbd tbd--inline"><span class="tbd__tag">TBD</span> add @handle + link</span></span>
-              </span>
-            </div>
           </li>
           <li>
             <a class="connect-card" href="mailto:williamwalkerptc@gmail.com">
@@ -320,7 +291,7 @@
   <footer class="site-footer">
     <div class="wrap footer-grid">
       <div>
-        <p class="footer-brand"><span class="brand__mark brand__mark--sm" aria-hidden="true">W</span> William Walker Elementary PTC</p>
+        <p class="footer-brand">William Walker Elementary PTC</p>
         <address class="footer-address">
           2350 Cedar Hills Blvd.<br />
           Beaverton, OR 97005

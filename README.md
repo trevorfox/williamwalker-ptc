@@ -5,8 +5,9 @@ no build step, no framework. Deployed on Vercel.
 
 ```
 index.html    → all page content
-styles.css    → all styling (Wildcat crest palette)
+styles.css    → all styling (blue + green + white, matched to the logo)
 script.js     → accessibility toolbar, mobile nav, scroll animations
+assets/logo.png → school "Home of the Wildcats" logo
 ```
 
 ## Run locally
@@ -25,37 +26,20 @@ npx serve .
 - Skip-to-content link, semantic landmarks, ARIA labels, visible focus rings,
   and `prefers-reduced-motion` support are built in.
 
-## ⚠️ TBD items (highlighted in bright yellow on the page)
+## Items to finish
 
-Search the code for `TBD` to find each spot. Three things to finish:
+Search the code for `TO ADD` to find each spot. Two things left:
 
 ### 1. Google Form (email signup)
-In `index.html`, find `<!-- TBD: Replace this placeholder ... -->` inside the
-`#signup` section. Replace the yellow `.tbd` block with your form's embed code:
+In `index.html`, find `<!-- TO ADD: paste the Google Form embed ... -->` inside the
+`#signup` section. Replace the `.note` box with your form's embed code:
 
 1. Open your Google Form → **Send** → **`< >`** (embed HTML) → copy the `<iframe>`.
-2. Paste it in place of the yellow box. Add `width="100%"` for best fit.
+2. Paste it in place of the box. Add `width="100%"` for best fit.
 
-### 2. Instagram handle
-In the **Connect** section, find `<!-- TBD: Instagram handle + link -->`.
-Turn the `connect-card--tbd` div into a real link like the Facebook one:
-
-```html
-<li>
-  <a class="connect-card" href="https://instagram.com/YOURHANDLE" target="_blank" rel="noopener">
-    <span class="connect-card__icon" aria-hidden="true">◎</span>
-    <span class="connect-card__body">
-      <span class="connect-card__name">Instagram</span>
-      <span class="connect-card__meta">@YOURHANDLE</span>
-    </span>
-    <span class="connect-card__arrow" aria-hidden="true">↗</span>
-  </a>
-</li>
-```
-
-### 3. Meeting day / time
-In the **Meetings** section, find `<!-- TBD: add the current meeting day / time ... -->`
-and replace the yellow box with the standing schedule.
+### 2. Meeting day / time
+In the **Meetings** section, find `<!-- TO ADD: the standing meeting day / time ... -->`
+and replace the `.note` box with the standing schedule.
 
 ## Deploy
 

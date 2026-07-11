@@ -73,7 +73,7 @@
 
   /* ---------- scroll reveal ---------- */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var targets = document.querySelectorAll('.section .wrap > *, .hero__inner');
+  var targets = document.querySelectorAll('.block .wrap > *, .hero__inner');
   if (!reduce && 'IntersectionObserver' in window) {
     targets.forEach(function (el, i) {
       el.classList.add('reveal');
