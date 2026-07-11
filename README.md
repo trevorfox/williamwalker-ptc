@@ -28,18 +28,16 @@ npx serve .
 
 ## Items to finish
 
-Search the code for `TO ADD` to find each spot. Two things left:
+Search the code for `TO ADD`. One thing left:
 
-### 1. Google Form (email signup)
-In `index.html`, find `<!-- TO ADD: paste the Google Form embed ... -->` inside the
-`#signup` section. Replace the `.note` box with your form's embed code:
-
-1. Open your Google Form → **Send** → **`< >`** (embed HTML) → copy the `<iframe>`.
-2. Paste it in place of the box. Add `width="100%"` for best fit.
-
-### 2. Meeting day / time
+### Meeting day / time
 In the **Meetings** section, find `<!-- TO ADD: the standing meeting day / time ... -->`
 and replace the `.note` box with the standing schedule.
+
+### Sign-up form (pending)
+A Google Form is being finalized under the PTC's own account. Once ready, replace the
+`.note` in the `#signup` section with its embed iframe (see the `TO ADD` comment there);
+`.signup__iframe` styling is already in `styles.css`.
 
 ## Deploy
 
