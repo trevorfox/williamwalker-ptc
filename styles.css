@@ -348,6 +348,8 @@ a.connect-card:hover { transform: translateY(-3px); background: rgba(255,255,255
 .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 1.8rem; align-items: start; }
 .footer-brand { font-weight: 800; font-size: 1.1rem; color: #fff; margin-bottom: 0.7rem; }
 .footer-address { font-style: normal; color: #9fb0cc; line-height: 1.7; font-size: 0.95rem; }
+.footer-social { display: inline-block; margin-top: 0.9rem; color: #cdd8ea; text-decoration: none; font-weight: 700; font-size: 0.92rem; }
+.footer-social:hover { color: #fff; }
 .footer-nav { display: flex; flex-direction: column; gap: 0.5rem; }
 .footer-nav a { color: #cdd8ea; text-decoration: none; font-size: 0.96rem; }
 .footer-nav a:hover { color: #fff; }
