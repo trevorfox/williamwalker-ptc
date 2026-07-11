@@ -380,6 +380,74 @@ html.hc .block--blue a, html.hc .block--green a, html.hc .footer-nav a { color: 
 html.ul-links a { text-decoration: underline !important; text-underline-offset: 3px; }
 
 /* =========================================================================
+   Calendar page
+   ========================================================================= */
+.cal-head { padding-bottom: 1.5rem; }
+.cal-head .lead { margin-top: 0.6rem; }
+.cal-controls {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-top: 1.8rem;
+}
+.cal-filters { display: inline-flex; gap: 0.4rem; background: var(--blue-tint); padding: 0.3rem; border-radius: 999px; }
+.cal-chip {
+  font-family: var(--ff); font-weight: 700; font-size: 0.92rem; color: var(--blue-deep);
+  background: transparent; border: 0; border-radius: 999px; padding: 0.45rem 0.95rem; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.4rem; transition: background 0.15s ease, color 0.15s ease;
+}
+.cal-chip:hover { background: rgba(47,103,178,0.12); }
+.cal-chip.is-active { background: var(--blue); color: #fff; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot--ptc { background: var(--green); }
+.dot--school { background: var(--blue); }
+.cal-chip.is-active .dot--ptc, .cal-chip.is-active .dot--school { box-shadow: 0 0 0 2px #fff; }
+.cal-subscribe {
+  font-weight: 700; font-size: 0.92rem; color: var(--blue-deep); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.9rem;
+  border: 1.5px solid var(--line); border-radius: 999px; transition: border-color 0.15s ease, background 0.15s ease;
+}
+.cal-subscribe:hover { border-color: var(--blue); background: var(--blue-tint); }
+
+.cal-body { padding-top: 0.5rem; }
+.cal-status { color: var(--ink-soft); font-size: 1.02rem; padding: 1.5rem 0; }
+.cal-status--warn { color: var(--green-deep); font-weight: 600; }
+.cal-list { display: block; }
+.cal-month {
+  font-size: 1.15rem; font-weight: 800; color: var(--blue-deep); letter-spacing: 0.02em;
+  margin: 2rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--blue-tint);
+}
+.cal-month:first-child { margin-top: 0.5rem; }
+.cal-event {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.9rem 0.4rem; border-bottom: 1px solid var(--line);
+}
+.cal-date {
+  flex: none; width: 58px; text-align: center; border-radius: 10px; padding: 0.45rem 0;
+  background: var(--blue-tint); color: var(--blue-deep); line-height: 1.05;
+}
+.cal-event--ptc .cal-date { background: var(--green-tint); color: var(--green-deep); }
+.cal-date__dow { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.cal-date__num { display: block; font-size: 1.5rem; font-weight: 900; }
+.cal-event__body { flex: 1 1 auto; min-width: 0; }
+.cal-event__title { font-size: 1.08rem; font-weight: 700; color: var(--blue-dark); margin: 0 0 0.15rem; }
+.cal-event__meta { margin: 0; font-size: 0.92rem; color: var(--ink-soft); }
+.cal-event__loc { color: var(--ink-soft); }
+.cal-tag {
+  flex: none; align-self: flex-start; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 0.22rem 0.5rem; border-radius: 6px;
+}
+.cal-tag--ptc { background: var(--green-tint); color: var(--green-deep); }
+.cal-tag--school { background: var(--blue-tint); color: var(--blue-deep); }
+
+@media (max-width: 560px) {
+  .cal-controls { flex-direction: column; align-items: stretch; }
+  .cal-subscribe { justify-content: center; }
+  .cal-date { width: 50px; }
+  .cal-event__title { font-size: 1rem; }
+}
+html.hc .cal-chip.is-active { background: #003a8c; color: #fff; }
+html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
+
+/* =========================================================================
    Responsive
    ========================================================================= */
 @media (max-width: 860px) {
