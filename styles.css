@@ -438,6 +438,30 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .cal-tag--ptc { background: var(--green-tint); color: var(--green-deep); }
 .cal-tag--school { background: var(--blue-tint); color: var(--blue-deep); }
 
+.cal-event__actions { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+.cal-add { position: relative; }
+.cal-add__btn {
+  font-family: var(--ff); font-weight: 700; font-size: 0.8rem; color: var(--blue-deep);
+  background: #fff; border: 1.5px solid var(--line); border-radius: 999px;
+  padding: 0.28rem 0.6rem; cursor: pointer; white-space: nowrap;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.cal-add__btn:hover, .cal-add__btn[aria-expanded="true"] { border-color: var(--blue); background: var(--blue-tint); }
+.cal-add__menu {
+  position: absolute; top: calc(100% + 4px); right: 0; z-index: 30;
+  min-width: 168px; background: #fff; border: 1px solid var(--line);
+  border-radius: 10px; box-shadow: var(--shadow); padding: 0.3rem;
+}
+.cal-add__menu[hidden] { display: none; }
+.cal-add__menu a {
+  display: block; padding: 0.55rem 0.7rem; border-radius: 7px;
+  font-size: 0.92rem; font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.cal-add__menu a:hover { background: var(--blue-tint); color: var(--blue-deep); }
+@media (max-width: 560px) {
+  .cal-event__actions { flex-direction: row-reverse; align-items: center; }
+}
+
 @media (max-width: 560px) {
   .cal-controls { flex-direction: column; align-items: stretch; }
   .cal-subscribe { justify-content: center; }

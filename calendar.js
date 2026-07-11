@@ -39,6 +39,35 @@
     });
   }
 
+  /* ----- "add to calendar" link builders ----- */
+  function addDaysStr(dateStr, n) {
+    var p = dateStr.split('-');
+    return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n)).toISOString().slice(0, 10);
+  }
+  function addHourStr(t) { var p = t.split(':'); return pad((+p[0] + 1) % 24) + ':' + p[1]; }
+  function ymd(d) { return d.replace(/-/g, ''); }
+  function gcalDates(e) {
+    if (e.allDay) return ymd(e.date) + '/' + ymd(addDaysStr(e.date, 1));
+    var end = e.endTime || addHourStr(e.startTime);
+    return ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00/' + ymd(e.date) + 'T' + end.replace(':', '') + '00';
+  }
+  function googleUrl(e) {
+    var u = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title) + '&dates=' + gcalDates(e);
+    if (e.location) u += '&location=' + encodeURIComponent(e.location);
+    return u;
+  }
+  function icsEsc(v) { return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,'); }
+  function icsHref(e) {
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WWPTC//Calendar//EN', 'BEGIN:VEVENT', 'UID:' + e.date + (e.startTime || '') + '@williamwalkerptc.com'];
+    if (e.allDay) { L.push('DTSTART;VALUE=DATE:' + ymd(e.date), 'DTEND;VALUE=DATE:' + ymd(addDaysStr(e.date, 1))); }
+    else { var end = e.endTime || addHourStr(e.startTime); L.push('DTSTART:' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND:' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
+    L.push('SUMMARY:' + icsEsc(e.title));
+    if (e.location) L.push('LOCATION:' + icsEsc(e.location));
+    L.push('END:VEVENT', 'END:VCALENDAR');
+    return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(L.join('\r\n'));
+  }
+  function slug(s) { return (String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)) || 'event'; }
+
   function render() {
     var today = todayISO();
     var events = allEvents.filter(function (e) {
@@ -80,7 +109,16 @@
               (e.location ? '<span class="cal-event__loc"> · ' + esc(e.location) + '</span>' : '') +
             '</p>' +
           '</div>' +
-          '<span class="cal-tag cal-tag--' + e.source + '">' + (e.source === 'ptc' ? 'PTC' : 'School') + '</span>' +
+          '<div class="cal-event__actions">' +
+            '<span class="cal-tag cal-tag--' + e.source + '">' + (e.source === 'ptc' ? 'PTC' : 'School') + '</span>' +
+            '<div class="cal-add">' +
+              '<button type="button" class="cal-add__btn" aria-haspopup="true" aria-expanded="false" aria-label="Add “' + esc(e.title) + '” to your calendar"><span aria-hidden="true">＋</span> Add</button>' +
+              '<div class="cal-add__menu" role="menu" hidden>' +
+                '<a role="menuitem" href="' + googleUrl(e) + '" target="_blank" rel="noopener">Google Calendar</a>' +
+                '<a role="menuitem" href="' + icsHref(e) + '" download="' + slug(e.title) + '.ics">Apple / Outlook</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
         '</article>';
     });
     listEl.innerHTML = html;
@@ -100,12 +138,35 @@
     });
   }
 
+  function closeAddMenus() {
+    listEl.querySelectorAll('.cal-add__menu:not([hidden])').forEach(function (m) { m.hidden = true; });
+    listEl.querySelectorAll('.cal-add__btn[aria-expanded="true"]').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+  }
+  function bindAddMenus() {
+    // event delegation — rows are re-rendered on filter, but listEl persists
+    listEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.cal-add__btn');
+      if (btn) {
+        e.stopPropagation();
+        var menu = btn.nextElementSibling;
+        var wasOpen = !menu.hidden;
+        closeAddMenus();
+        if (!wasOpen) { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+        return;
+      }
+      if (e.target.closest('.cal-add__menu a')) closeAddMenus(); // picked an option
+    });
+    document.addEventListener('click', function (e) { if (!e.target.closest('.cal-add')) closeAddMenus(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAddMenus(); });
+  }
+
   fetch('/api/calendar')
     .then(function (r) { return r.json(); })
     .then(function (data) {
       allEvents = (data && data.events) || [];
       bodyEl && bodyEl.setAttribute('aria-busy', 'false');
       bindFilters();
+      bindAddMenus();
       render();
       if (data && data.ok === false) {
         statusEl.hidden = false;
