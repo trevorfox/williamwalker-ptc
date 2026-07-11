@@ -454,15 +454,25 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
   .about-grid, .meetings-wrap, .signup { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-note { grid-column: 1 / -1; }
-  .nav-toggle { display: flex; }
+  .site-header { position: relative; }
+  .nav-toggle { display: flex; margin: -4px -4px -4px 0; }
   .nav-list {
-    position: absolute; top: 100%; right: clamp(1.15rem, 4vw, 2.5rem); left: clamp(1.15rem, 4vw, 2.5rem);
-    flex-direction: column; align-items: stretch; gap: 0.2rem;
-    background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 0.6rem; box-shadow: var(--shadow); display: none;
+    position: absolute; z-index: 60;
+    top: calc(100% + 8px);
+    left: clamp(0.6rem, 3vw, 1.5rem); right: clamp(0.6rem, 3vw, 1.5rem);
+    flex-direction: column; align-items: stretch; gap: 0.1rem;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 0.55rem; box-shadow: var(--shadow);
+    display: none;
   }
-  .nav-list.open { display: flex; }
-  .nav-list a { padding: 0.75rem 0.9rem; }
-  .nav-cta { text-align: center; }
+  .nav-list.open { display: flex; animation: navdrop 0.18s ease; }
+  @keyframes navdrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .nav-list li:not(:last-child) { border-bottom: 1px solid var(--blue-tint); }
+  .nav-list a {
+    display: block; padding: 0.95rem 1rem; font-size: 1.08rem; font-weight: 600; border-radius: 10px;
+  }
+  .nav-list li:last-child { margin-top: 0.35rem; }
+  .nav-cta { text-align: center; padding: 1rem !important; font-weight: 700; }
 }
 @media (max-width: 520px) {
   .footer-grid { grid-template-columns: 1fr; }

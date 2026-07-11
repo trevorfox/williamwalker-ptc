@@ -59,15 +59,24 @@
   var toggle = document.querySelector('.nav-toggle');
   var list = document.getElementById('nav-list');
   if (toggle && list) {
-    toggle.addEventListener('click', function () {
+    function closeNav(focus) {
+      list.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (focus) toggle.focus();
+    }
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
       var open = list.classList.toggle('open');
       toggle.setAttribute('aria-expanded', String(open));
     });
     list.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        list.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
+      if (e.target.tagName === 'A') closeNav(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (list.classList.contains('open') && !list.contains(e.target) && !toggle.contains(e.target)) closeNav(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && list.classList.contains('open')) closeNav(true);
     });
   }
 
