@@ -90,6 +90,23 @@
     targets.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- label Google Translate's dropdown for screen readers ----------
+     Google injects its <select.goog-te-combo> asynchronously with no
+     accessible name. Watch for it and add one. */
+  (function labelTranslate() {
+    var tries = 0;
+    var timer = setInterval(function () {
+      var combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.setAttribute('aria-label', 'Choose a language to translate this page');
+        combo.setAttribute('title', 'Translate this page');
+        clearInterval(timer);
+      } else if (++tries > 40) {
+        clearInterval(timer); /* give up after ~20s */
+      }
+    }, 500);
+  })();
+
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
