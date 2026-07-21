@@ -520,3 +520,64 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* =========================================================================
+   Supplies page
+   ========================================================================= */
+.grade-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+.grade-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 12px;
+  border: 2px solid var(--blue);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  color: var(--blue);
+  text-decoration: none;
+  text-align: center;
+  transition: background .15s ease, color .15s ease;
+}
+.grade-tile:hover, .grade-tile:focus-visible { background: var(--blue); color: #fff; }
+
+.grade { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 16px; scroll-margin-top: 130px; background: #fff; }
+.grade > summary {
+  list-style: none; cursor: pointer; padding: 18px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 1.25rem; font-weight: 800; color: var(--blue);
+}
+.grade > summary::-webkit-details-marker { display: none; }
+.grade > summary::after { content: "+"; font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.grade[open] > summary::after { content: "−"; }
+.grade__meta { font-size: .8rem; font-weight: 600; color: var(--ink-soft); margin-left: auto; }
+.grade__body { padding: 0 22px 24px; }
+.grade__subhead { font-weight: 700; margin: 18px 0 8px; color: var(--ink); }
+
+.supply-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.supply-list li { padding: 7px 0 7px 30px; position: relative; }
+.supply-list li::before {
+  content: ""; position: absolute; left: 2px; top: .78em;
+  width: 14px; height: 14px; border: 2px solid var(--green); border-radius: 4px;
+}
+.supply-list a { color: inherit; }
+.supply-list .item-note { display: block; font-size: .88em; color: var(--ink-soft); }
+.supply-list .item-flag { font-size: .82em; font-weight: 700; color: #8a5a00; background: #fff3d6; border-radius: 6px; padding: 1px 8px; margin-left: 6px; white-space: nowrap; }
+
+.donation-list { list-style: disc; margin: 0 0 8px 22px; padding: 0; color: var(--ink-soft); }
+.donation-list li { padding: 3px 0; }
+
+.disclosure { font-size: .88rem; color: var(--ink-soft); margin: 18px 0 10px; }
+.cart-btn { width: 100%; max-width: 460px; justify-content: center; }
+.shop-anywhere { font-size: .9rem; color: var(--ink-soft); margin-top: 12px; }
+
+.donate-nudge {
+  display: none; margin: 14px 0 0; padding: 12px 16px; border-radius: 10px;
+  background: var(--green-tint); color: var(--green-dark); font-weight: 600;
+}
+.donate-nudge.is-on { display: block; }
