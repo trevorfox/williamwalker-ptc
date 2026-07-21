@@ -575,6 +575,7 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 
 .disclosure { font-size: .88rem; color: var(--ink-soft); margin: 18px 0 10px; }
 .cart-btn { width: 100%; max-width: 460px; justify-content: center; }
+.cart-btn[hidden] { display: none; }
 .shop-anywhere { font-size: .9rem; color: var(--ink-soft); margin-top: 12px; }
 
 .donate-nudge {
