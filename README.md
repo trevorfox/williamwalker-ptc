@@ -5,8 +5,12 @@ no build step, no framework. Deployed on Vercel.
 
 ```
 index.html    → all page content
+calendar.html → events calendar page (district feed + PTC meetings)
+supplies.html → school supply lists + one-click Amazon cart
 styles.css    → all styling (blue + green + white, matched to the logo)
 script.js     → accessibility toolbar, mobile nav, scroll animations
+calendar.js   → calendar rendering + filters
+supplies.js   → Amazon cart URL builder, grade accordion
 assets/logo.png → school "Home of the Wildcats" logo
 ```
 
@@ -38,6 +42,18 @@ The email signup is a PTC-owned Google Form embedded in the `#signup` section
 (`.signup__iframe`), with an "open in a new tab" fallback link. To change questions,
 edit the form in Google Forms — the embed updates automatically. If the form is ever
 replaced, swap the `src` on both the iframe and the fallback link in `index.html`.
+
+## Supplies page (`/supplies`)
+
+Grade supply lists live directly in `supplies.html` as `<li data-asin="…" data-qty="…">`
+items — the HTML is the config. Annual refresh: update items/quantities from the school's
+PDFs, refresh ASINs (any Amazon product URL contains it: `/dp/ASINHERE`), leave
+`data-asin=""` to show "buy separately", or add `data-skip` for items families should
+choose themselves (backpacks etc.). The Amazon Associates tag is the `TAG` constant in
+`supplies.js` (currently a placeholder — replace when the PTC account is approved).
+If Amazon retires the bulk cart URL, set `data-idealist="<Amazon Idea List URL>"` on a
+grade's `<details>` to switch that grade to its Idea List. Never put Amazon links in
+emails/newsletters — link to the page instead (Associates policy).
 
 ## Deploy
 
