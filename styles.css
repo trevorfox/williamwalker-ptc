@@ -565,7 +565,8 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
   content: ""; position: absolute; left: 2px; top: .78em;
   width: 14px; height: 14px; border: 2px solid var(--green); border-radius: 4px;
 }
-.supply-list a { color: inherit; }
+.supply-list a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+.supply-list a:hover { color: var(--blue-deep); }
 .supply-list .item-note { display: block; font-size: .88em; color: var(--ink-soft); }
 .supply-list .item-flag { font-size: .82em; font-weight: 700; color: #8a5a00; background: #fff3d6; border-radius: 6px; padding: 1px 8px; margin-left: 6px; white-space: nowrap; }
 

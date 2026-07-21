@@ -48,12 +48,18 @@ replaced, swap the `src` on both the iframe and the fallback link in `index.html
 Grade supply lists live directly in `supplies.html` as `<li data-asin="…" data-qty="…">`
 items — the HTML is the config. Annual refresh: update items/quantities from the school's
 PDFs, refresh ASINs (any Amazon product URL contains it: `/dp/ASINHERE`), leave
-`data-asin=""` to show "buy separately", or add `data-skip` for items families should
+`data-asin=""` to leave an item unlinked, or add `data-skip` for items families should
 choose themselves (backpacks etc.). The Amazon Associates tag is the `TAG` constant in
 `supplies.js` (currently a placeholder — replace when the PTC account is approved).
-If Amazon retires the bulk cart URL, set `data-idealist="<Amazon Idea List URL>"` on a
-grade's `<details>` to switch that grade to its Idea List. Never put Amazon links in
-emails/newsletters — link to the page instead (Associates policy).
+
+**Bulk cart is OFF** (`BULK_CART = false` in `supplies.js`): Amazon retired the
+anonymous remote-cart flow — `gp/aws/cart/add.html` now routes through sign-in to an
+Associates handler that adds nothing (verified 2026-07-21, with and without a tag).
+Items are individually linked instead. Once the PTC's real tag exists, retest a bulk
+URL; if it works, flip `BULK_CART = true`. Better: create an Amazon Idea List per grade
+and set `data-idealist="<url>"` on that grade's `<details>` — that re-enables the
+per-grade one-click button. Never put Amazon links in emails/newsletters — link to the
+page instead (Associates policy).
 
 ## Deploy
 

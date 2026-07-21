@@ -1,14 +1,20 @@
 /* =========================================================================
    William Walker PTC — supplies page
    - Grade tiles open their <details> panel
-   - Builds the Amazon bulk "add to cart" URL from li[data-asin][data-qty]
-   - Tags per-item Amazon links; GA4 events; post-cart donate nudge
+   - Tags per-item Amazon product links; GA4 events
+   - Bulk-cart mode is OFF: Amazon retired the anonymous remote-cart flow
+     (gp/aws/cart/add.html now routes to a signed-in Associates handler that
+     adds nothing — verified 2026-07-21 with and without a tag). Retest with
+     the PTC's real tag once the Associates account is approved; if it works,
+     set BULK_CART to true. Per-grade Idea List fallback: set data-idealist
+     on the grade's <details> to bring back a one-click button.
    ========================================================================= */
 (function () {
   'use strict';
 
   /* Amazon Associates tag — replace when the PTC account is approved. */
   var TAG = 'PTCTAG-20';
+  var BULK_CART = false;
   var CART_BASE = 'https://www.amazon.com/gp/aws/cart/add.html';
 
   function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
@@ -28,7 +34,7 @@
     });
   });
 
-  /* ---------- cart items for a panel ---------- */
+  /* ---------- items with a sourced ASIN ---------- */
   function cartItems(panel) {
     return Array.prototype.slice.call(panel.querySelectorAll('li[data-asin]'))
       .filter(function (li) {
@@ -48,11 +54,11 @@
   /* ---------- wire each panel ---------- */
   panels.forEach(function (panel) {
     var btn = panel.querySelector('.cart-btn');
-    if (!btn) return;
     var items = cartItems(panel);
+    var grade = panel.getAttribute('data-grade');
     var ideaList = panel.getAttribute('data-idealist');
 
-    /* Item names link to their product page (tagged) — item-level fallback. */
+    /* Item names link to their product page (tagged). */
     items.forEach(function (li) {
       if (li.querySelector('a')) return;
       var a = document.createElement('a');
@@ -64,45 +70,37 @@
       li.insertBefore(a, note || null);
     });
 
-    /* Flag list items that aren't in the cart yet (no ASIN sourced). */
-    var missing = 0;
-    Array.prototype.slice.call(panel.querySelectorAll('li[data-asin]')).forEach(function (li) {
-      if (!li.hasAttribute('data-skip') && (li.getAttribute('data-asin') || '').length !== 10) {
-        missing++;
-        li.classList.add('no-asin');
-        if (!li.querySelector('.item-flag')) {
-          var flag = document.createElement('span');
-          flag.className = 'item-flag';
-          flag.textContent = 'buy separately';
-          li.appendChild(flag);
-        }
+    /* GA4: track item-link clicks */
+    panel.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a') : null;
+      if (a && a.href.indexOf('amazon.com/dp/') !== -1) {
+        var li = a.closest('li');
+        track('supply_item_click', { grade: grade, asin: li ? li.getAttribute('data-asin') : '' });
       }
     });
 
+    if (!btn) return;
+
     if (ideaList) {
-      /* Fallback mode: Amazon cart-add endpoint retired — link the Idea List. */
+      /* One-click mode via a curated Amazon Idea List. */
       btn.hidden = false;
       btn.addEventListener('click', function () {
-        track('supply_cart', { grade: panel.getAttribute('data-grade'), items: items.length, mode: 'idealist' });
+        track('supply_cart', { grade: grade, items: items.length, mode: 'idealist' });
         window.open(ideaList, '_blank', 'noopener');
         showNudge(panel);
       });
       return;
     }
 
-    if (!items.length) return; /* nothing sourced yet — button stays hidden */
-    if (missing) {
-      var n = document.createElement('span');
-      n.className = 'item-note';
-      n.textContent = 'Items marked "buy separately" aren’t included in the cart.';
-      btn.insertAdjacentElement('afterend', n);
+    if (BULK_CART && items.length) {
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        track('supply_cart', { grade: grade, items: items.length });
+        window.open(cartUrl(items), '_blank', 'noopener');
+        showNudge(panel);
+      });
     }
-    btn.hidden = false;
-    btn.addEventListener('click', function () {
-      track('supply_cart', { grade: panel.getAttribute('data-grade'), items: items.length });
-      window.open(cartUrl(items), '_blank', 'noopener');
-      showNudge(panel);
-    });
+    /* Otherwise the button stays hidden — items are individually linked. */
   });
 
   function showNudge(panel) {
