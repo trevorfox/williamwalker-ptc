@@ -578,6 +578,14 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 .cart-btn[hidden] { display: none; }
 .shop-anywhere { font-size: .9rem; color: var(--ink-soft); margin-top: 12px; }
 
+#shopping-helps { scroll-margin-top: 130px; }
+
+.od-callout {
+  display: inline-block; margin-top: 14px; padding: 8px 14px; border-radius: 999px;
+  background: var(--blue-tint); color: var(--blue-dark); font-size: .95rem;
+}
+.od-callout a { color: var(--blue); font-weight: 700; }
+
 .donate-nudge {
   display: none; margin: 14px 0 0; padding: 12px 16px; border-radius: 10px;
   background: var(--green-tint); color: var(--green-dark); font-weight: 600;
