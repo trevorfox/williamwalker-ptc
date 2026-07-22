@@ -104,6 +104,18 @@
     /* Otherwise the button stays hidden — items are individually linked. */
   });
 
+  /* ---------- Office Depot ID copy button ---------- */
+  var copyBtn = document.querySelector('.od-id-card__copy');
+  if (copyBtn && navigator.clipboard) {
+    copyBtn.hidden = false;
+    copyBtn.addEventListener('click', function () {
+      navigator.clipboard.writeText(copyBtn.getAttribute('data-copy')).then(function () {
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(function () { copyBtn.textContent = 'Copy ID'; }, 2000);
+      });
+    });
+  }
+
   function showNudge(panel) {
     var nudge = panel.querySelector('.donate-nudge');
     if (!nudge) return;
