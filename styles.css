@@ -558,6 +558,10 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 
 #shopping-helps { scroll-margin-top: 130px; }
 
+/* collapse the double .block padding between the intro and the grade panels */
+.supplies-head { padding-bottom: 1.25rem; }
+.grade-panels { padding-top: 0; }
+
 .od-callout {
   display: inline-block; margin-top: 14px; padding: 8px 14px; border-radius: 999px;
   background: var(--blue-tint); color: var(--blue-dark); font-size: .95rem;
