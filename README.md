@@ -52,14 +52,16 @@ PDFs, refresh ASINs (any Amazon product URL contains it: `/dp/ASINHERE`), leave
 choose themselves (backpacks etc.). The Amazon Associates tag is the `TAG` constant in
 `supplies.js` (currently a placeholder — replace when the PTC account is approved).
 
-**Bulk cart is OFF** (`BULK_CART = false` in `supplies.js`): Amazon retired the
-anonymous remote-cart flow — `gp/aws/cart/add.html` now routes through sign-in to an
-Associates handler that adds nothing (verified 2026-07-21, with and without a tag).
-Items are individually linked instead. Once the PTC's real tag exists, retest a bulk
-URL; if it works, flip `BULK_CART = true`. Better: create an Amazon Idea List per grade
-and set `data-idealist="<url>"` on that grade's `<details>` — that re-enables the
-per-grade one-click button. Never put Amazon links in emails/newsletters — link to the
-page instead (Associates policy).
+**Bulk cart is OFF until the tag exists** (`BULK_CART = false` in `supplies.js`).
+Amazon's current bulk-cart endpoint is `https://www.amazon.com/associates/addtocart`
+(same `ASIN.n`/`Quantity.n` params as the retired `gp/aws/cart/add.html`) and it
+**requires a valid registered AssociateTag** — verified 2026-07-21: a live registered
+tag fills the cart, an unregistered/placeholder tag lands on an empty one. When the
+PTC's Associates account is approved: set `TAG` in `supplies.js` to the real tag, flip
+`BULK_CART = true`, and test one grade. Until then items are individually linked.
+`data-idealist="<url>"` on a grade's `<details>` is an alternative one-click path.
+Never put Amazon links in emails/newsletters — link to the page instead (Associates
+policy).
 
 ## Deploy
 

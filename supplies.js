@@ -2,12 +2,13 @@
    William Walker PTC — supplies page
    - Grade tiles open their <details> panel
    - Tags per-item Amazon product links; GA4 events
-   - Bulk-cart mode is OFF: Amazon retired the anonymous remote-cart flow
-     (gp/aws/cart/add.html now routes to a signed-in Associates handler that
-     adds nothing — verified 2026-07-21 with and without a tag). Retest with
-     the PTC's real tag once the Associates account is approved; if it works,
-     set BULK_CART to true. Per-grade Idea List fallback: set data-idealist
-     on the grade's <details> to bring back a one-click button.
+   - Bulk-cart mode is OFF until the PTC has a registered Associates tag.
+     Amazon's successor endpoint (amazon.com/associates/addtocart, same
+     ASIN.n/Quantity.n params) VALIDATES the AssociateTag: a registered tag
+     fills the cart (verified 2026-07-21 with TeacherLists' live tag), an
+     unregistered one lands on an empty cart. When the PTC's tag is approved:
+     set TAG to it and BULK_CART to true. Per-grade data-idealist on the
+     grade's <details> remains an alternative one-click path.
    ========================================================================= */
 (function () {
   'use strict';
@@ -15,7 +16,7 @@
   /* Amazon Associates tag — replace when the PTC account is approved. */
   var TAG = 'PTCTAG-20';
   var BULK_CART = false;
-  var CART_BASE = 'https://www.amazon.com/gp/aws/cart/add.html';
+  var CART_BASE = 'https://www.amazon.com/associates/addtocart';
 
   function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
 
