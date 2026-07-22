@@ -524,28 +524,6 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 /* =========================================================================
    Supplies page
    ========================================================================= */
-.grade-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
-  margin-top: 28px;
-}
-.grade-tile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 64px;
-  padding: 12px;
-  border: 2px solid var(--blue);
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  color: var(--blue);
-  text-decoration: none;
-  text-align: center;
-  transition: background .15s ease, color .15s ease;
-}
-.grade-tile:hover, .grade-tile:focus-visible { background: var(--blue); color: #fff; }
-
 .grade { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 16px; scroll-margin-top: 130px; background: #fff; }
 .grade > summary {
   list-style: none; cursor: pointer; padding: 18px 22px;

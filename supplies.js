@@ -1,7 +1,7 @@
 /* =========================================================================
    William Walker PTC — supplies page
-   - Grade tiles open their <details> panel
    - Tags per-item Amazon product links; GA4 events
+   - Deep links (#prek etc.) auto-open their <details> panel
    - Bulk-cart mode is OFF until the PTC has a registered Associates tag.
      Amazon's successor endpoint (amazon.com/associates/addtocart, same
      ASIN.n/Quantity.n params) VALIDATES the AssociateTag: a registered tag
@@ -22,18 +22,20 @@
 
   var panels = Array.prototype.slice.call(document.querySelectorAll('details.grade'));
 
-  /* ---------- grade tiles open the target panel ---------- */
-  Array.prototype.slice.call(document.querySelectorAll('.grade-tile')).forEach(function (tile) {
-    tile.addEventListener('click', function () {
-      var panel = document.querySelector(tile.getAttribute('href'));
-      if (panel) panel.open = true; /* anchor jump proceeds natively */
-    });
-  });
   panels.forEach(function (panel) {
     panel.addEventListener('toggle', function () {
       if (panel.open) track('supply_grade_select', { grade: panel.getAttribute('data-grade') });
     });
   });
+
+  /* ---------- deep links open the target panel ---------- */
+  function openFromHash() {
+    if (!location.hash) return;
+    var panel = document.querySelector('details.grade' + location.hash.replace(/[^#\w-]/g, ''));
+    if (panel) panel.open = true;
+  }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
 
   /* ---------- items with a sourced ASIN ---------- */
   function cartItems(panel) {
