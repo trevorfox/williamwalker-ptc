@@ -13,8 +13,8 @@
 (function () {
   'use strict';
 
-  /* Amazon Associates tag — replace when the PTC account is approved. */
-  var TAG = 'PTCTAG-20';
+  /* Amazon Associates tracking ID (personal Associates account, pass-through to PTC). */
+  var TAG = 'wwptc-20';
   var BULK_CART = false;
   var CART_BASE = 'https://www.amazon.com/associates/addtocart';
 
