@@ -15,7 +15,7 @@
 
   /* Amazon Associates tracking ID (personal Associates account, pass-through to PTC). */
   var TAG = 'wwptc-20';
-  var BULK_CART = false;
+  var BULK_CART = true;
   var CART_BASE = 'https://www.amazon.com/associates/addtocart';
 
   function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
