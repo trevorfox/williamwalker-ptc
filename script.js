@@ -173,6 +173,8 @@
     var label = (a.textContent || '').trim().slice(0, 60);
     if (href.indexOf('zeffy.com') !== -1 || href.indexOf('paypal.com') !== -1) {
       track('donate', { link_text: label });
+      var prog = a.getAttribute('data-program-donate');
+      if (prog) track('program_donate_click', { program: prog, link_text: label });
     } else if (href === '#get-involved' || href === '/#get-involved' || href === '#signup') {
       track('signup_click', { link_text: label });
     }
