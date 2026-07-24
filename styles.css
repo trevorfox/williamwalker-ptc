@@ -599,3 +599,71 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
   background: var(--green-tint); color: var(--green-dark); font-weight: 600;
 }
 .donate-nudge.is-on { display: block; }
+
+/* =========================================================================
+   Programs & Events pages
+   ========================================================================= */
+/* hero variants: activity photo (with legibility overlay) or brand gradient */
+.hero--image, .hero--gradient { border-bottom: 0; }
+.hero--image {
+  background-image: linear-gradient(180deg, rgba(28,61,108,0.62), rgba(28,61,108,0.8)), var(--hero-img);
+  background-size: cover; background-position: center;
+}
+.hero--gradient { background: linear-gradient(135deg, var(--blue-dark), var(--blue) 58%, var(--green-deep)); }
+.hero--image .hero__eyebrow, .hero--gradient .hero__eyebrow { color: #bfead0; }
+.hero--image .hero__title, .hero--gradient .hero__title { color: #fff; }
+.hero--image .hero__lede, .hero--gradient .hero__lede { color: rgba(255,255,255,0.92); }
+
+.btn--white { background: #fff; color: var(--green-dark); box-shadow: var(--shadow-sm); }
+.btn--white:hover { background: var(--green-tint); transform: translateY(-2px); }
+
+/* story prose (rendered markdown) */
+.prose { max-width: 68ch; }
+.prose h2 { font-size: clamp(1.4rem, 2.6vw, 1.8rem); color: var(--blue-dark); margin: 2rem 0 0.8rem; }
+.prose h3 { font-size: 1.15rem; color: var(--blue-deep); margin: 1.6rem 0 0.6rem; }
+.prose ul { margin: 0 0 1rem; padding-left: 1.3rem; }
+.prose li { margin-bottom: 0.35rem; }
+.prose-img { margin: 1.6rem 0; }
+.prose-img img { border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+
+/* photo gallery */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.6rem; }
+.gallery figure { margin: 0; }
+.gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.gallery figcaption { font-size: 0.88rem; color: var(--ink-soft); margin-top: 0.45rem; }
+
+/* impact tiles (on green block) */
+.impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 2rem 0; }
+.impact-card { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.32); border-radius: var(--radius-sm); padding: 1.4rem 1.3rem; }
+.impact-card__amount { display: block; font-weight: 900; font-size: 2.1rem; color: #fff; line-height: 1; }
+.impact-card__buys { display: block; margin-top: 0.5rem; color: rgba(255,255,255,0.92); font-weight: 600; }
+.impact-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+.fineprint--light { color: rgba(255,255,255,0.85); opacity: 1; }
+
+/* program cards (index + "more programs") */
+.program-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+.program-card { border-radius: var(--radius-sm); overflow: hidden; background: #fff; box-shadow: var(--shadow); }
+.program-card--link { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.program-card--link:hover { transform: translateY(-3px); box-shadow: 0 22px 46px -22px rgba(27,42,63,0.6); }
+.program-card__link { display: block; color: inherit; text-decoration: none; height: 100%; }
+.program-card__media { aspect-ratio: 3 / 2; background: var(--blue-tint); }
+.program-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.program-card__ph { display: grid; place-items: center; background: linear-gradient(135deg, var(--blue), var(--green)); }
+.program-card__ph span { font-weight: 900; font-size: 2.6rem; color: rgba(255,255,255,0.9); }
+.program-card__body { padding: 1.1rem 1.2rem 1.3rem; }
+.program-card__body h3 { font-size: 1.15rem; color: var(--blue-dark); margin-bottom: 0.4rem; }
+.program-card__body p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+.program-card__more { display: inline-block; margin-top: 0.7rem; font-weight: 700; font-size: 0.94rem; color: var(--blue-deep); }
+
+/* homepage pills that link to program pages */
+.pill a { color: #fff; text-decoration: none; }
+
+/* high-contrast mode */
+html.hc .hero--image, html.hc .hero--gradient { background: #003a8c !important; background-image: none !important; }
+html.hc .hero--image .hero__title, html.hc .hero--gradient .hero__title,
+html.hc .hero--image .hero__eyebrow, html.hc .hero--gradient .hero__eyebrow,
+html.hc .hero--image .hero__lede, html.hc .hero--gradient .hero__lede { color: #fff !important; }
+html.hc .btn--white { background: #fff; color: #004d24; border-color: #004d24; }
+html.hc .impact-card { border-color: #fff; }
+html.hc .program-card { border: 2px solid #000; }
+html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-card__more { color: #000 !important; }
