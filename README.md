@@ -55,10 +55,13 @@ search links.
 
 Each grade has a **Print this list** button: it prints a one-sheet checklist headed by
 the school's 5% Back to Schools ID (**70243444** — also shown in the page callout and
-ID card). Parents give that ID at any Office Depot checkout (store, officedepot.com,
-or 1-800-GO-DEPOT) and the school earns 5% of qualifying purchases back as quarterly
-merchandise-card credits. There are no affiliate links or tags — the ID is the entire
-earning mechanism, so the page links are safe to share anywhere, including email.
+ID card). Parents give that ID **when they pay** — at the register in store, or on a
+1-800-GO-DEPOT phone order — and the school earns 5% of qualifying purchases back as
+quarterly merchandise-card credits. Verified 2026-08-06 with a real order: online
+checkout has NO school-ID field and stores can't credit a purchase after the fact
+(despite what OD's FAQ PDF claims), so the site steers people to shop in store with
+the printed list. There are no affiliate links or tags — the ID is the entire earning
+mechanism, so the page links are safe to share anywhere, including email.
 
 GA4 events: `supply_grade_select`, `supply_item_click` (grade/store/q),
 `supply_print` (grade), `od_id_copy`. Smoke test: `node scripts/supplies-page.test.mjs`.
