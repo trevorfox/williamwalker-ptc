@@ -15,7 +15,7 @@ const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 
 const DAY = 86400000;
 const BACK = 2;        // days back
-const FWD_PAGE = 183;  // page shows at least ~6 months, extended through June 30 (end of school year)
+const FWD_PAGE = 365;  // page shows 1 year out
 const FWD_FEED = 400;  // subscribe feed reaches ~13 months out
 
 let _cache = { at: 0, events: null };
@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.status(200).send(buildICS(feed, name, !only));
     } else {
-      const cut = pageCutoff();
+      const cut = isoOffset(FWD_PAGE);
       const page = events.filter((e) => e.date <= cut);
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.status(200).json({ ok: true, count: page.length, events: page });
@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.status(200).send(buildICS(fallback, 'William Walker PTC Meetings', false));
     } else {
-      res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= pageCutoff()) });
+      res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
     }
   }
 };
@@ -175,13 +175,6 @@ function addHour(t) {
   return pad(h) + ':' + p[1];
 }
 function pad(n) { return String(n).padStart(2, '0'); }
-function pageCutoff() {
-  const now = new Date();
-  const yr = now.getUTCFullYear() + (now.getUTCMonth() >= 6 ? 1 : 0); // July onward -> next school year
-  const juneEnd = yr + '-06-30';
-  const sixMonths = isoOffset(FWD_PAGE);
-  return juneEnd > sixMonths ? juneEnd : sixMonths;
-}
 function isoOffset(days) { return new Date(Date.now() + days * DAY).toISOString().slice(0, 10); }
 function icsStamp(d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
 function byStart(a, b) {
