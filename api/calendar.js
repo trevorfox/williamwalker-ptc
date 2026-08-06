@@ -13,6 +13,11 @@ const FEED_URL =
 const PTC = { startTime: '17:45', endTime: '19:30', title: 'PTC Meeting', location: 'William Walker Elementary' };
 const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 
+// One-off PTC events (all-day unless startTime/endTime given)
+const PTC_EVENTS = [
+  { date: '2026-09-23', title: 'Walkerthon!', allDay: true, location: 'William Walker Elementary' },
+];
+
 const DAY = 86400000;
 const BACK = 2;        // days back
 const FWD_PAGE = 365;  // page shows 1 year out
@@ -129,6 +134,11 @@ function ptcMeetings() {
       if (date >= lo && date <= hi) {
         out.push({ date, startTime: PTC.startTime, endTime: PTC.endTime, allDay: false, title: PTC.title, location: PTC.location, source: 'ptc' });
       }
+    }
+  }
+  for (const e of PTC_EVENTS) {
+    if (e.date >= lo && e.date <= hi) {
+      out.push({ date: e.date, startTime: e.startTime || null, endTime: e.endTime || null, allDay: !e.startTime, title: e.title, location: e.location || PTC.location, source: 'ptc' });
     }
   }
   return out;
