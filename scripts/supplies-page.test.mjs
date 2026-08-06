@@ -23,7 +23,7 @@ check('all six grades have a print button', (html.match(/class="btn btn--blue pr
 check('print sheet header exists with the school ID', /class="print-sheet"[\s\S]{0,600}70243444/.test(html));
 check('school ID appears in callout, ID card, and print sheet', (html.match(/70243444/g) || []).length >= 3);
 check('fine print covers qualifying-item exclusions', /ink\s*(&amp;|&)\s*toner/i.test(html));
-check('fine print covers the forgot-the-ID save', /same[- ]quarter|within the same quarter/i.test(html));
+check('fine print covers the forgot-the-ID save', /within the same\s+quarter/i.test(html));
 check('styles.css has the print block', css.includes('@media print') && css.includes('.print-target') && css.includes('printing-grade'));
 check('checklist checkboxes in print styles', css.includes('"☐ "') || css.includes("'☐ '"));
 check('GA4: supply_print event wired', js.includes("'supply_print'"));
