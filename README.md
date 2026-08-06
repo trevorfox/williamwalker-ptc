@@ -6,11 +6,11 @@ no build step, no framework. Deployed on Vercel.
 ```
 index.html    → all page content
 calendar.html → events calendar page (district feed + PTC meetings)
-supplies.html → school supply lists + one-click Amazon cart
+supplies.html → school supply lists + Office Depot 5% Back to Schools flow
 styles.css    → all styling (blue + green + white, matched to the logo)
 script.js     → accessibility toolbar, mobile nav, scroll animations
 calendar.js   → calendar rendering + filters
-supplies.js   → Amazon cart URL builder, grade accordion
+supplies.js   → Office Depot search links, print flow, grade accordion
 assets/logo.png → school "Home of the Wildcats" logo
 ```
 
@@ -45,23 +45,23 @@ replaced, swap the `src` on both the iframe and the fallback link in `index.html
 
 ## Supplies page (`/supplies`)
 
-Grade supply lists live directly in `supplies.html` as `<li data-asin="…" data-qty="…">`
-items — the HTML is the config. Annual refresh: update items/quantities from the school's
-PDFs, refresh ASINs (any Amazon product URL contains it: `/dp/ASINHERE`), leave
-`data-asin=""` to leave an item unlinked, or add `data-skip` for items families should
-choose themselves (backpacks etc.). The Amazon Associates tag is the `TAG` constant in
-`supplies.js` (currently a placeholder — replace when the PTC account is approved).
+Grade supply lists live directly in `supplies.html` as plain `<li>` items — the HTML
+is the config, and Google Translate translates it in place. At page load `supplies.js`
+wraps each item in an Office Depot search link (`officedepot.com/a/search/?q=…`) built
+from the item's English text; add `data-q="…"` to an `<li>` to override the derived
+query when the literal text searches poorly. Annual refresh: update items and
+quantities from the school's official PDFs (linked per grade), and re-spot-check a few
+search links.
 
-**Bulk cart is OFF until the tag exists** (`BULK_CART = false` in `supplies.js`).
-Amazon's current bulk-cart endpoint is `https://www.amazon.com/associates/addtocart`
-(same `ASIN.n`/`Quantity.n` params as the retired `gp/aws/cart/add.html`) and it
-**requires a valid registered AssociateTag** — verified 2026-07-21: a live registered
-tag fills the cart, an unregistered/placeholder tag lands on an empty one. When the
-PTC's Associates account is approved: set `TAG` in `supplies.js` to the real tag, flip
-`BULK_CART = true`, and test one grade. Until then items are individually linked.
-`data-idealist="<url>"` on a grade's `<details>` is an alternative one-click path.
-Never put Amazon links in emails/newsletters — link to the page instead (Associates
-policy).
+Each grade has a **Print this list** button: it prints a one-sheet checklist headed by
+the school's 5% Back to Schools ID (**70243444** — also shown in the page callout and
+ID card). Parents give that ID at any Office Depot checkout (store, officedepot.com,
+or 1-800-GO-DEPOT) and the school earns 5% of qualifying purchases back as quarterly
+merchandise-card credits. There are no affiliate links or tags — the ID is the entire
+earning mechanism, so the page links are safe to share anywhere, including email.
+
+GA4 events: `supply_grade_select`, `supply_item_click` (grade/store/q),
+`supply_print` (grade), `od_id_copy`. Smoke test: `node scripts/supplies-page.test.mjs`.
 
 ## Deploy
 

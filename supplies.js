@@ -43,7 +43,7 @@
     for (var n = li.firstChild; n && n !== note; n = n.nextSibling) text += n.textContent;
     return text
       .replace(/\([^)]*\)/g, ' ')
-      .replace(/^\s*\d+\s+(packs?|packages?|boxes?|bottles?|containers?|reams?|sets?|pairs?|individual)\s+(of\s+)?/i, '')
+      .replace(/^\s*\d+\s+(packs?|packages?|box(es)?|bottles?|containers?|reams?|sets?|pairs?|individual)\s+(of\s+)?/i, '')
       .replace(/^\s*\d+\s+/, '')
       .replace(/\s+/g, ' ')
       .trim();
