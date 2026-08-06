@@ -1,22 +1,19 @@
 /* =========================================================================
    William Walker PTC — supplies page
-   - Tags per-item Amazon product links; GA4 events
-   - Deep links (#prek etc.) auto-open their <details> panel
-   - Bulk-cart mode is OFF until the PTC has a registered Associates tag.
-     Amazon's successor endpoint (amazon.com/associates/addtocart, same
-     ASIN.n/Quantity.n params) VALIDATES the AssociateTag: a registered tag
-     fills the cart (verified 2026-07-21 with TeacherLists' live tag), an
-     unregistered one lands on an empty cart. When the PTC's tag is approved:
-     set TAG to it and BULK_CART to true. Per-grade data-idealist on the
-     grade's <details> remains an alternative one-click path.
+   - Every supply item links to an Office Depot search. Queries are built at
+     page load from the English item text (before Google Translate mutates
+     the DOM), so translated pages still search in English. data-q on an
+     <li> overrides the derived query.
+   - "Print this list" flags one grade + <body> with print classes and calls
+     window.print(); @media print rules in styles.css render a one-sheet
+     checklist headed by the 5% Back to Schools ID (70243444).
+   - No affiliate params anywhere — the school ID given at checkout is the
+     entire earning mechanism.
    ========================================================================= */
 (function () {
   'use strict';
 
-  /* Amazon Associates tracking ID (personal Associates account, pass-through to PTC). */
-  var TAG = 'wwptc-20';
-  var BULK_CART = true;
-  var CART_BASE = 'https://www.amazon.com/associates/addtocart';
+  var SEARCH_BASE = 'https://www.officedepot.com/a/search/?q=';
 
   function track(name, params) { try { if (window.gtag) window.gtag('event', name, params || {}); } catch (e) {} }
 
@@ -37,74 +34,79 @@
   openFromHash();
   window.addEventListener('hashchange', openFromHash);
 
-  /* ---------- items with a sourced ASIN ---------- */
-  function cartItems(panel) {
-    return Array.prototype.slice.call(panel.querySelectorAll('li[data-asin]'))
-      .filter(function (li) {
-        return !li.hasAttribute('data-skip') && (li.getAttribute('data-asin') || '').length === 10;
-      });
-  }
-
-  function cartUrl(items) {
-    var parts = ['AssociateTag=' + encodeURIComponent(TAG)];
-    items.forEach(function (li, i) {
-      parts.push('ASIN.' + (i + 1) + '=' + encodeURIComponent(li.getAttribute('data-asin')));
-      parts.push('Quantity.' + (i + 1) + '=' + encodeURIComponent(li.getAttribute('data-qty') || '1'));
-    });
-    return CART_BASE + '?' + parts.join('&');
+  /* ---------- search query from item text ---------- */
+  function itemQuery(li) {
+    var custom = li.getAttribute('data-q');
+    if (custom) return custom;
+    var note = li.querySelector('.item-note, .item-flag');
+    var text = '';
+    for (var n = li.firstChild; n && n !== note; n = n.nextSibling) text += n.textContent;
+    return text
+      .replace(/\([^)]*\)/g, ' ')
+      .replace(/^\s*\d+\s+(packs?|packages?|boxes?|bottles?|containers?|reams?|sets?|pairs?|individual)\s+(of\s+)?/i, '')
+      .replace(/^\s*\d+\s+/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   /* ---------- wire each panel ---------- */
   panels.forEach(function (panel) {
-    var btn = panel.querySelector('.cart-btn');
-    var items = cartItems(panel);
     var grade = panel.getAttribute('data-grade');
-    var ideaList = panel.getAttribute('data-idealist');
 
-    /* Item names link to their product page (tagged). */
-    items.forEach(function (li) {
+    /* Item names link to an Office Depot search (built now = English). */
+    Array.prototype.slice.call(panel.querySelectorAll('.supply-list li')).forEach(function (li) {
       if (li.querySelector('a')) return;
+      var q = itemQuery(li);
+      if (!q) return;
       var a = document.createElement('a');
-      a.href = 'https://www.amazon.com/dp/' + li.getAttribute('data-asin') + '?tag=' + encodeURIComponent(TAG);
+      a.href = SEARCH_BASE + encodeURIComponent(q);
       a.target = '_blank';
-      a.rel = 'noopener sponsored';
+      a.rel = 'noopener';
+      a.setAttribute('data-q', q);
       var note = li.querySelector('.item-note, .item-flag');
       while (li.firstChild && li.firstChild !== note) a.appendChild(li.firstChild);
       li.insertBefore(a, note || null);
     });
 
-    /* GA4: track item-link clicks */
+    /* GA4: item-link clicks */
     panel.addEventListener('click', function (e) {
       var a = e.target.closest ? e.target.closest('a') : null;
-      if (a && a.href.indexOf('amazon.com/dp/') !== -1) {
-        var li = a.closest('li');
-        track('supply_item_click', { grade: grade, asin: li ? li.getAttribute('data-asin') : '' });
+      if (a && a.href.indexOf('officedepot.com/a/search') !== -1) {
+        track('supply_item_click', { grade: grade, store: 'officedepot', q: a.getAttribute('data-q') || '' });
       }
     });
 
-    if (!btn) return;
-
-    if (ideaList) {
-      /* One-click mode via a curated Amazon Idea List. */
-      btn.hidden = false;
-      btn.addEventListener('click', function () {
-        track('supply_cart', { grade: grade, items: items.length, mode: 'idealist' });
-        window.open(ideaList, '_blank', 'noopener');
-        showNudge(panel);
-      });
-      return;
+    var btn = panel.querySelector('.print-btn');
+    if (btn) {
+      btn.addEventListener('click', function () { printPanel(panel, grade); });
     }
-
-    if (BULK_CART && items.length) {
-      btn.hidden = false;
-      btn.addEventListener('click', function () {
-        track('supply_cart', { grade: grade, items: items.length });
-        window.open(cartUrl(items), '_blank', 'noopener');
-        showNudge(panel);
-      });
-    }
-    /* Otherwise the button stays hidden — items are individually linked. */
   });
+
+  /* ---------- print flow ---------- */
+  function printPanel(panel, grade) {
+    var slot = document.querySelector('.print-sheet [data-print-grade]');
+    var summary = panel.querySelector('summary');
+    if (slot && summary) slot.textContent = summary.textContent.replace(/\s+/g, ' ').trim();
+
+    panel.open = true;
+    panel.classList.add('print-target');
+    document.body.classList.add('printing-grade');
+    track('supply_print', { grade: grade });
+
+    var done = false;
+    function cleanup() {
+      if (done) return;
+      done = true;
+      window.removeEventListener('afterprint', cleanup);
+      panel.classList.remove('print-target');
+      document.body.classList.remove('printing-grade');
+      showNudge(panel);
+    }
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+    /* iOS Safari doesn't reliably fire afterprint */
+    setTimeout(cleanup, 1000);
+  }
 
   /* ---------- Office Depot ID copy button ---------- */
   var copyBtn = document.querySelector('.od-id-card__copy');
@@ -112,6 +114,7 @@
     copyBtn.hidden = false;
     copyBtn.addEventListener('click', function () {
       navigator.clipboard.writeText(copyBtn.getAttribute('data-copy')).then(function () {
+        track('od_id_copy', {});
         copyBtn.textContent = 'Copied ✓';
         setTimeout(function () { copyBtn.textContent = 'Copy ID'; }, 2000);
       });
