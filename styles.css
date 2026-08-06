@@ -552,8 +552,7 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 .donation-list li { padding: 3px 0; }
 
 .disclosure { font-size: .88rem; color: var(--ink-soft); margin: 18px 0 10px; }
-.cart-btn { width: 100%; max-width: 460px; justify-content: center; }
-.cart-btn[hidden] { display: none; }
+.print-btn { width: 100%; max-width: 460px; justify-content: center; }
 .shop-anywhere { font-size: .9rem; color: var(--ink-soft); margin-top: 12px; }
 
 #shopping-helps { scroll-margin-top: 130px; }
@@ -667,3 +666,64 @@ html.hc .btn--white { background: #fff; color: #004d24; border-color: #004d24; }
 html.hc .impact-card { border-color: #fff; }
 html.hc .program-card { border: 2px solid #000; }
 html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-card__more { color: #000 !important; }
+
+/* =========================================================================
+   Print: one-sheet supply checklist (triggered by the per-grade
+   "Print this list" button — supplies.js sets body.printing-grade
+   and .print-target on the chosen grade)
+   ========================================================================= */
+.print-sheet { display: none; }
+
+@media print {
+  body.printing-grade { background: #fff; }
+
+  body.printing-grade .topbar,
+  body.printing-grade .site-footer,
+  body.printing-grade .skip-link,
+  body.printing-grade .supplies-head,
+  body.printing-grade .supplies-support,
+  body.printing-grade #shopping-helps,
+  body.printing-grade .grade:not(.print-target) { display: none !important; }
+
+  body.printing-grade .print-sheet {
+    display: block !important;
+    border: 3px solid #000;
+    padding: 12px 16px;
+    margin: 0 0 16px;
+  }
+  body.printing-grade .print-sheet__school { font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; }
+  body.printing-grade .print-sheet__id { font-size: 1rem; margin: 0; }
+
+  body.printing-grade .grade.print-target {
+    display: block;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+  body.printing-grade .grade.print-target summary {
+    font-size: 1.25rem;
+    font-weight: 800;
+    list-style: none;
+    padding: 0 0 6px;
+  }
+  body.printing-grade .grade.print-target summary::-webkit-details-marker { display: none; }
+  body.printing-grade .grade.print-target .grade__body { padding: 0; }
+
+  body.printing-grade .print-btn,
+  body.printing-grade .donate-nudge,
+  body.printing-grade .disclosure,
+  body.printing-grade .shop-anywhere { display: none !important; }
+
+  body.printing-grade .supply-list,
+  body.printing-grade .donation-list { list-style: none; padding-left: 0; margin: 0 0 10px; }
+  body.printing-grade .supply-list li,
+  body.printing-grade .donation-list li { padding: 2px 0; break-inside: avoid; }
+  body.printing-grade .supply-list li::before,
+  body.printing-grade .donation-list li::before { content: "☐ "; font-size: 1.05em; }
+
+  body.printing-grade .supply-list a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
