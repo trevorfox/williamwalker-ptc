@@ -15,6 +15,7 @@ const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 
 // One-off PTC events (all-day unless startTime/endTime given)
 const PTC_EVENTS = [
+  { date: '2026-08-15', title: 'Welcome to Walker — New Family Meet-Up', startTime: '09:30', endTime: '11:30', location: 'Cedar Hills Park, splash pad area' },
   { date: '2026-09-23', title: 'Walkerthon!', allDay: true, location: 'William Walker Elementary' },
 ];
 
