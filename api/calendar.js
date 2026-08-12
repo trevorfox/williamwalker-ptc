@@ -22,6 +22,43 @@ const PTC_EVENTS = [
   { date: '2026-09-24', title: 'Walkerthon — date TBD (Sept 17 or 24)', allDay: true, location: 'William Walker Elementary' },
 ];
 
+/* ---------- categorization ----------
+   The district marks most cultural/religious observances with a phrase in the
+   DESCRIPTION field. It's applied inconsistently, so a short exact-title list
+   patches the ones that slip through. Exact-title, never substring: a real
+   Walker event like "Diwali Celebration Night" must NOT be treated as an
+   observance. Anything unrecognized falls through to 'school' so it stays
+   visible — a miscategorized event is untidy, a vanished one loses a family. */
+const OBSERVANCE_MARKER = 'Cultural & Religious';
+const OBSERVANCE_TITLES = [
+  'christmas', 'easter', 'diwali', 'five days of diwali', 'eid al-fitr',
+  'eid al-adha', 'lunar new year', 'rosh hashanah', 'yom kippur',
+];
+const NO_SCHOOL_RE = /no school|school closed|no students/i;
+const DISTRICT_RE = /school board|board retreat|budget committee|budget 101|superintendent search|long-range facilities|public hearing/i;
+
+const FEED_NAMES = {
+  ptc: 'William Walker PTC Meetings',
+  noschool: 'William Walker — No School Days',
+  school: 'William Walker — School Events',
+  district: 'William Walker — District & Board',
+  observance: 'William Walker — Cultural & Religious Observances',
+};
+
+function isObservance(title, description) {
+  if (String(description || '').indexOf(OBSERVANCE_MARKER) !== -1) return true;
+  return OBSERVANCE_TITLES.indexOf(String(title || '').trim().toLowerCase()) !== -1;
+}
+
+function categorize(title, description, source) {
+  if (source === 'ptc') return 'ptc';
+  const t = String(title || '');
+  if (NO_SCHOOL_RE.test(t)) return 'noschool';
+  if (isObservance(t, description)) return 'observance';
+  if (DISTRICT_RE.test(t)) return 'district';
+  return 'school';
+}
+
 const DAY = 86400000;
 const BACK = 2;        // days back
 const FWD_PAGE = 365;  // page shows 1 year out
@@ -201,3 +238,7 @@ function unescapeICS(v) {
 function escICS(v) {
   return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 }
+
+/* ---------- test hooks (see scripts/calendar-categorize.test.mjs) ---------- */
+module.exports.categorize = categorize;
+module.exports.isObservance = isObservance;
