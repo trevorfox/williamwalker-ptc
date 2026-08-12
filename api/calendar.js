@@ -69,7 +69,7 @@ const CACHE_MS = 60 * 60 * 1000;
 
 module.exports = async (req, res) => {
   const isIcs = /[?&]format=ics\b/.test(req.url || '');
-  const only = (/[?&]only=(ptc|school)\b/.exec(req.url || '') || [])[1]; // optional single-source feed
+  const only = (/[?&]only=(ptc|noschool|school|district|observance)\b/.exec(req.url || '') || [])[1]; // optional single-category feed
   try {
     let events;
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {
@@ -82,9 +82,8 @@ module.exports = async (req, res) => {
     }
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     if (isIcs) {
-      var feed = only ? events.filter(function (e) { return e.source === only; }) : events;
-      var name = only === 'ptc' ? 'William Walker PTC Meetings'
-        : only === 'school' ? 'William Walker — School' : 'William Walker PTC + School';
+      var feed = only ? events.filter(function (e) { return e.category === only; }) : events;
+      var name = only ? FEED_NAMES[only] : 'William Walker PTC + School';
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.status(200).send(buildICS(feed, name, !only));
     } else {
@@ -112,7 +111,7 @@ async function fetchSchool() {
   return parseICS(await r.text());
 }
 
-function parseICS(raw) {
+function parseICS(raw, skipWindow) {
   const unfolded = raw.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
   const lines = unfolded.split(/\r\n|\n|\r/);
   const lo = isoOffset(-BACK), hi = isoOffset(FWD_FEED);
@@ -123,7 +122,7 @@ function parseICS(raw) {
     if (line === 'END:VEVENT') {
       if (cur && cur.dtstart && cur.summary) {
         const ev = toEvent(cur);
-        if (ev && ev.date >= lo && ev.date <= hi) events.push(ev);
+        if (ev && (skipWindow || (ev.date >= lo && ev.date <= hi))) events.push(ev);
       }
       cur = null; continue;
     }
@@ -137,6 +136,7 @@ function parseICS(raw) {
     else if (name === 'DTEND') cur.dtend = { params: left.toUpperCase(), value };
     else if (name === 'SUMMARY') cur.summary = unescapeICS(value);
     else if (name === 'LOCATION') cur.location = unescapeICS(value);
+    else if (name === 'DESCRIPTION') cur.description = unescapeICS(value);
   }
   return events;
 }
@@ -159,6 +159,7 @@ function toEvent(cur) {
     allDay: s.allDay,
     title: cur.summary,
     location: cur.location ? cur.location.slice(0, 90) : null,
+    category: categorize(cur.summary, cur.description || '', 'school'),
     source: 'school',
   };
 }
@@ -173,13 +174,13 @@ function ptcMeetings() {
       const day = firstWednesday(yr, m);
       const date = `${yr}-${pad(m)}-${pad(day)}`;
       if (date >= lo && date <= hi) {
-        out.push({ date, startTime: PTC.startTime, endTime: PTC.endTime, allDay: false, title: PTC.title, location: PTC.location, source: 'ptc' });
+        out.push({ date, startTime: PTC.startTime, endTime: PTC.endTime, allDay: false, title: PTC.title, location: PTC.location, category: 'ptc', source: 'ptc' });
       }
     }
   }
   for (const e of PTC_EVENTS) {
     if (e.date >= lo && e.date <= hi) {
-      out.push({ date: e.date, startTime: e.startTime || null, endTime: e.endTime || null, allDay: !e.startTime, title: e.title, location: e.location || PTC.location, source: 'ptc' });
+      out.push({ date: e.date, startTime: e.startTime || null, endTime: e.endTime || null, allDay: !e.startTime, title: e.title, location: e.location || PTC.location, category: 'ptc', source: 'ptc' });
     }
   }
   return out;
@@ -242,3 +243,4 @@ function escICS(v) {
 /* ---------- test hooks (see scripts/calendar-categorize.test.mjs) ---------- */
 module.exports.categorize = categorize;
 module.exports.isObservance = isObservance;
+module.exports.parseICSForTest = function (raw) { return parseICS(raw, true); };

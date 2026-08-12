@@ -62,4 +62,26 @@ eq(categorize('No School - Whatever', '', 'ptc'), 'ptc', 'ptc source beats nosch
 eq(categorize('Totally Unknown New Event Type', '', 'school'), 'school', 'unknown falls to school');
 eq(categorize('', '', 'school'), 'school', 'empty title falls to school');
 
-console.log('ok — ' + n + ' assertions passed');
+// ---------- end-to-end over the fixture ----------
+const { parseICSForTest } = cal;
+const fixture = readFileSync(join(ROOT, 'scripts', 'fixtures', 'calendar-feed.ics'), 'utf8');
+const parsed = parseICSForTest(fixture);
+
+const counts = parsed.reduce((a, e) => { a[e.category] = (a[e.category] || 0) + 1; return a; }, {});
+console.log('fixture counts:', JSON.stringify(counts));
+
+eq(parsed.length, 18, 'fixture parses 18 events');
+eq(counts.noschool, 4, 'fixture no-school count');
+eq(counts.observance, 5, 'fixture observance count');  // 2 by marker, 3 by exact title
+eq(counts.district, 2, 'fixture district count');
+eq(counts.school, 7, 'fixture school count');          // incl. both synthetic guards
+assert(parsed.every((e) => e.category), 'every event has a category');
+assert(parsed.every((e) => e.source === 'school'), 'feed events tagged source=school');
+
+// the two synthetic guards, end to end through the parser
+const byTitle = (t) => parsed.find((e) => e.title === t);
+eq(byTitle('Totally Unknown New Event Type').category, 'school', 'unknown title stays visible');
+eq(byTitle('Diwali Celebration Night').category, 'school', 'substring guard holds through parser');
+eq(byTitle('Chuseok').category, 'observance', 'marker survives DESCRIPTION unescaping');
+
+console.log('ok — ' + n + ' assertions passed (incl. fixture)');
