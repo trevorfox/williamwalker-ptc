@@ -16,7 +16,10 @@ const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 // One-off PTC events (all-day unless startTime/endTime given)
 const PTC_EVENTS = [
   { date: '2026-08-15', title: 'Welcome to Walker — New Family Meet-Up', startTime: '09:30', endTime: '11:30', location: 'Cedar Hills Park, splash pad area' },
-  { date: '2026-09-23', title: 'Walkerthon!', allDay: true, location: 'William Walker Elementary' },
+  // Walkerthon must land on a Thursday so Pre-K can join (Pre-K's first day is Sept 8).
+  // Board is deciding between the two; listed on both dates until it's locked.
+  { date: '2026-09-17', title: 'Walkerthon — date TBD (Sept 17 or 24)', allDay: true, location: 'William Walker Elementary' },
+  { date: '2026-09-24', title: 'Walkerthon — date TBD (Sept 17 or 24)', allDay: true, location: 'William Walker Elementary' },
 ];
 
 const DAY = 86400000;
