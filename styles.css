@@ -395,7 +395,7 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .cal-head { padding-bottom: 1.5rem; }
 .cal-head .lead { margin-top: 0.6rem; }
 .cal-controls {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
   gap: 1rem; margin-top: 1.8rem;
 }
 .cal-filters { display: inline-flex; flex-wrap: wrap; gap: 0.4rem; background: var(--blue-tint); padding: 0.3rem; border-radius: 999px; }
@@ -414,10 +414,9 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .cal-chip.is-active .dot { box-shadow: 0 0 0 2px #fff; }
 .cal-filters-wrap { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
 .cal-controls__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); }
-.cal-subs { display: flex; flex-direction: column; align-items: stretch; gap: 0.55rem; width: 100%; }
-.cal-subs__row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; }
-/* anchored right, not gapped — the pill's width changes with the filter */
-.cal-subs__row .cal-subscribe--ext { margin-left: auto; }
+/* right-aligned column so the pill sits inline with the chips; the pill's width
+   changes with the filter, so everything grows leftward and nothing drifts */
+.cal-subs { display: flex; flex-direction: column; align-items: flex-end; gap: 0.45rem; text-align: right; }
 .cal-subscribe {
   font-weight: 700; font-size: 0.9rem; color: var(--blue-deep); text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.9rem;
@@ -495,13 +494,20 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   .cal-event__actions { flex-direction: row-reverse; align-items: center; }
 }
 
+/* below this the five chips wrap to two rows, where a transparent chip on a
+   tinted lozenge reads as one blob — give each chip its own surface instead */
+@media (max-width: 720px) {
+  .cal-filters { border-radius: 1.4rem; padding: 0.45rem; gap: 0.45rem; }
+  .cal-chip { background: #fff; }
+  .cal-chip:hover { background: var(--blue-tint); }
+  .cal-chip.is-active { background: var(--blue); }
+}
+
 @media (max-width: 560px) {
   .cal-controls { flex-direction: column; align-items: stretch; }
-  .cal-subs__row { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  /* stacked full-width, so there is no right edge to align to */
+  .cal-subs { align-items: stretch; text-align: center; }
   .cal-subscribe { justify-content: center; }
-  /* stacked, so there is no right edge to anchor to */
-  .cal-subs__row .cal-subscribe--ext { margin-left: 0; text-align: center; }
-  .cal-subs__hint { text-align: center; }
   .cal-date { width: 50px; }
   .cal-event__title { font-size: 1rem; }
 }
