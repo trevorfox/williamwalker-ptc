@@ -15,11 +15,17 @@
   var WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+  var CATEGORIES = ['ptc', 'noschool', 'school', 'district', 'observance'];
+  var LABELS = { ptc: 'PTC', noschool: 'No School', school: 'School', district: 'District', observance: 'Observance' };
+
   var allEvents = [];
   var filter = (function () {
     var s = new URLSearchParams(location.search).get('show');
-    return (s === 'ptc' || s === 'school') ? s : 'all';
+    return CATEGORIES.indexOf(s) !== -1 ? s : 'all';
   })();
+
+  // falls back to source so a stale cached payload without `category` still renders
+  function catOf(e) { return e.category || e.source || 'school'; }
 
   function todayISO() {
     var d = new Date();
@@ -77,7 +83,7 @@
     var today = todayISO();
     var events = allEvents.filter(function (e) {
       if (e.date < today) return false;
-      if (filter !== 'all' && e.source !== filter) return false;
+      if (filter !== 'all' && catOf(e) !== filter) return false;
       return true;
     });
 
@@ -102,7 +108,7 @@
       var when = e.allDay ? 'All day'
         : (timeLabel(e.startTime) + (e.endTime ? ' – ' + timeLabel(e.endTime) : ''));
       html +=
-        '<article class="cal-event cal-event--' + e.source + '">' +
+        '<article class="cal-event cal-event--' + catOf(e) + '">' +
           '<div class="cal-date" aria-hidden="true">' +
             '<span class="cal-date__dow">' + WEEKDAYS[weekdayOf(e.date)] + '</span>' +
             '<span class="cal-date__num">' + (+dp[2]) + '</span>' +
@@ -115,7 +121,7 @@
             '</p>' +
           '</div>' +
           '<div class="cal-event__actions">' +
-            '<span class="cal-tag cal-tag--' + e.source + '">' + (e.source === 'ptc' ? 'PTC' : 'School') + '</span>' +
+            '<span class="cal-tag cal-tag--' + catOf(e) + '">' + esc(LABELS[catOf(e)] || 'School') + '</span>' +
             '<div class="cal-add">' +
               '<button type="button" class="cal-add__btn" aria-haspopup="true" aria-expanded="false" aria-label="Add “' + esc(e.title) + '” to your calendar"><span aria-hidden="true">＋</span> Add</button>' +
               '<div class="cal-add__menu" role="menu" hidden>' +
@@ -147,7 +153,8 @@
   // subscribe-link clicks (static in the HTML)
   document.querySelectorAll('.cal-subscribe').forEach(function (a) {
     a.addEventListener('click', function () {
-      track('calendar_subscribe', { feed: a.href.indexOf('only=ptc') !== -1 ? 'ptc' : 'school' });
+      var m = /only=([a-z]+)/.exec(a.href);
+      track('calendar_subscribe', { feed: m ? m[1] : 'district-site' });
     });
   });
 
