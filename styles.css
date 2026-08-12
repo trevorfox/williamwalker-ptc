@@ -412,14 +412,24 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .dot--noschool { background: var(--blue-dark); }
 .dot--district { background: var(--ink-soft); }
 .cal-chip.is-active .dot { box-shadow: 0 0 0 2px #fff; }
-.cal-subs { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
-.cal-subs__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); }
+.cal-filters-wrap { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.cal-controls__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); }
+.cal-subs { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
 .cal-subscribe {
   font-weight: 700; font-size: 0.9rem; color: var(--blue-deep); text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.9rem;
-  border: 1.5px solid var(--line); border-radius: 999px; transition: border-color 0.15s ease, background 0.15s ease;
+  border: 1.5px solid var(--blue); border-radius: 999px; background: var(--blue-tint);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-.cal-subscribe:hover { border-color: var(--blue); background: var(--blue-tint); }
+.cal-subscribe:hover { background: var(--blue); color: #fff; }
+.cal-subscribe:hover .dot { box-shadow: 0 0 0 2px #fff; }
+.cal-subscribe .dot:not([class*="dot--"]) { display: none; }
+.cal-subs__hint { font-size: 0.84rem; color: var(--ink-soft); }
+.cal-subscribe--ext {
+  font-weight: 600; font-size: 0.86rem; color: var(--ink-soft);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.cal-subscribe--ext:hover { color: var(--blue-deep); }
 
 .cal-body { padding-top: 0.5rem; }
 .cal-status { color: var(--ink-soft); font-size: 1.02rem; padding: 1.5rem 0; }

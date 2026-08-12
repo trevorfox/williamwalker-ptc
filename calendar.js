@@ -17,6 +17,12 @@
 
   var CATEGORIES = ['ptc', 'noschool', 'school', 'district', 'observance'];
   var LABELS = { ptc: 'PTC', noschool: 'No School', school: 'School', district: 'District', observance: 'Observance' };
+  // observance has no chip, but ?show=observance is still a valid deep link
+  var SUB_LABELS = {
+    all: 'all events', ptc: 'PTC meetings', noschool: 'No School days',
+    school: 'School events', district: 'District events', observance: 'Observances',
+  };
+  var FEED_BASE = 'webcal://williamwalkerptc.com/api/calendar?format=ics';
 
   var allEvents = [];
   var filter = (function () {
@@ -135,6 +141,21 @@
     listEl.innerHTML = html;
   }
 
+  /* ----- the subscribe link follows the active filter ----- */
+  var subEl = document.getElementById('cal-subscribe');
+  var subLabelEl = document.getElementById('cal-subscribe-label');
+  var subDotEl = document.getElementById('cal-subscribe-dot');
+  var subHintEl = document.getElementById('cal-sub-hint');
+
+  function syncSubscribe() {
+    if (!subEl) return;
+    var all = filter === 'all';
+    subEl.href = all ? FEED_BASE : FEED_BASE + '&only=' + filter;
+    subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
+    subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
+    subHintEl.hidden = !all;
+  }
+
   function bindFilters() {
     document.querySelectorAll('.cal-chip').forEach(function (chip) {
       chip.addEventListener('click', function () {
@@ -145,17 +166,18 @@
           c.setAttribute('aria-pressed', String(on));
         });
         track('calendar_filter', { filter: filter });
+        syncSubscribe();
         render();
       });
     });
   }
 
-  // subscribe-link clicks (static in the HTML)
-  document.querySelectorAll('.cal-subscribe').forEach(function (a) {
-    a.addEventListener('click', function () {
-      var m = /only=([a-z]+)/.exec(a.href);
-      track('calendar_subscribe', { feed: m ? m[1] : 'district-site' });
-    });
+  // subscribe clicks — read `filter` directly; the "all" feed carries no only= param
+  if (subEl) {
+    subEl.addEventListener('click', function () { track('calendar_subscribe', { feed: filter }); });
+  }
+  document.querySelectorAll('.cal-subscribe--ext').forEach(function (a) {
+    a.addEventListener('click', function () { track('calendar_subscribe', { feed: 'district-site' }); });
   });
 
   function closeAddMenus() {
@@ -202,6 +224,7 @@
         c.classList.toggle('is-active', on);
         c.setAttribute('aria-pressed', String(on));
       });
+      syncSubscribe();
       render();
       if (data && data.ok === false) {
         statusEl.hidden = false;

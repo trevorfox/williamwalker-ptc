@@ -103,26 +103,23 @@
         <p class="lead">School events from the Beaverton School District calendar and our PTC meetings, together in one place.</p>
 
         <div class="cal-controls">
-          <div class="cal-filters" role="group" aria-label="Filter events">
-            <button type="button" class="cal-chip is-active" data-filter="all" aria-pressed="true">All</button>
-            <button type="button" class="cal-chip" data-filter="ptc" aria-pressed="false"><span class="dot dot--ptc" aria-hidden="true"></span> PTC</button>
-            <button type="button" class="cal-chip" data-filter="noschool" aria-pressed="false"><span class="dot dot--noschool" aria-hidden="true"></span> No School</button>
-            <button type="button" class="cal-chip" data-filter="school" aria-pressed="false"><span class="dot dot--school" aria-hidden="true"></span> School events</button>
-            <button type="button" class="cal-chip" data-filter="district" aria-pressed="false"><span class="dot dot--district" aria-hidden="true"></span> District</button>
+          <div class="cal-filters-wrap">
+            <span class="cal-controls__label" id="cal-filter-label">Filter events:</span>
+            <div class="cal-filters" role="group" aria-labelledby="cal-filter-label">
+              <button type="button" class="cal-chip is-active" data-filter="all" aria-pressed="true">All</button>
+              <button type="button" class="cal-chip" data-filter="ptc" aria-pressed="false"><span class="dot dot--ptc" aria-hidden="true"></span> PTC</button>
+              <button type="button" class="cal-chip" data-filter="noschool" aria-pressed="false"><span class="dot dot--noschool" aria-hidden="true"></span> No School</button>
+              <button type="button" class="cal-chip" data-filter="school" aria-pressed="false"><span class="dot dot--school" aria-hidden="true"></span> School events</button>
+              <button type="button" class="cal-chip" data-filter="district" aria-pressed="false"><span class="dot dot--district" aria-hidden="true"></span> District</button>
+            </div>
           </div>
           <div class="cal-subs">
-            <span class="cal-subs__label">Subscribe:</span>
-            <a class="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics&only=ptc">
-              <span class="dot dot--ptc" aria-hidden="true"></span> PTC meetings
+            <a class="cal-subscribe" id="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics">
+              <span class="dot" id="cal-subscribe-dot" aria-hidden="true"></span> <span id="cal-subscribe-label">Subscribe to all events</span>
             </a>
-            <a class="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics&only=noschool">
-              <span class="dot dot--noschool" aria-hidden="true"></span> No School days
-            </a>
-            <a class="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics&only=school">
-              <span class="dot dot--school" aria-hidden="true"></span> School events
-            </a>
-            <a class="cal-subscribe" href="https://williamwalker.beaverton.k12.or.us/cf_calendar/cms_calendar_feeds.cfm?element_id=43556&calendar_ids=605,359&team_ids=" target="_blank" rel="noopener">
-              <span class="dot dot--district" aria-hidden="true"></span> Full district feed <span aria-hidden="true">↗</span>
+            <span class="cal-subs__hint" id="cal-sub-hint">Select a filter to subscribe to just those events.</span>
+            <a class="cal-subscribe--ext" href="https://williamwalker.beaverton.k12.or.us/cf_calendar/cms_calendar_feeds.cfm?element_id=43556&calendar_ids=605,359&team_ids=" target="_blank" rel="noopener">
+              Beaverton SD calendar <span aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
