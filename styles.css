@@ -19,6 +19,7 @@
   --ink:   #1b2a3f;
   --ink-soft: #48586e;
   --line:  #dbe3ee;
+  --slate-tint: #eef1f6;
 
   --maxw: 1120px;
   --radius: 16px;
@@ -397,7 +398,7 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: 1rem; margin-top: 1.8rem;
 }
-.cal-filters { display: inline-flex; gap: 0.4rem; background: var(--blue-tint); padding: 0.3rem; border-radius: 999px; }
+.cal-filters { display: inline-flex; flex-wrap: wrap; gap: 0.4rem; background: var(--blue-tint); padding: 0.3rem; border-radius: 999px; }
 .cal-chip {
   font-family: var(--ff); font-weight: 700; font-size: 0.92rem; color: var(--blue-deep);
   background: transparent; border: 0; border-radius: 999px; padding: 0.45rem 0.95rem; cursor: pointer;
@@ -408,7 +409,9 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .dot--ptc { background: var(--green); }
 .dot--school { background: var(--blue); }
-.cal-chip.is-active .dot--ptc, .cal-chip.is-active .dot--school { box-shadow: 0 0 0 2px #fff; }
+.dot--noschool { background: var(--blue-dark); }
+.dot--district { background: var(--ink-soft); }
+.cal-chip.is-active .dot { box-shadow: 0 0 0 2px #fff; }
 .cal-subs { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .cal-subs__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); }
 .cal-subscribe {
@@ -436,6 +439,7 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   background: var(--blue-tint); color: var(--blue-deep); line-height: 1.05;
 }
 .cal-event--ptc .cal-date { background: var(--green-tint); color: var(--green-deep); }
+.cal-event--noschool .cal-date { background: var(--blue-dark); color: #fff; }
 .cal-date__dow { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
 .cal-date__num { display: block; font-size: 1.5rem; font-weight: 900; }
 .cal-event__body { flex: 1 1 auto; min-width: 0; }
@@ -448,6 +452,11 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 }
 .cal-tag--ptc { background: var(--green-tint); color: var(--green-deep); }
 .cal-tag--school { background: var(--blue-tint); color: var(--blue-deep); }
+/* No-school days get the strongest treatment — they're what parents scan for.
+   Observances get the quietest, since they're informational. */
+.cal-tag--noschool { background: var(--blue-dark); color: #fff; }
+.cal-tag--district { background: var(--slate-tint); color: var(--ink-soft); }
+.cal-tag--observance { background: transparent; color: var(--ink-soft); box-shadow: inset 0 0 0 1px var(--line); }
 
 .cal-event__actions { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
 .cal-add { position: relative; }
