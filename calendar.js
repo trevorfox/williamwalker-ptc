@@ -194,6 +194,27 @@
   var subGoogleEl = document.getElementById('cal-subscribe-google');
   var subIcsEl = document.getElementById('cal-subscribe-ics');
   var subDlEl = document.getElementById('cal-subscribe-dl');
+  var shareEl = document.getElementById('cal-share');
+
+  /* ----- filter state lives in the URL -----
+     replaceState, not pushState: the filter is a view preference, not a
+     navigation. Pushing would mean four Backs to escape after trying four
+     chips, and it's why no popstate handler is needed — nothing to pop.
+     `show=all` is stripped so the canonical URL stays /calendar. */
+  function syncUrl() {
+    if (!history.replaceState) return;
+    // preserves anything else on the query string (utm_* from a newsletter link)
+    var p = new URLSearchParams(location.search);
+    if (filter === 'all') p.delete('show'); else p.set('show', filter);
+    var q = p.toString();
+    history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+  }
+
+  // Built from scratch rather than read off location, so a shared link never
+  // carries the sharer's campaign tags into everyone else's visit.
+  function viewUrl(f) {
+    return 'https://' + FEED_HOST + '/calendar' + (f === 'all' ? '' : '?show=' + f);
+  }
 
   function syncSubscribe() {
     if (!subBtnEl) return;
@@ -206,7 +227,10 @@
     subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
+    // one row, two occupants: the hint explains filtering, the share link is
+    // only meaningful once filtered (an unfiltered view is just /calendar)
     subHintEl.hidden = !all;
+    if (shareEl) shareEl.hidden = all;
   }
 
   function closeSubscribeMenu() {
@@ -236,6 +260,18 @@
       track('calendar_subscribe', { feed: filter, via: 'copy' });
       subCopyEl.textContent = 'Link copied!';
       setTimeout(function () { subCopyEl.textContent = original; closeSubscribeMenu(); }, 1100);
+    });
+  }
+
+  function bindShare() {
+    if (!shareEl) return;
+    shareEl.addEventListener('click', function () {
+      var original = shareEl.textContent;
+      writeClipboard(viewUrl(filter), function () {
+        track('calendar_share', { filter: filter });
+        shareEl.textContent = 'Link copied!';
+        setTimeout(function () { shareEl.textContent = original; }, 1100);
+      });
     });
   }
 
@@ -273,6 +309,7 @@
           c.setAttribute('aria-pressed', String(on));
         });
         track('calendar_filter', { filter: filter });
+        syncUrl();
         syncSubscribe();
         render();
       });
@@ -322,6 +359,7 @@
       bindFilters();
       bindAddMenus();
       bindSubscribeMenu();
+      bindShare();
       // reflect ?show= filter on the chips
       document.querySelectorAll('.cal-chip').forEach(function (c) {
         var on = c.getAttribute('data-filter') === filter;

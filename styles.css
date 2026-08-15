@@ -449,6 +449,14 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   margin-top: 0.3rem; padding-top: 0.6rem;
 }
 .cal-subs__hint { font-size: 0.84rem; color: var(--ink-soft); }
+/* sits in the hint's row, so it matches its size and weight rather than the pill's */
+.cal-subs__share {
+  font-family: var(--ff); font-size: 0.84rem; font-weight: 600; color: var(--blue-deep);
+  background: none; border: 0; padding: 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.cal-subs__share:hover { color: var(--blue); }
+.cal-subs__share[hidden] { display: none; }
 .cal-subscribe--ext {
   font-weight: 600; font-size: 0.86rem; color: var(--ink-soft);
   text-decoration: underline; text-underline-offset: 3px;
@@ -516,6 +524,14 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   .cal-event__actions { flex-direction: row-reverse; align-items: center; }
 }
 
+/* Between ~960px and the 560px stack, .cal-controls wraps and .cal-subs drops
+   to its own line, shrink-wrapped to the pill. Right-aligning inside it then
+   rags the links against the pill's edge rather than anything meaningful, so
+   line the group up on the left with the pill and the filter row above it. */
+@media (max-width: 980px) and (min-width: 561px) {
+  .cal-subs { align-items: flex-start; text-align: left; }
+}
+
 /* below this the five chips wrap to two rows, where a transparent chip on a
    tinted lozenge reads as one blob — give each chip its own surface instead */
 @media (max-width: 720px) {
@@ -530,6 +546,8 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   /* stacked full-width, so there is no right edge to align to */
   .cal-subs { align-items: stretch; text-align: center; }
   .cal-subscribe { display: flex; justify-content: center; }
+  /* stretched full-width here, so the label needs centering of its own */
+  .cal-subs__share { text-align: center; }
   /* the wrapper spans full width here so the button can center; re-anchor the
      menu to the button's own center instead of the wrapper's right edge */
   .cal-subscribe__menu { left: 50%; right: auto; transform: translateX(-50%); }
