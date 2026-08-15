@@ -149,14 +149,18 @@
   /* ----- the subscribe control follows the active filter -----
      A bare <a href="webcal:..."> does nothing when nothing on the device is
      registered to handle that scheme — no error, no prompt, just a dead click
-     (confirmed via net::ERR_ABORTED). So this is a disclosure menu, same
-     pattern as the per-event "+ Add" button below: a Google Calendar link
-     (plain https, always loads) plus the webcal link for Apple/Outlook. */
+     (confirmed via net::ERR_ABORTED). Google's "add by URL" page fixes desktop
+     but Google Calendar's own mobile apps (iOS *and* Android) don't support
+     subscribe-by-URL at all — visiting that page on a phone just lands on a
+     generic settings screen, cid ignored. So "Copy calendar link" leads: it's
+     the only option that reliably does something on every device, with
+     Google Calendar (desktop) and the webcal link (Apple/Outlook) below it. */
   var subBtnEl = document.getElementById('cal-subscribe-btn');
   var subMenuEl = document.getElementById('cal-subscribe-menu');
   var subLabelEl = document.getElementById('cal-subscribe-label');
   var subDotEl = document.getElementById('cal-subscribe-dot');
   var subHintEl = document.getElementById('cal-sub-hint');
+  var subCopyEl = document.getElementById('cal-subscribe-copy');
   var subGoogleEl = document.getElementById('cal-subscribe-google');
   var subIcsEl = document.getElementById('cal-subscribe-ics');
 
@@ -165,6 +169,7 @@
     var all = filter === 'all';
     var icsUrl = all ? FEED_BASE : FEED_BASE + '&only=' + filter;
     var httpsUrl = all ? FEED_BASE_HTTPS : FEED_BASE_HTTPS + '&only=' + filter;
+    subCopyEl.setAttribute('data-url', httpsUrl);
     subIcsEl.href = icsUrl;
     subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
@@ -178,6 +183,27 @@
     subBtnEl.setAttribute('aria-expanded', 'false');
   }
 
+  function copyFeedLink() {
+    var url = subCopyEl.getAttribute('data-url');
+    var original = subCopyEl.textContent;
+    var confirm = function () {
+      track('calendar_subscribe', { feed: filter, via: 'copy' });
+      subCopyEl.textContent = 'Link copied!';
+      setTimeout(function () { subCopyEl.textContent = original; closeSubscribeMenu(); }, 1100);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(confirm, confirm);
+      return;
+    }
+    // older browsers with no Clipboard API — the hidden-textarea fallback
+    var ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (err) { /* nothing left to try */ }
+    document.body.removeChild(ta);
+    confirm();
+  }
+
   function bindSubscribeMenu() {
     if (!subBtnEl) return;
     subBtnEl.addEventListener('click', function (e) {
@@ -186,6 +212,7 @@
       closeSubscribeMenu();
       if (!wasOpen) { subMenuEl.hidden = false; subBtnEl.setAttribute('aria-expanded', 'true'); }
     });
+    subCopyEl.addEventListener('click', function (e) { e.stopPropagation(); copyFeedLink(); });
     subMenuEl.addEventListener('click', function (e) {
       var link = e.target.closest('a');
       if (!link) return;
