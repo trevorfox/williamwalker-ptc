@@ -154,18 +154,18 @@
   }
 
   /* ----- the subscribe control follows the active filter -----
-     Four ways in, because no single one works everywhere:
-       copy     — always works; the only universal option, so it leads
-       google   — desktop only. Google Calendar's mobile apps can't subscribe
-                  by URL at all; on a phone the add-by-url page just lands on
-                  a generic settings screen with the cid ignored
-       webcal   — needs an OS-registered handler for the scheme. Points at the
-                  extensionful /calendar.ics path, matching the shape of the
-                  district's feed, since some handlers match on .ics and choke
-                  on query strings
-       download — one-time snapshot, no updates ever. Last resort for phones
-                  where nothing above can subscribe; labeled as such in the UI
-                  so nobody mistakes it for a live feed. */
+     Named destinations first, generic copy as the catch-all. Every item ends
+     in a live subscription — no snapshot option, deliberately: a one-time
+     import silently rots, and a stale no-school day is the failure that
+     actually hurts here. (/calendar.ics?download=1 still serves a file if
+     someone needs one ad hoc; it's just not advertised.)
+       google — /u/0/r/settings/addbyurl. Prefills cid on desktop; on mobile it
+                opens an empty paste box, so the click copies the URL too
+       webcal — one tap wherever the OS has a handler (iOS, macOS, Outlook).
+                Uses the extensionful /calendar.ics path, matching the district
+                feed's shape, since some handlers choke on query strings
+       copy   — the universal primitive; every paste-based flow needs it, and
+                it's the only thing that works when the two above don't */
   var subBtnEl = document.getElementById('cal-subscribe-btn');
   var subMenuEl = document.getElementById('cal-subscribe-menu');
   var subLabelEl = document.getElementById('cal-subscribe-label');
@@ -174,7 +174,6 @@
   var subCopyEl = document.getElementById('cal-subscribe-copy');
   var subGoogleEl = document.getElementById('cal-subscribe-google');
   var subIcsEl = document.getElementById('cal-subscribe-ics');
-  var subDlEl = document.getElementById('cal-subscribe-dl');
 
   function syncSubscribe() {
     if (!subBtnEl) return;
@@ -182,9 +181,6 @@
     var httpsUrl = feedUrl('https', filter);
     subCopyEl.setAttribute('data-url', httpsUrl);
     subIcsEl.href = feedUrl('webcal', filter);
-    // root-relative: same-origin, so it downloads from whatever host is serving
-    // the page (production, a preview, or dev) rather than always from prod
-    subDlEl.href = feedPath(filter) + '?download=1';
     subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
@@ -233,7 +229,7 @@
     subMenuEl.addEventListener('click', function (e) {
       var link = e.target.closest('a');
       if (!link) return;
-      var via = link === subGoogleEl ? 'google' : (link === subDlEl ? 'download' : 'ics');
+      var via = link === subGoogleEl ? 'google' : 'ics';
       // Google's add-by-url page doesn't prefill cid on mobile — it just opens the
       // paste box — so put the feed URL on the clipboard on the way out and the
       // next step is a paste rather than a hunt for the link.
