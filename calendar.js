@@ -68,7 +68,20 @@
     });
   }
 
-  /* ----- "add to calendar" link builders ----- */
+  /* ----- "add to calendar" link builders -----
+     Times from the feed are Pacific wall-clock but carry no zone, so every
+     generated event has to name one or it drifts on a device set elsewhere.
+     Mirrors the VTIMEZONE the /api/calendar feed emits. */
+  var TZID = 'America/Los_Angeles';
+  var VTIMEZONE = [
+    'BEGIN:VTIMEZONE', 'TZID:' + TZID, 'X-LIC-LOCATION:' + TZID,
+    'BEGIN:DAYLIGHT', 'TZOFFSETFROM:-0800', 'TZOFFSETTO:-0700', 'TZNAME:PDT',
+    'DTSTART:19700308T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU', 'END:DAYLIGHT',
+    'BEGIN:STANDARD', 'TZOFFSETFROM:-0700', 'TZOFFSETTO:-0800', 'TZNAME:PST',
+    'DTSTART:19701101T020000', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU', 'END:STANDARD',
+    'END:VTIMEZONE',
+  ];
+
   function addDaysStr(dateStr, n) {
     var p = dateStr.split('-');
     return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n)).toISOString().slice(0, 10);
@@ -83,13 +96,19 @@
   function googleUrl(e) {
     var u = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title) + '&dates=' + gcalDates(e);
     if (e.location) u += '&location=' + encodeURIComponent(e.location);
+    // without ctz Google reads the bare timestamps in the viewer's own zone
+    if (!e.allDay) u += '&ctz=' + encodeURIComponent(TZID);
     return u;
   }
   function icsEsc(v) { return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,'); }
   function icsHref(e) {
-    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WWPTC//Calendar//EN', 'BEGIN:VEVENT', 'UID:' + e.date + (e.startTime || '') + '@williamwalkerptc.com'];
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WWPTC//Calendar//EN'];
+    // VTIMEZONE must precede the VEVENT that references it; all-day events are
+    // date-only and carry no zone, so they don't need the block
+    if (!e.allDay) L = L.concat(VTIMEZONE);
+    L.push('BEGIN:VEVENT', 'UID:' + e.date + (e.startTime || '') + '@williamwalkerptc.com');
     if (e.allDay) { L.push('DTSTART;VALUE=DATE:' + ymd(e.date), 'DTEND;VALUE=DATE:' + ymd(addDaysStr(e.date, 1))); }
-    else { var end = e.endTime || addHourStr(e.startTime); L.push('DTSTART:' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND:' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
+    else { var end = e.endTime || addHourStr(e.startTime); L.push('DTSTART;TZID=' + TZID + ':' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND;TZID=' + TZID + ':' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
     L.push('SUMMARY:' + icsEsc(e.title));
     if (e.location) L.push('LOCATION:' + icsEsc(e.location));
     L.push('END:VEVENT', 'END:VCALENDAR');

@@ -43,6 +43,28 @@ const FEED_NAMES = {
   observance: 'William Walker — Cultural & Religious Observances',
 };
 
+/* ---------- timezone ----------
+   The district feed emits floating times — DTSTART:20250820T143000, no Z, no
+   TZID, no VTIMEZONE — so "2:30 PM" means 2:30 wherever the reader happens to
+   be. Correct in Beaverton, wrong on a device set to any other zone. The values
+   are Pacific wall-clock, so we parse them as-is and label them on the way out.
+   RRULE-based rather than fixed dates so the DST rules stay valid indefinitely. */
+const TZID = 'America/Los_Angeles';
+const VTIMEZONE = [
+  'BEGIN:VTIMEZONE',
+  'TZID:' + TZID,
+  'X-LIC-LOCATION:' + TZID,
+  'BEGIN:DAYLIGHT',
+  'TZOFFSETFROM:-0800', 'TZOFFSETTO:-0700', 'TZNAME:PDT',
+  'DTSTART:19700308T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+  'END:DAYLIGHT',
+  'BEGIN:STANDARD',
+  'TZOFFSETFROM:-0700', 'TZOFFSETTO:-0800', 'TZNAME:PST',
+  'DTSTART:19701101T020000', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+  'END:STANDARD',
+  'END:VTIMEZONE',
+];
+
 function isObservance(title, description) {
   if (String(description || '').indexOf(OBSERVANCE_MARKER) !== -1) return true;
   return OBSERVANCE_TITLES.indexOf(String(title || '').trim().toLowerCase()) !== -1;
@@ -207,7 +229,8 @@ function buildICS(events, name, prefixPtc) {
   const out = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//William Walker PTC//Calendar//EN',
     'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (name || 'William Walker PTC'),
-  ];
+    'X-WR-TIMEZONE:' + TZID,
+  ].concat(VTIMEZONE);
   events.forEach((e, i) => {
     const uid = `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@williamwalkerptc.com`;
     out.push('BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + stamp);
@@ -215,9 +238,11 @@ function buildICS(events, name, prefixPtc) {
       out.push('DTSTART;VALUE=DATE:' + e.date.replace(/-/g, ''));
       out.push('DTEND;VALUE=DATE:' + addDays(e.date, 1).replace(/-/g, ''));
     } else {
+      // all-day events stay VALUE=DATE — a date has no timezone, and tagging
+      // one would shift it a day for readers west of us
       const end = e.endTime || addHour(e.startTime);
-      out.push('DTSTART:' + e.date.replace(/-/g, '') + 'T' + e.startTime.replace(':', '') + '00');
-      out.push('DTEND:' + e.date.replace(/-/g, '') + 'T' + end.replace(':', '') + '00');
+      out.push('DTSTART;TZID=' + TZID + ':' + e.date.replace(/-/g, '') + 'T' + e.startTime.replace(':', '') + '00');
+      out.push('DTEND;TZID=' + TZID + ':' + e.date.replace(/-/g, '') + 'T' + end.replace(':', '') + '00');
     }
     out.push('SUMMARY:' + escICS((prefixPtc && e.source === 'ptc' ? 'PTC: ' : '') + e.title));
     if (e.location) out.push('LOCATION:' + escICS(e.location));
