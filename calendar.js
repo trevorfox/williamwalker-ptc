@@ -22,12 +22,15 @@
     all: 'all events', ptc: 'PTC meetings', noschool: 'No School days',
     school: 'School events', district: 'District events', observance: 'Observances',
   };
-  var FEED_BASE = 'webcal://williamwalkerptc.com/api/calendar?format=ics';
-  // https twin of FEED_BASE — webcal: has no browser-registered handler on most
-  // desktops/Android, so a bare click on it silently does nothing (net::ERR_ABORTED).
-  // Google's "add by URL" page takes a plain https feed URL and always loads.
-  var FEED_BASE_HTTPS = 'https://williamwalkerptc.com/api/calendar?format=ics';
+  // Feed URLs are built as extensionful paths — /calendar.ics, /calendar-ptc.ics —
+  // not ?format=ics. Subscribe handlers are fussy about both the .ics extension
+  // and query strings; the district's feed (…/calendar_605.ics) subscribes fine
+  // where our query-string URL did not. Same endpoint either way, via rewrites
+  // in vercel.json. feedPath() is the single place that shape is decided.
+  var FEED_HOST = 'williamwalkerptc.com';
   var GOOGLE_SUBSCRIBE_BASE = 'https://calendar.google.com/calendar/r/settings/addbyurl?cid=';
+  function feedPath(f) { return f === 'all' ? '/calendar.ics' : '/calendar-' + f + '.ics'; }
+  function feedUrl(scheme, f) { return scheme + '://' + FEED_HOST + feedPath(f); }
 
   var allEvents = [];
   var filter = (function () {
@@ -167,10 +170,9 @@
   function syncSubscribe() {
     if (!subBtnEl) return;
     var all = filter === 'all';
-    var icsUrl = all ? FEED_BASE : FEED_BASE + '&only=' + filter;
-    var httpsUrl = all ? FEED_BASE_HTTPS : FEED_BASE_HTTPS + '&only=' + filter;
+    var httpsUrl = feedUrl('https', filter);
     subCopyEl.setAttribute('data-url', httpsUrl);
-    subIcsEl.href = icsUrl;
+    subIcsEl.href = feedUrl('webcal', filter);
     subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);

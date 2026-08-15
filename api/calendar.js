@@ -66,8 +66,18 @@ let _cache = { at: 0, events: null };
 const CACHE_MS = 60 * 60 * 1000;
 
 module.exports = async (req, res) => {
-  const isIcs = /[?&]format=ics\b/.test(req.url || '');
-  const only = (/[?&]only=(ptc|noschool|school|district|observance)\b/.exec(req.url || '') || [])[1]; // optional single-category feed
+  // Two ways in: the ?format=ics query the site's own fetch uses, and a clean
+  // /calendar[-category].ics path for calendar apps. The clean path exists
+  // because subscribe handlers are fussy — several match on a literal .ics
+  // extension and choke on query strings, which is why the district's
+  // webcal://…/calendar_605.ics subscribes where our ?format=ics URL did not.
+  const url = req.url || '';
+  const path = url.split('?')[0];
+  const isIcs = /[?&]format=ics\b/.test(url) || /\.ics$/.test(path);
+  // path form wins; both are validated against FEED_NAMES below
+  const asked = (/\/calendar-([a-z]+)\.ics$/.exec(path) || [])[1]
+    || (/[?&]only=([a-z]+)\b/.exec(url) || [])[1];
+  const only = Object.prototype.hasOwnProperty.call(FEED_NAMES, asked) ? asked : undefined;
   try {
     let events;
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {

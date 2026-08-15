@@ -1,6 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/calendar.ics", "destination": "/api/calendar?format=ics" },
+    { "source": "/calendar-:only.ics", "destination": "/api/calendar?format=ics&only=:only" }
+  ],
   "redirects": [
     {
       "source": "/",
