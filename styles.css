@@ -453,8 +453,11 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .cal-subs__share {
   font-family: var(--ff); font-size: 0.84rem; font-weight: 600; color: var(--blue-deep);
   background: none; border: 0; padding: 0; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 3px;
+  display: inline-flex; align-items: center; gap: 0.32rem;
 }
+.cal-subs__share svg { flex: none; }
+/* underline the words only — carrying it under the icon reads as a stray rule */
+.cal-subs__share span { text-decoration: underline; text-underline-offset: 3px; }
 .cal-subs__share:hover { color: var(--blue); }
 .cal-subs__share[hidden] { display: none; }
 .cal-subscribe--ext {
@@ -546,8 +549,8 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
   /* stacked full-width, so there is no right edge to align to */
   .cal-subs { align-items: stretch; text-align: center; }
   .cal-subscribe { display: flex; justify-content: center; }
-  /* stretched full-width here, so the label needs centering of its own */
-  .cal-subs__share { text-align: center; }
+  /* stretched full-width here, so the icon+label pair needs centering of its own */
+  .cal-subs__share { justify-content: center; }
   /* the wrapper spans full width here so the button can center; re-anchor the
      menu to the button's own center instead of the wrapper's right edge */
   .cal-subscribe__menu { left: 50%; right: auto; transform: translateX(-50%); }

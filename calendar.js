@@ -195,6 +195,7 @@
   var subIcsEl = document.getElementById('cal-subscribe-ics');
   var subDlEl = document.getElementById('cal-subscribe-dl');
   var shareEl = document.getElementById('cal-share');
+  var shareLabelEl = document.getElementById('cal-share-label');
 
   /* ----- filter state lives in the URL -----
      replaceState, not pushState: the filter is a view preference, not a
@@ -264,13 +265,14 @@
   }
 
   function bindShare() {
-    if (!shareEl) return;
+    if (!shareEl || !shareLabelEl) return;
     shareEl.addEventListener('click', function () {
-      var original = shareEl.textContent;
+      // swap the label span, not the button — the button also holds the icon
+      var original = shareLabelEl.textContent;
       writeClipboard(viewUrl(filter), function () {
         track('calendar_share', { filter: filter });
-        shareEl.textContent = 'Link copied!';
-        setTimeout(function () { shareEl.textContent = original; }, 1100);
+        shareLabelEl.textContent = 'Link copied!';
+        setTimeout(function () { shareLabelEl.textContent = original; }, 1100);
       });
     });
   }
