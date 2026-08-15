@@ -441,6 +441,13 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 }
 .cal-subscribe__menu a:hover, .cal-subscribe__menu button:hover { background: var(--blue-tint); color: var(--blue-deep); }
 .cal-subscribe__note { font-weight: 500; font-size: 0.72rem; color: var(--ink-soft); }
+/* the import sits below a rule — it differs in kind from the three above it,
+   which all end in a live subscription */
+/* needs the menu prefix to outrank the `border: 0` in the shared item rule */
+.cal-subscribe__menu a.cal-subscribe__alt {
+  border-top: 1px solid var(--line); border-radius: 0 0 7px 7px;
+  margin-top: 0.3rem; padding-top: 0.6rem;
+}
 .cal-subs__hint { font-size: 0.84rem; color: var(--ink-soft); }
 .cal-subscribe--ext {
   font-weight: 600; font-size: 0.86rem; color: var(--ink-soft);
