@@ -150,14 +150,18 @@
   }
 
   /* ----- the subscribe control follows the active filter -----
-     A bare <a href="webcal:..."> does nothing when nothing on the device is
-     registered to handle that scheme — no error, no prompt, just a dead click
-     (confirmed via net::ERR_ABORTED). Google's "add by URL" page fixes desktop
-     but Google Calendar's own mobile apps (iOS *and* Android) don't support
-     subscribe-by-URL at all — visiting that page on a phone just lands on a
-     generic settings screen, cid ignored. So "Copy calendar link" leads: it's
-     the only option that reliably does something on every device, with
-     Google Calendar (desktop) and the webcal link (Apple/Outlook) below it. */
+     Four ways in, because no single one works everywhere:
+       copy     — always works; the only universal option, so it leads
+       google   — desktop only. Google Calendar's mobile apps can't subscribe
+                  by URL at all; on a phone the add-by-url page just lands on
+                  a generic settings screen with the cid ignored
+       webcal   — needs an OS-registered handler for the scheme. Points at the
+                  extensionful /calendar.ics path, matching the shape of the
+                  district's feed, since some handlers match on .ics and choke
+                  on query strings
+       download — one-time snapshot, no updates ever. Last resort for phones
+                  where nothing above can subscribe; labeled as such in the UI
+                  so nobody mistakes it for a live feed. */
   var subBtnEl = document.getElementById('cal-subscribe-btn');
   var subMenuEl = document.getElementById('cal-subscribe-menu');
   var subLabelEl = document.getElementById('cal-subscribe-label');
@@ -166,6 +170,7 @@
   var subCopyEl = document.getElementById('cal-subscribe-copy');
   var subGoogleEl = document.getElementById('cal-subscribe-google');
   var subIcsEl = document.getElementById('cal-subscribe-ics');
+  var subDlEl = document.getElementById('cal-subscribe-dl');
 
   function syncSubscribe() {
     if (!subBtnEl) return;
@@ -173,6 +178,9 @@
     var httpsUrl = feedUrl('https', filter);
     subCopyEl.setAttribute('data-url', httpsUrl);
     subIcsEl.href = feedUrl('webcal', filter);
+    // root-relative: same-origin, so it downloads from whatever host is serving
+    // the page (production, a preview, or dev) rather than always from prod
+    subDlEl.href = feedPath(filter) + '?download=1';
     subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
@@ -218,7 +226,8 @@
     subMenuEl.addEventListener('click', function (e) {
       var link = e.target.closest('a');
       if (!link) return;
-      track('calendar_subscribe', { feed: filter, via: link === subGoogleEl ? 'google' : 'ics' });
+      var via = link === subGoogleEl ? 'google' : (link === subDlEl ? 'download' : 'ics');
+      track('calendar_subscribe', { feed: filter, via: via });
       closeSubscribeMenu();
     });
     document.addEventListener('click', function (e) { if (!e.target.closest('.cal-subscribe')) closeSubscribeMenu(); });

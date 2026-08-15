@@ -78,6 +78,10 @@ module.exports = async (req, res) => {
   const asked = (/\/calendar-([a-z]+)\.ics$/.exec(path) || [])[1]
     || (/[?&]only=([a-z]+)\b/.exec(url) || [])[1];
   const only = Object.prototype.hasOwnProperty.call(FEED_NAMES, asked) ? asked : undefined;
+  // ?download=1 forces a file save instead of a subscribe/inline handoff. This is
+  // a one-time snapshot, not a feed — offered because Google Calendar's mobile
+  // apps can't subscribe by URL at all, so importing is the only way in on a phone.
+  const isDownload = /[?&]download=1\b/.test(url);
   try {
     let events;
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {
@@ -93,6 +97,9 @@ module.exports = async (req, res) => {
       var feed = only ? events.filter(function (e) { return e.category === only; }) : events;
       var name = only ? FEED_NAMES[only] : 'William Walker PTC + School';
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+      if (isDownload) {
+        res.setHeader('Content-Disposition', 'attachment; filename="william-walker-' + (only || 'calendar') + '.ics"');
+      }
       res.status(200).send(buildICS(feed, name, !only));
     } else {
       const cut = isoOffset(FWD_PAGE);
