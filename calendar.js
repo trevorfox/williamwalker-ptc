@@ -28,7 +28,11 @@
   // where our query-string URL did not. Same endpoint either way, via rewrites
   // in vercel.json. feedPath() is the single place that shape is decided.
   var FEED_HOST = 'williamwalkerptc.com';
-  var GOOGLE_SUBSCRIBE_BASE = 'https://calendar.google.com/calendar/r/settings/addbyurl?cid=';
+  // /u/0/ matters: the bare /calendar/r/... form dead-ends on a generic settings
+  // screen on Android, while /calendar/u/0/r/... opens the actual add-by-URL box.
+  // cid is still passed for desktop, where it prefills; mobile ignores it and
+  // shows an empty field, which is why we copy the URL on click too.
+  var GOOGLE_SUBSCRIBE_BASE = 'https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=';
   function feedPath(f) { return f === 'all' ? '/calendar.ics' : '/calendar-' + f + '.ics'; }
   function feedUrl(scheme, f) { return scheme + '://' + FEED_HOST + feedPath(f); }
 
@@ -193,16 +197,10 @@
     subBtnEl.setAttribute('aria-expanded', 'false');
   }
 
-  function copyFeedLink() {
-    var url = subCopyEl.getAttribute('data-url');
-    var original = subCopyEl.textContent;
-    var confirm = function () {
-      track('calendar_subscribe', { feed: filter, via: 'copy' });
-      subCopyEl.textContent = 'Link copied!';
-      setTimeout(function () { subCopyEl.textContent = original; closeSubscribeMenu(); }, 1100);
-    };
+  // must run inside the click gesture, or the clipboard write is rejected
+  function writeClipboard(url, done) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(confirm, confirm);
+      navigator.clipboard.writeText(url).then(done, done);
       return;
     }
     // older browsers with no Clipboard API — the hidden-textarea fallback
@@ -211,7 +209,16 @@
     document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); } catch (err) { /* nothing left to try */ }
     document.body.removeChild(ta);
-    confirm();
+    done();
+  }
+
+  function copyFeedLink() {
+    var original = subCopyEl.textContent;
+    writeClipboard(subCopyEl.getAttribute('data-url'), function () {
+      track('calendar_subscribe', { feed: filter, via: 'copy' });
+      subCopyEl.textContent = 'Link copied!';
+      setTimeout(function () { subCopyEl.textContent = original; closeSubscribeMenu(); }, 1100);
+    });
   }
 
   function bindSubscribeMenu() {
@@ -227,6 +234,10 @@
       var link = e.target.closest('a');
       if (!link) return;
       var via = link === subGoogleEl ? 'google' : (link === subDlEl ? 'download' : 'ics');
+      // Google's add-by-url page doesn't prefill cid on mobile — it just opens the
+      // paste box — so put the feed URL on the clipboard on the way out and the
+      // next step is a paste rather than a hunt for the link.
+      if (link === subGoogleEl) writeClipboard(feedUrl('https', filter), function () {});
       track('calendar_subscribe', { feed: filter, via: via });
       closeSubscribeMenu();
     });
