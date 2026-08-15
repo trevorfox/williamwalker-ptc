@@ -23,6 +23,11 @@
     school: 'School events', district: 'District events', observance: 'Observances',
   };
   var FEED_BASE = 'webcal://williamwalkerptc.com/api/calendar?format=ics';
+  // https twin of FEED_BASE — webcal: has no browser-registered handler on most
+  // desktops/Android, so a bare click on it silently does nothing (net::ERR_ABORTED).
+  // Google's "add by URL" page takes a plain https feed URL and always loads.
+  var FEED_BASE_HTTPS = 'https://williamwalkerptc.com/api/calendar?format=ics';
+  var GOOGLE_SUBSCRIBE_BASE = 'https://calendar.google.com/calendar/r/settings/addbyurl?cid=';
 
   var allEvents = [];
   var filter = (function () {
@@ -141,19 +146,54 @@
     listEl.innerHTML = html;
   }
 
-  /* ----- the subscribe link follows the active filter ----- */
-  var subEl = document.getElementById('cal-subscribe');
+  /* ----- the subscribe control follows the active filter -----
+     A bare <a href="webcal:..."> does nothing when nothing on the device is
+     registered to handle that scheme — no error, no prompt, just a dead click
+     (confirmed via net::ERR_ABORTED). So this is a disclosure menu, same
+     pattern as the per-event "+ Add" button below: a Google Calendar link
+     (plain https, always loads) plus the webcal link for Apple/Outlook. */
+  var subBtnEl = document.getElementById('cal-subscribe-btn');
+  var subMenuEl = document.getElementById('cal-subscribe-menu');
   var subLabelEl = document.getElementById('cal-subscribe-label');
   var subDotEl = document.getElementById('cal-subscribe-dot');
   var subHintEl = document.getElementById('cal-sub-hint');
+  var subGoogleEl = document.getElementById('cal-subscribe-google');
+  var subIcsEl = document.getElementById('cal-subscribe-ics');
 
   function syncSubscribe() {
-    if (!subEl) return;
+    if (!subBtnEl) return;
     var all = filter === 'all';
-    subEl.href = all ? FEED_BASE : FEED_BASE + '&only=' + filter;
+    var icsUrl = all ? FEED_BASE : FEED_BASE + '&only=' + filter;
+    var httpsUrl = all ? FEED_BASE_HTTPS : FEED_BASE_HTTPS + '&only=' + filter;
+    subIcsEl.href = icsUrl;
+    subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
     subHintEl.hidden = !all;
+  }
+
+  function closeSubscribeMenu() {
+    if (!subMenuEl || subMenuEl.hidden) return;
+    subMenuEl.hidden = true;
+    subBtnEl.setAttribute('aria-expanded', 'false');
+  }
+
+  function bindSubscribeMenu() {
+    if (!subBtnEl) return;
+    subBtnEl.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var wasOpen = !subMenuEl.hidden;
+      closeSubscribeMenu();
+      if (!wasOpen) { subMenuEl.hidden = false; subBtnEl.setAttribute('aria-expanded', 'true'); }
+    });
+    subMenuEl.addEventListener('click', function (e) {
+      var link = e.target.closest('a');
+      if (!link) return;
+      track('calendar_subscribe', { feed: filter, via: link === subGoogleEl ? 'google' : 'ics' });
+      closeSubscribeMenu();
+    });
+    document.addEventListener('click', function (e) { if (!e.target.closest('.cal-subscribe')) closeSubscribeMenu(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSubscribeMenu(); });
   }
 
   function bindFilters() {
@@ -172,10 +212,6 @@
     });
   }
 
-  // subscribe clicks — read `filter` directly; the "all" feed carries no only= param
-  if (subEl) {
-    subEl.addEventListener('click', function () { track('calendar_subscribe', { feed: filter }); });
-  }
   document.querySelectorAll('.cal-subscribe--ext').forEach(function (a) {
     a.addEventListener('click', function () { track('calendar_subscribe', { feed: 'district-site' }); });
   });
@@ -218,6 +254,7 @@
       bodyEl && bodyEl.setAttribute('aria-busy', 'false');
       bindFilters();
       bindAddMenus();
+      bindSubscribeMenu();
       // reflect ?show= filter on the chips
       document.querySelectorAll('.cal-chip').forEach(function (c) {
         var on = c.getAttribute('data-filter') === filter;

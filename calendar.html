@@ -114,9 +114,15 @@
             </div>
           </div>
           <div class="cal-subs">
-            <a class="cal-subscribe" id="cal-subscribe" href="webcal://williamwalkerptc.com/api/calendar?format=ics">
-              <span class="dot" id="cal-subscribe-dot" aria-hidden="true"></span> <span id="cal-subscribe-label">Subscribe to all events</span>
-            </a>
+            <div class="cal-subscribe">
+              <button type="button" class="cal-subscribe__btn" id="cal-subscribe-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="dot" id="cal-subscribe-dot" aria-hidden="true"></span> <span id="cal-subscribe-label">Subscribe to all events</span>
+              </button>
+              <div class="cal-subscribe__menu" id="cal-subscribe-menu" role="menu" hidden>
+                <a role="menuitem" id="cal-subscribe-google" href="https://calendar.google.com/calendar/r/settings/addbyurl?cid=https%3A%2F%2Fwilliamwalkerptc.com%2Fapi%2Fcalendar%3Fformat%3Dics" target="_blank" rel="noopener">Google Calendar</a>
+                <a role="menuitem" id="cal-subscribe-ics" href="webcal://williamwalkerptc.com/api/calendar?format=ics">Apple / Outlook</a>
+              </div>
+            </div>
             <span class="cal-subs__hint" id="cal-sub-hint">Select a filter to subscribe to just those events.</span>
             <a class="cal-subscribe--ext" href="https://williamwalker.beaverton.k12.or.us/cf_calendar/cms_calendar_feeds.cfm?element_id=43556&calendar_ids=605,359&team_ids=" target="_blank" rel="noopener">
               Beaverton SD calendar <span aria-hidden="true">↗</span>
