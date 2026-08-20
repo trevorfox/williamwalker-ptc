@@ -10,7 +10,7 @@
 const FEED_URL =
   'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD';
 
-const PTC = { startTime: '17:45', endTime: '19:30', title: 'PTC Meeting', location: 'William Walker Elementary' };
+const PTC = { startTime: '18:00', endTime: '19:00', title: 'PTC Meeting', location: 'William Walker Elementary' };
 const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 
 // One-off PTC events (all-day unless startTime/endTime given)

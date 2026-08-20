@@ -703,6 +703,12 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 .prose-img { margin: 1.6rem 0; }
 .prose-img img { border-radius: var(--radius-sm); box-shadow: var(--shadow); }
 
+/* board roster (teachers page) */
+.roster { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem 1.6rem; }
+.roster li { border-left: 3px solid var(--green); padding-left: 0.9rem; }
+.roster__name { display: block; font-weight: 700; color: var(--blue-dark); }
+.roster__role { display: block; font-size: 0.9rem; color: var(--ink-soft); }
+
 /* photo gallery */
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.6rem; }
 .gallery figure { margin: 0; }

@@ -249,6 +249,7 @@ const FOOTER = `  <!-- ============ FOOTER ============ -->
           2350 Cedar Hills Blvd.<br />
           Beaverton, OR 97005
         </address>
+        <a class="footer-social" href="mailto:williamwalkerptc@gmail.com">williamwalkerptc@gmail.com</a><br />
         <a class="footer-social" href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener">Follow us on Facebook <span aria-hidden="true">↗</span></a>
       </div>
       <nav class="footer-nav" aria-label="Footer">
@@ -257,6 +258,7 @@ const FOOTER = `  <!-- ============ FOOTER ============ -->
         <a href="/programs">Programs</a>
         <a href="/#get-involved">Get Involved</a>
         <a href="/supplies">Supplies</a>
+        <a href="/teachers">Teachers</a>
         <a href="/#connect">Connect</a>
       </nav>
       <p class="footer-note">

@@ -34,7 +34,7 @@ npx serve .
 
 All copy lives in `index.html`. Common edits:
 - **Meeting schedule** — the `.meeting-card` in the `#meetings` section
-  (currently: First Wednesday, 5:45–7:30 PM, September–June).
+  (currently: First Wednesday, 6:00–7:00 PM, September–June).
 - **Programs / events** — the pill list and event cards in `#what-we-do`.
 
 ### Sign-up form
