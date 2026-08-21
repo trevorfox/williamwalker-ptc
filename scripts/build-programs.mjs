@@ -258,7 +258,7 @@ const FOOTER = `  <!-- ============ FOOTER ============ -->
         <a href="/programs">Programs</a>
         <a href="/#get-involved">Get Involved</a>
         <a href="/supplies">Supplies</a>
-        <a href="/parents">Parents</a>
+        <a href="/families">Families</a>
         <a href="/teachers">Teachers</a>
         <a href="/#connect">Connect</a>
       </nav>

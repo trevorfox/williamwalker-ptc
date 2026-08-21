@@ -6,6 +6,7 @@
     { "source": "/calendar-:only.ics", "destination": "/api/calendar?format=ics&only=:only" }
   ],
   "redirects": [
+    { "source": "/parents", "destination": "/families", "permanent": true },
     {
       "source": "/",
       "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
@@ -15,6 +16,30 @@
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
+      "destination": "https://williamwalkerptc.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "wwptc.org" }],
+      "destination": "https://williamwalkerptc.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "wwptc.org" }],
+      "destination": "https://williamwalkerptc.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.wwptc.org" }],
+      "destination": "https://williamwalkerptc.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.wwptc.org" }],
       "destination": "https://williamwalkerptc.com/:path*",
       "permanent": true
     }
