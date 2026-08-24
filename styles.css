@@ -811,3 +811,51 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
     text-decoration: none;
   }
 }
+
+/* =========================================================================
+   Family FAQ page (/families/faq)
+   ========================================================================= */
+.faq-updated { font-size: 0.92rem; color: var(--ink-soft); margin: -0.4rem 0 0; }
+
+.faq-toc { list-style: none; margin: 1.6rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.faq-toc a {
+  display: inline-block; font-weight: 700; font-size: 0.88rem; text-decoration: none;
+  color: var(--blue-deep); background: var(--blue-tint); border: 1.5px solid var(--blue);
+  border-radius: 999px; padding: 0.45rem 0.9rem;
+}
+.faq-toc a:hover { background: var(--blue); color: #fff; }
+
+/* district-vs-PTC source labels — same visual language as .kicker */
+.src-tag {
+  display: inline-block; font-weight: 800; font-size: 0.7rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.24rem 0.65rem; border-radius: 999px; margin: 0 0 1rem;
+}
+.src-tag--district { background: var(--blue-tint); color: var(--blue-deep); }
+.src-tag--ptc { background: var(--green-tint); color: var(--green-deep); }
+.qa-a .src-tag { margin: 0 0 0.7rem; }
+
+/* question/answer accordion — same <details> pattern as .grade on /supplies */
+.qa { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+.qa-item { border: 1px solid var(--line); border-radius: 14px; background: var(--white); scroll-margin-top: 130px; }
+.qa-item[open] { border-color: var(--blue); }
+.qa-item--ptc[open] { border-color: var(--green); }
+.qa-q {
+  list-style: none; cursor: pointer; padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 1.05rem; font-weight: 800; color: var(--blue-dark);
+}
+.qa-q::-webkit-details-marker { display: none; }
+.qa-q::after { content: "+"; font-size: 1.4rem; line-height: 1; flex-shrink: 0; color: var(--blue); }
+.qa-item[open] .qa-q::after { content: "−"; }
+.qa-a { padding: 0 20px 22px; }
+
+.qa-placeholder {
+  border: 1.5px dashed var(--line); border-radius: 14px; padding: 16px 20px;
+  color: var(--ink-soft); font-weight: 700; scroll-margin-top: 130px;
+}
+.qa-placeholder a { font-weight: 700; margin-left: 0.3rem; }
+
+@media (max-width: 560px) {
+  .qa-q { padding: 14px 16px; font-size: 1rem; }
+  .qa-a { padding: 0 16px 18px; }
+}
