@@ -92,10 +92,13 @@
     }
     function closeSub(btn, focus) {
       btn.setAttribute('aria-expanded', 'false');
+      btn._latched = false;
       if (focus) btn.focus();
     }
     function closeAllSubs(except) {
-      subToggles.forEach(function (b) { if (b !== except) b.setAttribute('aria-expanded', 'false'); });
+      subToggles.forEach(function (b) {
+        if (b !== except) { b.setAttribute('aria-expanded', 'false'); b._latched = false; }
+      });
     }
     function openSub(btn) {
       closeAllSubs(btn);
@@ -111,8 +114,15 @@
     subToggles.forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (btn.getAttribute('aria-expanded') === 'true') closeSub(btn, false);
-        else openSub(btn);
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        /* hover already opened it: the click pins it open rather than closing
+           it out from under the pointer */
+        if (isOpen && !btn._latched && btn.parentNode.matches(':hover')) {
+          btn._latched = true;
+          return;
+        }
+        if (isOpen) closeSub(btn, false);
+        else { openSub(btn); btn._latched = true; }
       });
 
       btn.addEventListener('keydown', function (e) {
@@ -155,6 +165,32 @@
         if (!btn.parentNode.contains(e.relatedTarget)) closeSub(btn, false);
       });
     });
+
+    /* Pointer devices open on hover. Closing is delayed so brushing past the
+       menu, or cutting a corner on the way to an item, doesn't dismiss it.
+       Driven here rather than in CSS so aria-expanded stays truthful. */
+    var canHover = window.matchMedia('(hover: hover)').matches;
+    var wide = window.matchMedia('(min-width: 861px)');
+    var closeTimer = null;
+    function cancelClose() { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } }
+
+    if (canHover) {
+      subToggles.forEach(function (btn) {
+        var item = btn.parentNode;
+        item.addEventListener('mouseenter', function () {
+          if (!wide.matches) return;
+          cancelClose();
+          openSub(btn);
+        });
+        item.addEventListener('mouseleave', function () {
+          if (!wide.matches || btn._latched) return;
+          cancelClose();
+          closeTimer = setTimeout(function () { closeSub(btn, false); }, 400);
+        });
+        /* keyboard focus inside the menu should never be yanked away by a timer */
+        item.addEventListener('focusin', cancelClose);
+      });
+    }
 
     document.addEventListener('click', function (e) {
       var open = anySubOpen();

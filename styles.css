@@ -221,13 +221,11 @@ body { top: 0 !important; }
   display: none;
 }
 .nav-sub-toggle[aria-expanded="true"] + .nav-sub { display: block; animation: navdrop 0.16s ease; }
+/* invisible bridge across the 6px gap, so moving the pointer from the button
+   down into the panel never crosses dead space and closes the menu */
+.nav-sub::before { content: ""; position: absolute; top: -8px; left: 0; right: 0; height: 8px; }
 .nav-sub a { display: block; white-space: nowrap; padding: 0.6rem 0.75rem; font-size: 0.95rem; }
 
-/* Pointer devices get hover-to-open; touch and keyboard rely on the toggle. */
-@media (hover: hover) and (min-width: 861px) {
-  .nav-item.has-sub:hover .nav-sub { display: block; animation: navdrop 0.16s ease; }
-  .nav-item.has-sub:hover .nav-sub-toggle { background: var(--blue-tint); color: var(--blue-deep); }
-}
 
 /* =========================================================================
    Hero
