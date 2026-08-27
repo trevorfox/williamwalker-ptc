@@ -226,14 +226,32 @@ const TOPBAR = `<body>
       <nav class="main-nav" aria-label="Primary">
         <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle menu"><span></span><span></span><span></span></button>
         <ul id="nav-list" class="nav-list">
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#what-we-do">What We Do</a></li>
-          <li><a href="/#get-involved">Get Involved</a></li>
-          <li><a href="/programs" aria-current="page">Programs</a></li>
+          <li class="nav-item has-sub">
+            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-families">
+              Families <span class="caret" aria-hidden="true"></span>
+            </button>
+            <ul id="sub-families" class="nav-sub">
+              <li><a href="/families">All family links</a></li>
+              <li><a href="/families/faq">Family FAQ</a></li>
+              <li><a href="/supplies">School supplies</a></li>
+            </ul>
+          </li>
+          <li><a href="/teachers">Teachers</a></li>
           <li><a href="/calendar">Calendar</a></li>
+          <li><a href="/programs" aria-current="page">Programs</a></li>
+          <!-- Seasonal: Supplies is also in the Families menu. Remove this line after supply season. -->
           <li><a href="/supplies">Supplies</a></li>
-          <li><a href="/#connect">Connect</a></li>
-          <li><a class="nav-cta" href="/#get-involved">Sign Up</a></li>
+          <li class="nav-item has-sub">
+            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about">
+              About <span class="caret" aria-hidden="true"></span>
+            </button>
+            <ul id="sub-about" class="nav-sub">
+              <li><a href="/#about">About the PTC</a></li>
+              <li><a href="/minutes">Meeting minutes</a></li>
+              <li><a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">Board &amp; contacts <span aria-hidden="true">&#8599;</span></a></li>
+            </ul>
+          </li>
+          <li><a class="nav-cta" href="/#signup">Sign Up</a></li>
         </ul>
       </nav>
     </header>
@@ -254,14 +272,15 @@ const FOOTER = `  <!-- ============ FOOTER ============ -->
       </div>
       <nav class="footer-nav" aria-label="Footer">
         <a href="/#about">About</a>
-        <a href="/#what-we-do">What We Do</a>
         <a href="/programs">Programs</a>
-        <a href="/#get-involved">Get Involved</a>
+        <a href="/calendar">Calendar</a>
         <a href="/supplies">Supplies</a>
         <a href="/families">Families</a>
+        <a href="/families/faq">Family FAQ</a>
         <a href="/teachers">Teachers</a>
+        <a href="/minutes">Meeting minutes</a>
         <a href="/#connect">Connect</a>
-        <a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">PTC Contacts <span aria-hidden="true">↗</span></a>
+        <a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">PTC Contacts <span aria-hidden="true">&#8599;</span></a>
       </nav>
       <p class="footer-note">
         A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an
