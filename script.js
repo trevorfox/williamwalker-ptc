@@ -83,6 +83,95 @@
     });
   }
 
+  /* ---------- nav submenus (Families, About) ---------- */
+  var subToggles = Array.prototype.slice.call(document.querySelectorAll('.nav-sub-toggle'));
+  if (subToggles.length) {
+    function subItems(btn) {
+      var panel = btn.nextElementSibling;
+      return panel ? Array.prototype.slice.call(panel.querySelectorAll('a')) : [];
+    }
+    function closeSub(btn, focus) {
+      btn.setAttribute('aria-expanded', 'false');
+      if (focus) btn.focus();
+    }
+    function closeAllSubs(except) {
+      subToggles.forEach(function (b) { if (b !== except) b.setAttribute('aria-expanded', 'false'); });
+    }
+    function openSub(btn) {
+      closeAllSubs(btn);
+      btn.setAttribute('aria-expanded', 'true');
+    }
+    function anySubOpen() {
+      for (var i = 0; i < subToggles.length; i++) {
+        if (subToggles[i].getAttribute('aria-expanded') === 'true') return subToggles[i];
+      }
+      return null;
+    }
+
+    subToggles.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (btn.getAttribute('aria-expanded') === 'true') closeSub(btn, false);
+        else openSub(btn);
+      });
+
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          openSub(btn);
+          var items = subItems(btn);
+          if (items.length) items[0].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          openSub(btn);
+          var up = subItems(btn);
+          if (up.length) up[up.length - 1].focus();
+        }
+      });
+
+      var panel = btn.nextElementSibling;
+      if (panel) {
+        panel.addEventListener('keydown', function (e) {
+          var items = subItems(btn);
+          var i = items.indexOf(document.activeElement);
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (items.length) items[(i + 1) % items.length].focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (items.length) items[(i - 1 + items.length) % items.length].focus();
+          } else if (e.key === 'Home') {
+            e.preventDefault();
+            if (items.length) items[0].focus();
+          } else if (e.key === 'End') {
+            e.preventDefault();
+            if (items.length) items[items.length - 1].focus();
+          }
+        });
+      }
+
+      /* tabbing or clicking away closes the menu */
+      btn.parentNode.addEventListener('focusout', function (e) {
+        if (!btn.parentNode.contains(e.relatedTarget)) closeSub(btn, false);
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      var open = anySubOpen();
+      if (open && !open.parentNode.contains(e.target)) closeAllSubs(null);
+    });
+
+    /* capture phase so Escape closes the submenu before the mobile nav handler sees it */
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var open = anySubOpen();
+      if (open) {
+        e.stopPropagation();
+        closeSub(open, true);
+      }
+    }, true);
+  }
+
   /* ---------- dropdown menus (Language + Accessibility) ---------- */
   var menus = Array.prototype.slice.call(document.querySelectorAll('.menu'));
   function closeMenu(m) {

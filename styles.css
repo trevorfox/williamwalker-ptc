@@ -187,6 +187,48 @@ body { top: 0 !important; }
 .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
+/* --- current page --- */
+.nav-list a[aria-current="page"] { background: var(--blue-tint); color: var(--blue-deep); }
+.nav-sub-toggle.is-current { color: var(--blue-deep); }
+
+/* --- dropdown menus (Families, About) --- */
+@keyframes navdrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+.nav-item.has-sub { position: relative; }
+.nav-sub-toggle {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font: inherit; font-weight: 600; font-size: 0.98rem; color: var(--ink);
+  background: none; border: 0; cursor: pointer;
+  padding: 0.5rem 0.8rem; border-radius: 9px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-sub-toggle:hover,
+.nav-sub-toggle[aria-expanded="true"] { background: var(--blue-tint); color: var(--blue-deep); }
+.nav-sub-toggle .caret {
+  width: 6px; height: 6px; display: inline-block;
+  border: solid currentColor; border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -2px);
+  transition: transform 0.18s ease;
+}
+.nav-sub-toggle[aria-expanded="true"] .caret { transform: rotate(-135deg) translate(-2px, -1px); }
+
+.nav-sub {
+  list-style: none; margin: 0; padding: 0.4rem;
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 70;
+  min-width: 224px;
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: none;
+}
+.nav-sub-toggle[aria-expanded="true"] + .nav-sub { display: block; animation: navdrop 0.16s ease; }
+.nav-sub a { display: block; white-space: nowrap; padding: 0.6rem 0.75rem; font-size: 0.95rem; }
+
+/* Pointer devices get hover-to-open; touch and keyboard rely on the toggle. */
+@media (hover: hover) and (min-width: 861px) {
+  .nav-item.has-sub:hover .nav-sub { display: block; animation: navdrop 0.16s ease; }
+  .nav-item.has-sub:hover .nav-sub-toggle { background: var(--blue-tint); color: var(--blue-deep); }
+}
+
 /* =========================================================================
    Hero
    ========================================================================= */
@@ -381,6 +423,9 @@ html.hc .block--blue *, html.hc .block--green * { color: #fff !important; }
 html.hc .event-card, html.hc .meeting-card { background: #fff; border: 2px solid #000; }
 html.hc .event-card h4, html.hc .event-card p, html.hc .meeting-card * { color: #000 !important; }
 html.hc .pill, html.hc .way, html.hc .signup, html.hc .connect-card { border-color: #fff; }
+html.hc .nav-sub { background: #fff; border: 2px solid #000; }
+html.hc .nav-sub-toggle { color: #0033cc; }
+html.hc .nav-sub a { color: #0033cc; }
 html.hc .btn--blue { background: #003a8c; color: #fff; border-color: #fff; }
 html.hc .btn--green { background: #004d24; color: #fff; border-color: #fff; }
 html.hc a { color: #0033cc; }
@@ -577,14 +622,34 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
     background: #fff; border: 1px solid var(--line); border-radius: 16px;
     padding: 0.55rem; box-shadow: var(--shadow);
     display: none;
+    /* an expanded submenu can outgrow a short screen; the panel scrolls itself
+       because the page can't scroll to absolutely-positioned overflow */
+    max-height: calc(100vh - 7.5rem);
+    max-height: calc(100dvh - 7.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .nav-list.open { display: flex; animation: navdrop 0.18s ease; }
-  @keyframes navdrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-  .nav-list li:not(:last-child) { border-bottom: 1px solid var(--blue-tint); }
+  .nav-list > li:not(:last-child) { border-bottom: 1px solid var(--blue-tint); }
   .nav-list a {
     display: block; padding: 0.95rem 1rem; font-size: 1.08rem; font-weight: 600; border-radius: 10px;
   }
-  .nav-list li:last-child { margin-top: 0.35rem; }
+  .nav-list > li:last-child { margin-top: 0.35rem; }
+  /* dropdowns collapse into inline accordions - no hover on touch */
+  .nav-item.has-sub { position: static; }
+  .nav-sub-toggle {
+    display: flex; width: 100%; justify-content: space-between; align-items: center;
+    padding: 0.95rem 1rem; font-size: 1.08rem; border-radius: 10px;
+  }
+  .nav-sub {
+    position: static; display: none; min-width: 0; margin: 0;
+    padding: 0.1rem 0 0.4rem 0.75rem;
+    background: none; border: 0; border-radius: 0; box-shadow: none;
+  }
+  .nav-sub-toggle[aria-expanded="true"] + .nav-sub { display: block; animation: none; }
+  .nav-sub a {
+    white-space: normal; font-size: 1rem; padding: 0.7rem 1rem; color: var(--ink-soft);
+  }
   .nav-cta { text-align: center; padding: 1rem !important; font-weight: 700; }
 }
 @media (max-width: 520px) {
