@@ -234,6 +234,7 @@ const TOPBAR = `<body>
               <li><a href="/families">All family links</a></li>
               <li><a href="/families/faq">Family FAQ</a></li>
               <li><a href="/supplies">School supplies</a></li>
+              <li><a href="/fundraising">Fundraising</a></li>
             </ul>
           </li>
           <li><a href="/teachers">Teachers</a></li>
@@ -275,6 +276,7 @@ const FOOTER = `  <!-- ============ FOOTER ============ -->
         <a href="/programs">Programs</a>
         <a href="/calendar">Calendar</a>
         <a href="/supplies">Supplies</a>
+        <a href="/fundraising">Fundraising</a>
         <a href="/families">Families</a>
         <a href="/families/faq">Family FAQ</a>
         <a href="/teachers">Teachers</a>
