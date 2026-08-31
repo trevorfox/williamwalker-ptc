@@ -20,7 +20,7 @@ parent volunteers bring it to every classroom themselves.
 Through Art Literacy, students meet a famous artist's work, learn the story
 and technique behind it, then make their own piece in that style. Monet's
 water lilies, Kandinsky's circles, Northwest Coast printmaking — over their
-years at Walker, students build a real foundation in looking at and making
+years at William Walker, students build a real foundation in looking at and making
 art.
 
 ## What your support covers
