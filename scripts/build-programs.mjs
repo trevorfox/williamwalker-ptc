@@ -441,7 +441,7 @@ function indexPage(entries) {
         <h1 id="hero-title" class="hero__title">Programs &amp; Events</h1>
         <p class="hero__lede">
           Every program on this page is funded by families and run by volunteers —
-          here's what the PTC makes happen at Walker, and how you can help.
+          here's what the PTC makes happen at William Walker, and how you can help.
         </p>
         <div class="hero__actions">
           <a class="btn btn--green" href="${DEFAULT_DONATE}" target="_blank" rel="noopener">Donate <span aria-hidden="true">↗</span></a>

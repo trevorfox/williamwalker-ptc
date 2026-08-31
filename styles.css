@@ -297,6 +297,9 @@ body { top: 0 !important; }
 .pill:hover { transform: translateY(-2px); background: rgba(255,255,255,0.22); }
 
 .event-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+/* 2-up variant: used where cards carry more text than the homepage's */
+.event-grid--2up { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 700px) { .event-grid--2up { grid-template-columns: 1fr; } }
 .event-card {
   background: #fff; border-radius: var(--radius-sm); padding: 1.35rem;
   box-shadow: var(--shadow); transition: transform 0.15s ease, box-shadow 0.15s ease;
