@@ -33,6 +33,14 @@
   // cid is still passed for desktop, where it prefills; mobile ignores it and
   // shows an empty field, which is why we copy the URL on click too.
   var GOOGLE_SUBSCRIBE_BASE = 'https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=';
+  // The PTC feed is a real Google Calendar, so Google users can add it directly:
+  // this link opens an "Add this calendar?" confirmation on desktop and opens
+  // the Calendar app on a phone. No paste step, and Google-to-Google
+  // subscriptions refresh in minutes where an ICS URL refreshes about daily.
+  // The other filters are feeds our function builds, so they keep the URL flow.
+  var GOOGLE_PTC_CAL_ID = 'd80a9ae1fa7fe9ae54e7433f4bf6d7213afc849d84fed26fedd6e7c6a9d2a47b@group.calendar.google.com';
+  var GOOGLE_PTC_ADD_URL = 'https://calendar.google.com/calendar/u/0/r?cid=' + encodeURIComponent(GOOGLE_PTC_CAL_ID);
+  function googleIsDirect() { return filter === 'ptc'; }
   function feedPath(f) { return f === 'all' ? '/calendar.ics' : '/calendar-' + f + '.ics'; }
   function feedUrl(scheme, f) { return scheme + '://' + FEED_HOST + feedPath(f); }
 
@@ -240,7 +248,9 @@
     subIcsEl.href = feedUrl('webcal', filter);
     // root-relative: downloads from whichever host serves the page
     subDlEl.href = feedPath(filter) + '?download=1';
-    subGoogleEl.href = GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
+    subGoogleEl.href = googleIsDirect() ? GOOGLE_PTC_ADD_URL : GOOGLE_SUBSCRIBE_BASE + encodeURIComponent(httpsUrl);
+    var googleNote = subGoogleEl.querySelector('.cal-subscribe__note');
+    if (googleNote) googleNote.textContent = googleIsDirect() ? 'one tap' : 'copies link, then paste';
     subLabelEl.textContent = 'Subscribe to ' + SUB_LABELS[filter];
     subDotEl.className = 'dot' + (all ? '' : ' dot--' + filter);
     // one row, two occupants: the hint explains filtering, the share link is
@@ -304,11 +314,12 @@
     subMenuEl.addEventListener('click', function (e) {
       var link = e.target.closest('a');
       if (!link) return;
-      var via = link === subGoogleEl ? 'google' : (link === subDlEl ? 'download' : 'ics');
+      var via = link === subGoogleEl ? (googleIsDirect() ? 'google_direct' : 'google') : (link === subDlEl ? 'download' : 'ics');
       // Google's add-by-url page doesn't prefill cid on mobile — it just opens the
       // paste box — so put the feed URL on the clipboard on the way out and the
-      // next step is a paste rather than a hunt for the link.
-      if (link === subGoogleEl) writeClipboard(feedUrl('https', filter), function () {});
+      // next step is a paste rather than a hunt for the link. The direct-add
+      // link for the PTC calendar needs no paste, so leave the clipboard alone.
+      if (link === subGoogleEl && !googleIsDirect()) writeClipboard(feedUrl('https', filter), function () {});
       track('calendar_subscribe', { feed: filter, via: via });
       closeSubscribeMenu();
     });
@@ -387,7 +398,7 @@
       render();
       if (data && data.ok === false) {
         statusEl.hidden = false;
-        statusEl.textContent = 'Showing PTC meetings — the school district calendar is temporarily unavailable.';
+        statusEl.textContent = 'Showing PTC events only — the school district calendar is temporarily unavailable.';
         statusEl.classList.add('cal-status--warn');
       }
     })
