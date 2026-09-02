@@ -537,6 +537,8 @@ html.ul-links a { text-decoration: underline !important; text-underline-offset: 
 .cal-event__title { font-size: 1.08rem; font-weight: 700; color: var(--blue-dark); margin: 0 0 0.15rem; }
 .cal-event__meta { margin: 0; font-size: 0.92rem; color: var(--ink-soft); }
 .cal-event__loc { color: var(--ink-soft); }
+.cal-event__desc { margin: 0.4rem 0 0; font-size: 0.92rem; line-height: 1.45; color: var(--ink); max-width: 60ch; }
+.cal-event__desc a { color: var(--blue); text-decoration: underline; word-break: break-word; }
 .cal-tag {
   flex: none; align-self: flex-start; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em;
   text-transform: uppercase; padding: 0.22rem 0.5rem; border-radius: 6px;

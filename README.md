@@ -5,7 +5,7 @@ no build step, no framework. Deployed on Vercel.
 
 ```
 index.html    → all page content
-calendar.html → events calendar page (district feed + PTC meetings)
+calendar.html → events calendar page (district feed + PTC Google Calendar + PTC meetings)
 supplies.html → school supply lists + Office Depot 5% Back to Schools flow
 styles.css    → all styling (blue + green + white, matched to the logo)
 script.js     → accessibility toolbar, mobile nav, scroll animations

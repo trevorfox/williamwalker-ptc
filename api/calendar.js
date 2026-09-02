@@ -1,7 +1,8 @@
 /* =========================================================================
    /api/calendar  —  Vercel serverless function
-   Fetches the school district iCal feed (server-side, avoiding browser CORS),
-   parses it, merges in the recurring PTC meetings, and returns:
+   Fetches the school district iCal feed and the PTC's public Google Calendar
+   feed (server-side, avoiding browser CORS), parses both, merges in the
+   recurring PTC meetings, and returns:
      - JSON            (default)         -> consumed by the /calendar page
      - iCal / .ics     (?format=ics)     -> subscribe feed (school + PTC events)
    Edge-cached for an hour to be polite to the school server.
@@ -10,18 +11,16 @@
 const FEED_URL =
   'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD';
 
+// PTC one-off events live in a Google Calendar owned by williamwalkerptc@gmail.com
+// ("WEBSITE PUBLIC CALENDAR"). Board members with edit access add events there;
+// nothing needs a commit or deploy. Its public ICS is fetched exactly like the
+// district feed. Recurring PTC meetings stay generated in code because Google
+// emits a recurring event as one VEVENT + RRULE, which parseICS does not expand.
+const PTC_FEED_URL =
+  'https://calendar.google.com/calendar/ical/d80a9ae1fa7fe9ae54e7433f4bf6d7213afc849d84fed26fedd6e7c6a9d2a47b%40group.calendar.google.com/public/basic.ics';
+
 const PTC = { startTime: '18:00', endTime: '19:00', title: 'PTC Meeting', location: 'William Walker Elementary' };
 const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
-
-// One-off PTC events (all-day unless startTime/endTime given)
-const PTC_EVENTS = [
-  { date: '2026-08-15', title: 'Welcome to Walker — New Family Meet-Up', startTime: '09:30', endTime: '11:30', location: 'Cedar Hills Park, splash pad area' },
-  // Walkerthon lands on a Thursday so Pre-K can join (Pre-K's first day is Sept 8).
-  { date: '2026-09-24', title: 'Walkerthon', allDay: true, location: 'William Walker Elementary' },
-  // Restaurant fundraiser nights. Pastini gave no hours, so it's all-day; mention the school when ordering.
-  { date: '2026-09-15', title: 'Pastini Dine-Out Night — 20% to William Walker (mention the school, dine in or take out)', allDay: true, location: 'Pastini, Cedar Hills' },
-  { date: '2026-10-13', title: 'McMenamins Friends & Family Night — 50% of dine-in sales to William Walker', startTime: '17:00', endTime: '23:00', location: 'McMenamins Cedar Hills, 2885 SW Cedar Hills Blvd' },
-];
 
 /* ---------- categorization ----------
    The district marks most cultural/religious observances with a phrase in the
@@ -39,7 +38,7 @@ const NO_SCHOOL_RE = /no school|school closed|no students/i;
 const DISTRICT_RE = /school board|board retreat|budget committee|budget 101|superintendent search|long-range facilities|public hearing/i;
 
 const FEED_NAMES = {
-  ptc: 'William Walker PTC Meetings',
+  ptc: 'William Walker PTC Events',
   noschool: 'William Walker — No School Days',
   school: 'William Walker — School Events',
   district: 'William Walker — District & Board',
@@ -112,8 +111,13 @@ module.exports = async (req, res) => {
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {
       events = _cache.events;
     } else {
-      const school = await fetchSchool();
-      events = school.concat(ptcMeetings());
+      const feeds = await Promise.allSettled([fetchFeed(FEED_URL, 'school'), fetchFeed(PTC_FEED_URL, 'ptc')]);
+      // The district feed is the backbone: if it fails, the catch below serves
+      // the PTC-only fallback. The Google feed failing just drops one-offs
+      // for an hour, which is not worth a warning banner.
+      if (feeds[0].status === 'rejected') throw feeds[0].reason;
+      const gcal = feeds[1].status === 'fulfilled' ? feeds[1].value : [];
+      events = feeds[0].value.concat(gcal, ptcMeetings());
       events.sort(byStart);
       _cache = { at: Date.now(), events };
     }
@@ -137,21 +141,22 @@ module.exports = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=300');
     if (isIcs) {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-      res.status(200).send(buildICS(fallback, 'William Walker PTC Meetings', false));
+      res.status(200).send(buildICS(fallback, 'William Walker PTC Events', false));
     } else {
       res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
     }
   }
 };
 
-/* ---------- fetch + parse the school feed ---------- */
-async function fetchSchool() {
-  const r = await fetch(FEED_URL, { headers: { 'User-Agent': 'WWPTC-Calendar/1.0 (+williamwalkerptc.com)' } });
-  if (!r.ok) throw new Error('feed status ' + r.status);
-  return parseICS(await r.text());
+/* ---------- fetch + parse an iCal feed ---------- */
+async function fetchFeed(feedUrl, source) {
+  const r = await fetch(feedUrl, { headers: { 'User-Agent': 'WWPTC-Calendar/1.0 (+williamwalkerptc.com)' } });
+  if (!r.ok) throw new Error(source + ' feed status ' + r.status);
+  return parseICS(await r.text(), false, source);
 }
 
-function parseICS(raw, skipWindow) {
+function parseICS(raw, skipWindow, source) {
+  source = source || 'school';
   const unfolded = raw.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
   const lines = unfolded.split(/\r\n|\n|\r/);
   const lo = isoOffset(-BACK), hi = isoOffset(FWD_FEED);
@@ -160,8 +165,11 @@ function parseICS(raw, skipWindow) {
   for (const line of lines) {
     if (line === 'BEGIN:VEVENT') { cur = {}; continue; }
     if (line === 'END:VEVENT') {
-      if (cur && cur.dtstart && cur.summary) {
-        const ev = toEvent(cur);
+      // Google keeps cancelled events in the feed with STATUS:CANCELLED, and
+      // emits recurring ones as a single VEVENT + RRULE we can't expand — showing
+      // only the first occurrence would mislead, so those are dropped.
+      if (cur && cur.dtstart && cur.summary && cur.status !== 'CANCELLED' && !cur.rrule) {
+        const ev = toEvent(cur, source);
         if (ev && (skipWindow || (ev.date >= lo && ev.date <= hi))) events.push(ev);
       }
       cur = null; continue;
@@ -176,7 +184,10 @@ function parseICS(raw, skipWindow) {
     else if (name === 'DTEND') cur.dtend = { params: left.toUpperCase(), value };
     else if (name === 'SUMMARY') cur.summary = unescapeICS(value);
     else if (name === 'LOCATION') cur.location = unescapeICS(value);
-    else if (name === 'DESCRIPTION') cur.description = unescapeICS(value);
+    else if (name === 'DESCRIPTION') cur.description = value;
+    else if (name === 'UID') cur.uid = value.trim();
+    else if (name === 'STATUS') cur.status = value.trim().toUpperCase();
+    else if (name === 'RRULE') cur.rrule = value;
   }
   return events;
 }
@@ -186,22 +197,45 @@ function parseDT(field) {
   const allDay = /VALUE=DATE(?!-TIME)/.test(field.params) || /^\d{8}$/.test(v);
   const date = `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)}`;
   if (allDay) return { date, time: null, allDay: true };
-  return { date, time: `${v.slice(9, 11)}:${v.slice(11, 13)}`, allDay: false };
+  const time = `${v.slice(9, 11)}:${v.slice(11, 13)}`;
+  // The district feed emits floating Pacific wall-clock times (no Z, no TZID).
+  // Google's public feed emits UTC with a trailing Z, so "20261014T000000Z" is
+  // really 5:00 PM on the 13th in Beaverton; convert before the date is used.
+  if (/Z$/.test(v)) return utcToPacific(date, time);
+  return { date, time, allDay: false };
 }
 
-function toEvent(cur) {
+const PACIFIC_FMT = new Intl.DateTimeFormat('en-US', {
+  timeZone: TZID, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+});
+function utcToPacific(date, time) {
+  const parts = {};
+  for (const p of PACIFIC_FMT.formatToParts(new Date(`${date}T${time}:00Z`))) parts[p.type] = p.value;
+  const hour = parts.hour === '24' ? '00' : parts.hour; // some ICU builds print midnight as 24
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${hour}:${parts.minute}`, allDay: false };
+}
+
+function toEvent(cur, source) {
   const s = parseDT(cur.dtstart);
   const e = cur.dtend ? parseDT(cur.dtend) : null;
-  return {
+  const descFlat = cur.description ? unescapeICS(cur.description) : '';
+  const ev = {
     date: s.date,
     startTime: s.allDay ? null : s.time,
     endTime: e && !e.allDay ? e.time : null,
     allDay: s.allDay,
     title: cur.summary,
-    location: cur.location ? cur.location.slice(0, 90) : null,
-    category: categorize(cur.summary, cur.description || '', 'school'),
-    source: 'school',
+    location: cur.location ? cur.location.slice(0, 120) : null,
+    category: categorize(cur.summary, descFlat, source),
+    source,
   };
+  // District descriptions are mostly boilerplate used only for categorization.
+  // PTC descriptions are written by the board for families, so they ship.
+  if (source === 'ptc') {
+    if (cur.description) ev.description = unescapeICSText(cur.description).slice(0, 1500);
+    if (cur.uid) ev.uid = cur.uid;
+  }
+  return ev;
 }
 
 /* ---------- recurring PTC meetings ---------- */
@@ -218,11 +252,6 @@ function ptcMeetings() {
       }
     }
   }
-  for (const e of PTC_EVENTS) {
-    if (e.date >= lo && e.date <= hi) {
-      out.push({ date: e.date, startTime: e.startTime || null, endTime: e.endTime || null, allDay: !e.startTime, title: e.title, location: e.location || PTC.location, category: 'ptc', source: 'ptc' });
-    }
-  }
   return out;
 }
 
@@ -235,7 +264,9 @@ function buildICS(events, name, prefixPtc) {
     'X-WR-TIMEZONE:' + TZID,
   ].concat(VTIMEZONE);
   events.forEach((e, i) => {
-    const uid = `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@williamwalkerptc.com`;
+    // Google events keep their own UID so an edit updates the subscriber's copy
+    // instead of creating a duplicate next to the old one.
+    const uid = e.uid || `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@williamwalkerptc.com`;
     out.push('BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + stamp);
     if (e.allDay) {
       out.push('DTSTART;VALUE=DATE:' + e.date.replace(/-/g, ''));
@@ -249,6 +280,7 @@ function buildICS(events, name, prefixPtc) {
     }
     out.push('SUMMARY:' + escICS((prefixPtc && e.source === 'ptc' ? 'PTC: ' : '') + e.title));
     if (e.location) out.push('LOCATION:' + escICS(e.location));
+    if (e.description) out.push('DESCRIPTION:' + escICS(e.description));
     out.push('END:VEVENT');
   });
   out.push('END:VCALENDAR');
@@ -279,6 +311,11 @@ function byStart(a, b) {
 function unescapeICS(v) {
   return v.replace(/\\n/gi, ' ').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\').replace(/\s+/g, ' ').trim();
 }
+// Same as unescapeICS but keeps line breaks, for descriptions shown to readers.
+function unescapeICSText(v) {
+  return v.replace(/\\n/gi, '\n').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\')
+    .split('\n').map((l) => l.replace(/[ \t]+/g, ' ').trim()).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
 function escICS(v) {
   return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 }
@@ -286,4 +323,4 @@ function escICS(v) {
 /* ---------- test hooks (see scripts/calendar-categorize.test.mjs) ---------- */
 module.exports.categorize = categorize;
 module.exports.isObservance = isObservance;
-module.exports.parseICSForTest = function (raw) { return parseICS(raw, true); };
+module.exports.parseICSForTest = function (raw, source) { return parseICS(raw, true, source); };

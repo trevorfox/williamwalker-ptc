@@ -96,23 +96,37 @@
   function googleUrl(e) {
     var u = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title) + '&dates=' + gcalDates(e);
     if (e.location) u += '&location=' + encodeURIComponent(e.location);
+    if (e.description) u += '&details=' + encodeURIComponent(e.description);
     // without ctz Google reads the bare timestamps in the viewer's own zone
     if (!e.allDay) u += '&ctz=' + encodeURIComponent(TZID);
     return u;
   }
-  function icsEsc(v) { return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,'); }
+  function icsEsc(v) { return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
   function icsHref(e) {
     var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WWPTC//Calendar//EN'];
     // VTIMEZONE must precede the VEVENT that references it; all-day events are
     // date-only and carry no zone, so they don't need the block
     if (!e.allDay) L = L.concat(VTIMEZONE);
-    L.push('BEGIN:VEVENT', 'UID:' + e.date + (e.startTime || '') + '@williamwalkerptc.com');
+    L.push('BEGIN:VEVENT', 'UID:' + (e.uid || e.date + (e.startTime || '') + '@williamwalkerptc.com'));
     if (e.allDay) { L.push('DTSTART;VALUE=DATE:' + ymd(e.date), 'DTEND;VALUE=DATE:' + ymd(addDaysStr(e.date, 1))); }
     else { var end = e.endTime || addHourStr(e.startTime); L.push('DTSTART;TZID=' + TZID + ':' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND;TZID=' + TZID + ':' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
     L.push('SUMMARY:' + icsEsc(e.title));
     if (e.location) L.push('LOCATION:' + icsEsc(e.location));
+    if (e.description) L.push('DESCRIPTION:' + icsEsc(e.description));
     L.push('END:VEVENT', 'END:VCALENDAR');
     return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(L.join('\r\n'));
+  }
+  // Descriptions come from the PTC's Google Calendar as plain text. Escape
+  // everything, then turn bare URLs into links and newlines into <br>.
+  function descHtml(text) {
+    var out = '', re = /https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)]/g, last = 0, m;
+    while ((m = re.exec(text))) {
+      out += esc(text.slice(last, m.index));
+      out += '<a href="' + esc(m[0]) + '" target="_blank" rel="noopener">' + esc(m[0].replace(/^https?:\/\//, '')) + '</a>';
+      last = m.index + m[0].length;
+    }
+    out += esc(text.slice(last));
+    return out.replace(/\n/g, '<br>');
   }
   function slug(s) { return (String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)) || 'event'; }
 
@@ -156,6 +170,7 @@
               '<span class="cal-event__when">' + esc(when) + '</span>' +
               (e.location ? '<span class="cal-event__loc"> · ' + esc(e.location) + '</span>' : '') +
             '</p>' +
+            (e.description ? '<p class="cal-event__desc">' + descHtml(e.description) + '</p>' : '') +
           '</div>' +
           '<div class="cal-event__actions">' +
             '<span class="cal-tag cal-tag--' + catOf(e) + '">' + esc(LABELS[catOf(e)] || 'School') + '</span>' +
