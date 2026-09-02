@@ -18,6 +18,9 @@ const PTC_EVENTS = [
   { date: '2026-08-15', title: 'Welcome to Walker — New Family Meet-Up', startTime: '09:30', endTime: '11:30', location: 'Cedar Hills Park, splash pad area' },
   // Walkerthon lands on a Thursday so Pre-K can join (Pre-K's first day is Sept 8).
   { date: '2026-09-24', title: 'Walkerthon', allDay: true, location: 'William Walker Elementary' },
+  // Restaurant fundraiser nights. Pastini gave no hours, so it's all-day; mention the school when ordering.
+  { date: '2026-09-15', title: 'Pastini Dine-Out Night — 20% to William Walker (mention the school, dine in or take out)', allDay: true, location: 'Pastini, Cedar Hills' },
+  { date: '2026-10-13', title: 'McMenamins Friends & Family Night — 50% of dine-in sales to William Walker', startTime: '17:00', endTime: '23:00', location: 'McMenamins Cedar Hills, 2885 SW Cedar Hills Blvd' },
 ];
 
 /* ---------- categorization ----------
