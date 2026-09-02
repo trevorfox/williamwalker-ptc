@@ -1,8 +1,7 @@
 /* =========================================================================
    /api/calendar  —  Vercel serverless function
    Fetches the school district iCal feed and the PTC's public Google Calendar
-   feed (server-side, avoiding browser CORS), parses both, merges in the
-   recurring PTC meetings, and returns:
+   feed (server-side, avoiding browser CORS), parses and merges both, and returns:
      - JSON            (default)         -> consumed by the /calendar page
      - iCal / .ics     (?format=ics)     -> subscribe feed (school + PTC events)
    Edge-cached for an hour to be polite to the school server.
@@ -11,16 +10,15 @@
 const FEED_URL =
   'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD';
 
-// PTC one-off events live in a Google Calendar owned by williamwalkerptc@gmail.com
-// ("WEBSITE PUBLIC CALENDAR"). Board members with edit access add events there;
-// nothing needs a commit or deploy. Its public ICS is fetched exactly like the
-// district feed. Recurring PTC meetings stay generated in code because Google
-// emits a recurring event as one VEVENT + RRULE, which parseICS does not expand.
+// Every PTC event, monthly meetings included, lives in a Google Calendar owned
+// by williamwalkerptc@gmail.com ("WEBSITE PUBLIC CALENDAR"). Board members with
+// edit access add and move events there; nothing needs a commit or deploy. Its
+// public ICS is fetched exactly like the district feed. Meetings are entered as
+// individual events (ten per school year, first Wednesday, 6–7 PM) rather than
+// one recurring event, because Google emits a recurring event as a single
+// VEVENT + RRULE, which parseICS does not expand.
 const PTC_FEED_URL =
   'https://calendar.google.com/calendar/ical/d80a9ae1fa7fe9ae54e7433f4bf6d7213afc849d84fed26fedd6e7c6a9d2a47b%40group.calendar.google.com/public/basic.ics';
-
-const PTC = { startTime: '18:00', endTime: '19:00', title: 'PTC Meeting', location: 'William Walker Elementary' };
-const PTC_MONTHS = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]; // Sept–June
 
 /* ---------- categorization ----------
    The district marks most cultural/religious observances with a phrase in the
@@ -106,6 +104,7 @@ module.exports = async (req, res) => {
   // a one-time snapshot, not a feed — offered because Google Calendar's mobile
   // apps can't subscribe by URL at all, so importing is the only way in on a phone.
   const isDownload = /[?&]download=1\b/.test(url);
+  let fallbackEvents = [];
   try {
     let events;
     if (_cache.events && Date.now() - _cache.at < CACHE_MS) {
@@ -113,11 +112,12 @@ module.exports = async (req, res) => {
     } else {
       const feeds = await Promise.allSettled([fetchFeed(FEED_URL, 'school'), fetchFeed(PTC_FEED_URL, 'ptc')]);
       // The district feed is the backbone: if it fails, the catch below serves
-      // the PTC-only fallback. The Google feed failing just drops one-offs
-      // for an hour, which is not worth a warning banner.
-      if (feeds[0].status === 'rejected') throw feeds[0].reason;
+      // whatever PTC events came through, and the page shows its warning. The
+      // Google feed failing just drops PTC events for an hour, which is not
+      // worth a banner — the district feed is the one families check for closures.
       const gcal = feeds[1].status === 'fulfilled' ? feeds[1].value : [];
-      events = feeds[0].value.concat(gcal, ptcMeetings());
+      if (feeds[0].status === 'rejected') { fallbackEvents = gcal; throw feeds[0].reason; }
+      events = feeds[0].value.concat(gcal);
       events.sort(byStart);
       _cache = { at: Date.now(), events };
     }
@@ -137,7 +137,8 @@ module.exports = async (req, res) => {
       res.status(200).json({ ok: true, count: page.length, events: page });
     }
   } catch (err) {
-    const fallback = ptcMeetings().sort(byStart);
+    // Last good merge if we have one, else whatever the Google feed gave us.
+    const fallback = (_cache.events || fallbackEvents).slice().sort(byStart);
     res.setHeader('Cache-Control', 's-maxage=300');
     if (isIcs) {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
@@ -238,23 +239,6 @@ function toEvent(cur, source) {
   return ev;
 }
 
-/* ---------- recurring PTC meetings ---------- */
-function ptcMeetings() {
-  const y = new Date().getUTCFullYear();
-  const lo = isoOffset(-BACK), hi = isoOffset(FWD_FEED);
-  const out = [];
-  for (const yr of [y - 1, y, y + 1, y + 2]) {
-    for (const m of PTC_MONTHS) {
-      const day = firstWednesday(yr, m);
-      const date = `${yr}-${pad(m)}-${pad(day)}`;
-      if (date >= lo && date <= hi) {
-        out.push({ date, startTime: PTC.startTime, endTime: PTC.endTime, allDay: false, title: PTC.title, location: PTC.location, category: 'ptc', source: 'ptc' });
-      }
-    }
-  }
-  return out;
-}
-
 /* ---------- build a subscribe-ready iCal feed ---------- */
 function buildICS(events, name, prefixPtc) {
   const stamp = icsStamp(new Date());
@@ -288,10 +272,6 @@ function buildICS(events, name, prefixPtc) {
 }
 
 /* ---------- helpers ---------- */
-function firstWednesday(year, month) {
-  const dow = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
-  return 1 + ((3 - dow + 7) % 7);
-}
 function addDays(dateStr, n) {
   const p = dateStr.split('-');
   const d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n));
