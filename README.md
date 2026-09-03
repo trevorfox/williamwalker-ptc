@@ -22,6 +22,11 @@ Two directories are build output and should not be hand-edited: `blog/` and
 `programs/`. Edit the markdown in `content/`, re-run the generator, and commit
 both the source and the generated HTML.
 
+**Changing the nav or footer** means editing `scripts/lib/chrome.mjs` *and* the
+hand-written pages (`index.html`, `calendar.html`, `supplies.html`, …), then
+re-running both generators. Editing the generated HTML alone looks right until
+the next build silently reverts it.
+
 ## Run locally
 
 Just open `index.html` in a browser, or serve the folder:

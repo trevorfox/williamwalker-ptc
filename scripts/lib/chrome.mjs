@@ -106,10 +106,9 @@ export function topbar(current) {
             </ul>
           </li>
           <li><a href="/teachers"${cur("teachers")}>Teachers</a></li>
-          <li><a href="/calendar"${cur("calendar")}>Calendar</a></li>
           <li><a href="/programs"${cur("programs")}>Programs</a></li>
-          <!-- Seasonal: Supplies is also in the Families menu. Remove this line after supply season. -->
-          <li><a href="/supplies"${cur("supplies")}>Supplies</a></li>
+          <li><a href="/fundraising"${cur("fundraising")}>Fundraising</a></li>
+          <li><a href="/calendar"${cur("calendar")}>Calendar</a></li>
           <li class="nav-item has-sub">
             <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about">
               About <span class="caret" aria-hidden="true"></span>
