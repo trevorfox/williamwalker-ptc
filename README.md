@@ -12,7 +12,15 @@ script.js     → accessibility toolbar, mobile nav, scroll animations
 calendar.js   → calendar rendering + filters
 supplies.js   → Office Depot search links, print flow, grade accordion
 assets/logo.png → school "Home of the Wildcats" logo
+
+blog/         → GENERATED from content/blog/*.md — see "Blog" below
+programs/     → GENERATED from content/programs/*.md
+scripts/lib/  → markdown renderer + shared page chrome, used by both generators
 ```
+
+Two directories are build output and should not be hand-edited: `blog/` and
+`programs/`. Edit the markdown in `content/`, re-run the generator, and commit
+both the source and the generated HTML.
 
 ## Run locally
 
@@ -65,6 +73,36 @@ mechanism, so the page links are safe to share anywhere, including email.
 
 GA4 events: `supply_grade_select`, `supply_item_click` (grade/store/q),
 `supply_print` (grade), `od_id_copy`. Smoke test: `node scripts/supplies-page.test.mjs`.
+
+## Blog (`/blog`)
+
+Posts are markdown files in `content/blog/`, one per post, with the filename as
+the URL slug (`fall-carnival.md` → `/blog/fall-carnival`). Frontmatter is
+`title`, `date` (YYYY-MM-DD), `author`, `blurb`, and optionally `hero_image`
+(relative to `assets/blog/`) and `draft: true`. Files starting with `_` are
+skipped, which is how `content/blog/_template.md` stays out of the build.
+
+```bash
+node scripts/build-blog.mjs        # writes blog/*.html + blog/index.html
+node scripts/build-blog.test.mjs   # smoke test (builds fixtures in a temp dir)
+```
+
+`date` is an explicit field rather than being read from git, because rebases
+rewrite commit dates. It is formatted without going through `Date()`, which
+would parse `2026-09-15` as UTC midnight and render it as September 14 in
+Pacific time.
+
+**Nothing on the site links to `/blog` yet.** Add it to the nav in
+`scripts/lib/chrome.mjs` (which feeds every generated page) and to the
+hand-written HTML pages when the first real post is ready. There is also a
+placeholder `content/blog/example-post.md` to delete at that point.
+
+The markdown renderer is a deliberate subset — `##`/`###` headings, paragraphs,
+`-` lists, `>` quotes, `**bold**`, `*italic*`, `` `code` ``, links, and
+standalone images. Anything fancier renders as plain text. It lives in
+`scripts/lib/md.mjs` alongside `scripts/lib/chrome.mjs`, which holds the
+`<head>`, top bar, nav, and footer shared by the blog and programs builds —
+edit the nav there once and every generated page picks it up.
 
 ## Deploy
 

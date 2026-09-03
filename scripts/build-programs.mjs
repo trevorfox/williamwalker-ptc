@@ -32,6 +32,8 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
+import { head, topbar, FOOTER } from './lib/chrome.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT = join(ROOT, 'content', 'programs');
@@ -42,80 +44,12 @@ const DEFAULT_DONATE = 'https://www.zeffy.com/en-US/peer-to-peer/walkerthon--202
 const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all PTC programs.';
 
 function fail(msg) { console.error('build-programs: ' + msg); process.exit(1); }
-function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-
-/* ---------- frontmatter (YAML subset) ---------- */
-function scalar(v) {
-  if (/^".*"$/.test(v) || /^'.*'$/.test(v)) return v.slice(1, -1);
-  if (v === 'true') return true;
-  if (v === 'false') return false;
-  if (/^-?\d+(\.\d+)?$/.test(v)) return Number(v);
-  return v;
-}
-function parseFrontmatter(src, file) {
-  const m = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-  if (!m) fail(file + ': missing frontmatter block (--- … ---)');
-  const data = {};
-  let listKey = null, listItem = null;
-  for (const raw of m[1].split(/\r?\n/)) {
-    if (!raw.trim() || raw.trim().startsWith('#')) continue;
-    const indent = raw.match(/^ */)[0].length;
-    const line = raw.trim();
-    if (indent === 0) {
-      listKey = null; listItem = null;
-      const kv = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
-      if (!kv) fail(file + ': bad frontmatter line: "' + line + '"');
-      if (kv[2] === '') { data[kv[1]] = []; listKey = kv[1]; }
-      else data[kv[1]] = scalar(kv[2]);
-    } else if (line.startsWith('- ')) {
-      if (!listKey) fail(file + ': list item outside a list: "' + line + '"');
-      listItem = {};
-      data[listKey].push(listItem);
-      const kv = line.slice(2).match(/^([\w-]+):\s*(.*)$/);
-      if (!kv) fail(file + ': bad list item line: "' + line + '"');
-      listItem[kv[1]] = scalar(kv[2]);
-    } else {
-      if (!listItem) fail(file + ': indented line outside a list item: "' + line + '"');
-      const kv = line.match(/^([\w-]+):\s*(.*)$/);
-      if (!kv) fail(file + ': bad list item line: "' + line + '"');
-      listItem[kv[1]] = scalar(kv[2]);
-    }
-  }
-  return { data, body: m[2].trim() };
-}
-
-/* ---------- markdown subset ---------- */
-function inline(s) {
-  s = esc(s);
-  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, text, href) {
-    const ext = /^https?:/.test(href) && href.indexOf(SITE) !== 0;
-    return '<a href="' + href + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + text + '</a>';
-  });
-  return s;
-}
-function renderMd(md) {
-  return md.split(/\n{2,}/).map(function (b) {
-    b = b.trim();
-    if (!b) return '';
-    if (b.startsWith('### ')) return '<h3>' + inline(b.slice(4)) + '</h3>';
-    if (b.startsWith('## ')) return '<h2>' + inline(b.slice(3)) + '</h2>';
-    const lines = b.split('\n');
-    if (lines.every(function (l) { return l.trim().startsWith('- '); })) {
-      return '<ul>' + lines.map(function (l) { return '<li>' + inline(l.trim().slice(2)) + '</li>'; }).join('') + '</ul>';
-    }
-    const img = b.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
-    if (img) return '<figure class="prose-img"><img src="' + esc(img[2]) + '" alt="' + esc(img[1]) + '" loading="lazy" /></figure>';
-    return '<p>' + inline(lines.join(' ')) + '</p>';
-  }).filter(Boolean).join('\n');
-}
 
 /* ---------- load + validate ---------- */
 function loadEntries() {
   if (!existsSync(CONTENT)) fail('content dir missing: ' + CONTENT);
   const entries = readdirSync(CONTENT).filter(function (f) { return f.endsWith('.md'); }).sort().map(function (f) {
-    const parsed = parseFrontmatter(readFileSync(join(CONTENT, f), 'utf8'), f);
+    const parsed = parseFrontmatter(readFileSync(join(CONTENT, f), 'utf8'), f, fail);
     const d = parsed.data;
     ['title', 'type', 'blurb'].forEach(function (k) { if (!d[k]) fail(f + ': missing required "' + k + '"'); });
     if (d.type !== 'program' && d.type !== 'event') fail(f + ': type must be "program" or "event", got "' + d.type + '"');
@@ -142,172 +76,6 @@ function loadEntries() {
 
 function assetUrl(rel) { return '/assets/programs/' + rel; }
 function assetExists(rel) { return !!rel && existsSync(join(ASSETS, rel)); }
-
-/* ---------- shared chrome ---------- */
-function head(o) {
-  return '<!doctype html>\n<html lang="en">\n<head>\n'
-    + '  <meta charset="utf-8" />\n'
-    + '  <meta name="viewport" content="width=device-width, initial-scale=1" />\n\n'
-    + '  <!-- Google tag (gtag.js) -->\n'
-    + '  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HV902LVJ1B"></script>\n'
-    + '  <script>\n    window.dataLayer = window.dataLayer || [];\n    function gtag(){dataLayer.push(arguments);}\n    gtag(\'js\', new Date());\n    gtag(\'config\', \'G-HV902LVJ1B\');\n  </script>\n\n'
-    + '  <title>' + esc(o.title) + '</title>\n'
-    + '  <meta name="description" content="' + esc(o.description) + '" />\n'
-    + '  <link rel="canonical" href="' + o.canonical + '" />\n'
-    + '  <meta property="og:title" content="' + esc(o.title) + '" />\n'
-    + '  <meta property="og:description" content="' + esc(o.description) + '" />\n'
-    + '  <meta property="og:image" content="' + o.ogImage + '" />\n'
-    + '  <meta property="og:url" content="' + o.canonical + '" />\n'
-    + '  <meta property="og:type" content="website" />\n'
-    + '  <meta name="theme-color" content="#2F67B2" />\n'
-    + '  <link rel="icon" href="/assets/logo.png" />\n\n'
-    + '  <link rel="preconnect" href="https://fonts.googleapis.com" />\n'
-    + '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n'
-    + '  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />\n'
-    + '  <link rel="stylesheet" href="/styles.css" />\n'
-    + '</head>\n';
-}
-
-const TOPBAR = `<body>
-  <a class="skip-link" href="#main">Skip to main content</a>
-
-  <div class="topbar">
-    <div class="utility">
-      <div class="utility__inner">
-        <div class="menu" data-menu>
-          <button type="button" class="menu__btn" id="lang-btn" aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
-            <span class="i-translate" aria-hidden="true">文A</span>
-            <span class="menu__btn-label">Language</span>
-            <span class="menu__caret" aria-hidden="true"></span>
-          </button>
-          <div class="menu__panel" id="lang-menu" role="menu" aria-labelledby="lang-btn" hidden>
-            <p class="menu__title" aria-hidden="true">Translate this page</p>
-            <button type="button" role="menuitemradio" aria-checked="true"  class="menu__item" data-lang="en">English</button>
-            <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="es">Español</button>
-            <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="zh-CN">中文</button>
-            <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="vi">Tiếng Việt</button>
-            <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="ar" dir="rtl">العربية</button>
-            <div class="menu__more">
-              <label class="menu__morelabel">More languages</label>
-              <div id="google_translate_element"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu" data-menu>
-          <button type="button" class="menu__btn" id="a11y-btn" aria-haspopup="true" aria-expanded="false" aria-controls="a11y-menu">
-            <span class="i-access" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="12" cy="3.6" r="2.1"/><path d="M20 8.2c0 .6-.5 1-1 1h-3.9V21c0 .6-.5 1-1.1 1s-1-.4-1-1v-6h-2v6c0 .6-.5 1-1.1 1s-1-.4-1-1V9.2H5c-.6 0-1-.4-1-1s.4-1 1-1h14c.6 0 1 .4 1 1z"/></svg>
-            </span>
-            <span class="menu__btn-label">Accessibility</span>
-            <span class="menu__caret" aria-hidden="true"></span>
-          </button>
-          <div class="menu__panel menu__panel--a11y" id="a11y-menu" role="group" aria-labelledby="a11y-btn" hidden>
-            <div class="a11y-row" role="group" aria-label="Text size">
-              <span class="a11y-row__label">Text size</span>
-              <span class="a11y-sizes">
-                <button type="button" class="a11y-size" data-font="down" aria-label="Decrease text size">A<span class="a11y-minus">−</span></button>
-                <button type="button" class="a11y-size" data-font="reset" aria-label="Reset text size">A</button>
-                <button type="button" class="a11y-size a11y-size--big" data-font="up" aria-label="Increase text size">A<span class="a11y-plus">+</span></button>
-              </span>
-            </div>
-            <button type="button" class="a11y-opt" data-toggle="contrast" aria-pressed="false"><span>High contrast</span><span class="a11y-switch" aria-hidden="true"></span></button>
-            <button type="button" class="a11y-opt" data-toggle="links" aria-pressed="false"><span>Underline links</span><span class="a11y-switch" aria-hidden="true"></span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <header class="site-header">
-      <a class="brand" href="/" aria-label="William Walker PTC home">
-        <img class="brand__logo" src="/assets/logo.png" width="226" height="223" alt="William Walker Elementary — Home of the Wildcats" />
-        <span class="brand__text">PTC</span>
-      </a>
-      <nav class="main-nav" aria-label="Primary">
-        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-        <ul id="nav-list" class="nav-list">
-          <li class="nav-item has-sub">
-            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-families">
-              Families <span class="caret" aria-hidden="true"></span>
-            </button>
-            <ul id="sub-families" class="nav-sub">
-              <li><a href="/families">All family links</a></li>
-              <li><a href="/families/faq">Family FAQ</a></li>
-              <li><a href="/supplies">School supplies</a></li>
-              <li><a href="/fundraising">Fundraising</a></li>
-            </ul>
-          </li>
-          <li><a href="/teachers">Teachers</a></li>
-          <li><a href="/calendar">Calendar</a></li>
-          <li><a href="/programs" aria-current="page">Programs</a></li>
-          <!-- Seasonal: Supplies is also in the Families menu. Remove this line after supply season. -->
-          <li><a href="/supplies">Supplies</a></li>
-          <li class="nav-item has-sub">
-            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about">
-              About <span class="caret" aria-hidden="true"></span>
-            </button>
-            <ul id="sub-about" class="nav-sub">
-              <li><a href="/#about">About the PTC</a></li>
-              <li><a href="/minutes">Meeting minutes</a></li>
-              <li><a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">Board &amp; contacts <span aria-hidden="true">&#8599;</span></a></li>
-            </ul>
-          </li>
-          <li><a class="nav-cta" href="/#signup">Sign Up</a></li>
-        </ul>
-      </nav>
-    </header>
-  </div>
-`;
-
-const FOOTER = `  <!-- ============ FOOTER ============ -->
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <div>
-        <p class="footer-brand">William Walker Elementary PTC</p>
-        <address class="footer-address">
-          2350 Cedar Hills Blvd.<br />
-          Beaverton, OR 97005
-        </address>
-        <a class="footer-social" href="mailto:williamwalkerptc@gmail.com">williamwalkerptc@gmail.com</a><br />
-        <a class="footer-social" href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener">Follow us on Facebook <span aria-hidden="true">↗</span></a>
-      </div>
-      <nav class="footer-nav" aria-label="Footer">
-        <a href="/#about">About</a>
-        <a href="/programs">Programs</a>
-        <a href="/calendar">Calendar</a>
-        <a href="/supplies">Supplies</a>
-        <a href="/fundraising">Fundraising</a>
-        <a href="/families">Families</a>
-        <a href="/families/faq">Family FAQ</a>
-        <a href="/teachers">Teachers</a>
-        <a href="/minutes">Meeting minutes</a>
-        <a href="/#connect">Connect</a>
-        <a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">PTC Contacts <span aria-hidden="true">&#8599;</span></a>
-      </nav>
-      <p class="footer-note">
-        A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an
-        independent organization and is not officially administered by the Beaverton
-        School District.
-      </p>
-    </div>
-    <p class="footer-copy">© <span id="year">2026</span> William Walker Parent Teacher Club, Inc.</p>
-  </footer>
-
-  <!-- Google Translate init -->
-  <script>
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement(
-        { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false },
-        'google_translate_element'
-      );
-    }
-  </script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
-
-  <script src="/script.js" defer></script>
-</body>
-</html>
-`;
 
 /* ---------- page pieces ---------- */
 function donateBtn(p, cls, label) {
@@ -408,13 +176,13 @@ function detailPage(p, entries) {
     canonical: SITE + '/programs/' + p.slug,
     ogImage: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + '/assets/logo.png',
   })
-    + TOPBAR
+    + topbar('programs')
     + '\n  <main id="main">\n'
     + heroHtml(p)
     + '\n    <section class="block block--white" aria-labelledby="story-title">\n'
     + '      <div class="wrap">\n'
     + '        <p class="kicker kicker--blue">' + kicker + '</p>\n'
-    + '        <div class="prose">\n' + renderMd(p.body) + '\n        </div>\n'
+    + '        <div class="prose">\n' + renderMd(p.body, SITE) + '\n        </div>\n'
     + '      </div>\n    </section>\n'
     + '\n' + galleryHtml(p)
     + '\n' + impactHtml(p)
@@ -432,7 +200,7 @@ function indexPage(entries) {
     canonical: SITE + '/programs',
     ogImage: SITE + '/assets/logo.png',
   })
-    + TOPBAR
+    + topbar('programs')
     + `
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
