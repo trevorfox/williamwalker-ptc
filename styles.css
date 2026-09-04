@@ -1008,3 +1008,14 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
 .social-link__meta { display: block; font-size: 0.82rem; color: var(--ink-soft); }
 
 .block--blue .social-link, .block--green .social-link { background: rgba(255,255,255,0.97); }
+
+/* Grouped link grids (families page). Sub-headings rather than separate
+   blocks: four block--blue sections would quadruple the section padding,
+   which is the opposite of keeping the page short. */
+.connect-group + .connect-group { margin-top: 2.4rem; }
+.connect-group .connect-grid { margin-top: 0.9rem; }
+.connect-group__title {
+  margin: 0; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #bcd4f2;
+}
+.block--white .connect-group__title { color: var(--blue-deep); }
