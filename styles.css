@@ -1033,12 +1033,13 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
   background: var(--blue-tint); padding: 14px 16px;
 }
 .idbox__label {
-  margin: 0; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--blue-dark);
+  margin: 0; font-size: clamp(1.02rem, 2.4vw, 1.2rem); font-weight: 900;
+  letter-spacing: -0.01em; line-height: 1.2; color: var(--blue-dark);
+  text-wrap: balance;
 }
 .idbox__code {
-  margin: 0; font-size: clamp(1.25rem, 3.2vw, 1.6rem); font-weight: 900;
-  letter-spacing: 0.03em; color: var(--blue); line-height: 1.15;
+  margin: 0; font-size: 1.02rem; font-weight: 700; letter-spacing: 0.07em;
+  color: var(--blue-deep); line-height: 1.3;
   font-variant-numeric: tabular-nums; user-select: all;
 }
 .idbox__actions { margin-top: auto; padding-top: 0.6rem; display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
