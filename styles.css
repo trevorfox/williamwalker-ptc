@@ -980,3 +980,31 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
 @media (max-width: 560px) {
   .post-card__body { padding: 16px; }
 }
+
+/* =========================================================================
+   Social links (footer icon row + on-page labelled pills)
+   ========================================================================= */
+.social-row { display: flex; gap: 0.55rem; list-style: none; padding: 0; margin: 1rem 0 0; }
+.social-btn {
+  display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); color: #cdd8ea; text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.social-btn:hover, .social-btn:focus-visible { background: rgba(255,255,255,0.26); color: #fff; transform: translateY(-2px); }
+
+.social-links { display: flex; flex-wrap: wrap; gap: 0.9rem; list-style: none; padding: 0; margin: 2rem 0 0; }
+.social-link {
+  display: flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--ink);
+  background: #fff; border: 1.5px solid var(--line); border-radius: 999px;
+  padding: 0.55rem 1.4rem 0.55rem 0.6rem;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.social-link:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.social-link__icon {
+  display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--blue-tint); color: var(--blue-deep); flex-shrink: 0;
+}
+.social-link__name { display: block; font-weight: 800; font-size: 0.98rem; line-height: 1.25; }
+.social-link__meta { display: block; font-size: 0.82rem; color: var(--ink-soft); }
+
+.block--blue .social-link, .block--green .social-link { background: rgba(255,255,255,0.97); }
