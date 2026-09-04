@@ -341,6 +341,24 @@
     }, 500);
   })();
 
+  /* ---------- copy buttons on the fundraising ID board ----------
+     Scoped to .idbox__copy so it cannot double-bind with the single-button
+     handler supplies.js already owns for .od-id-card__copy. */
+  var idCopyBtns = document.querySelectorAll('.idbox__copy');
+  if (idCopyBtns.length && navigator.clipboard) {
+    Array.prototype.forEach.call(idCopyBtns, function (btn) {
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(function () {
+          track('fundraising_id_copy', { id: btn.getAttribute('data-id') || '' });
+          var prev = btn.textContent;
+          btn.textContent = 'Copied \u2713';
+          setTimeout(function () { btn.textContent = prev; }, 2000);
+        });
+      });
+    });
+  }
+
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();

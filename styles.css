@@ -1019,3 +1019,47 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
   text-transform: uppercase; color: #bcd4f2;
 }
 .block--white .connect-group__title { color: var(--blue-deep); }
+
+/* =========================================================================
+   Fundraising ID board — the codes people need at a register, up top
+   ========================================================================= */
+.idboard {
+  list-style: none; margin: 2rem 0 0; padding: 0; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9rem;
+}
+.idbox {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  border: 2px dashed var(--blue); border-radius: var(--radius-sm);
+  background: var(--blue-tint); padding: 14px 16px;
+}
+.idbox__label {
+  margin: 0; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--blue-dark);
+}
+.idbox__code {
+  margin: 0; font-size: clamp(1.25rem, 3.2vw, 1.6rem); font-weight: 900;
+  letter-spacing: 0.03em; color: var(--blue); line-height: 1.15;
+  font-variant-numeric: tabular-nums; user-select: all;
+}
+.idbox__actions { margin-top: auto; padding-top: 0.6rem; display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+.idbox__copy {
+  padding: 5px 13px; border: 2px solid var(--blue); border-radius: 999px;
+  background: #fff; color: var(--blue); font-family: var(--ff);
+  font-weight: 700; font-size: 0.8rem; cursor: pointer;
+}
+.idbox__copy:hover { background: var(--blue); color: #fff; }
+.idbox__copy[hidden] { display: none; }
+.idbox__more { font-size: 0.8rem; font-weight: 700; color: var(--blue-deep); }
+
+/* The topbar is sticky, so board links need the same offset the supplies
+   and FAQ anchors already use, or the target lands under the header. */
+#match, .event-card[id] { scroll-margin-top: 130px; }
+
+.match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.6rem; margin-top: 2rem; }
+.match-grid h3 { font-size: 1.1rem; color: var(--blue-dark); margin: 0 0 0.8rem; }
+.match-steps { margin: 0; padding-left: 1.2rem; }
+.match-steps li { margin-bottom: 0.55rem; }
+.match-list {
+  margin: 0 0 0.9rem; font-weight: 700; color: var(--blue-deep); line-height: 1.9;
+}
+.match-note { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
