@@ -123,10 +123,12 @@ function cardHtml(p) {
 function moreHtml(p, posts) {
   const others = posts.filter(function (o) { return o.slug !== p.slug; }).slice(0, 3);
   if (!others.length) return '';
-  return '    <section class="block block--white" aria-labelledby="more-title">\n'
+  return '    <section class="block block--white post-more" aria-labelledby="more-title">\n'
     + '      <div class="wrap">\n'
-    + '        <p class="kicker kicker--blue">More from the PTC</p>\n'
-    + '        <h2 id="more-title" class="section-title">Recent posts.</h2>\n'
+    + '        <div class="post-more__head">\n'
+    + '          <p class="kicker kicker--blue">More from the PTC</p>\n'
+    + '          <h2 id="more-title" class="section-title">Recent posts.</h2>\n'
+    + '        </div>\n'
     + '        <div class="post-cards">\n'
     + others.map(cardHtml).join('\n')
     + '\n        </div>\n      </div>\n    </section>\n';
@@ -160,8 +162,10 @@ function postPage(p, posts) {
     + heroHtml(p)
     + '\n    <section class="block block--white" aria-label="' + esc(p.title) + '">\n'
     + '      <div class="wrap">\n'
-    + '        <div class="prose">\n' + renderMd(p.body, SITE) + '\n        </div>\n'
-    + '        <p class="post-back"><a href="/blog">← All posts</a></p>\n'
+    + '        <div class="post-body">\n'
+    + '          <div class="prose">\n' + renderMd(p.body, SITE) + '\n          </div>\n'
+    + '          <p class="post-back"><a href="/blog">← All posts</a></p>\n'
+    + '        </div>\n'
     + '      </div>\n    </section>\n'
     + '\n' + moreHtml(p, posts)
     + '  </main>\n\n'

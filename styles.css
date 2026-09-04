@@ -954,6 +954,16 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
 .post-card__body p { margin: 0; color: var(--ink-soft); }
 .post-card__more { margin-top: auto; padding-top: 0.5rem; font-weight: 800; color: var(--blue); }
 
+/* The hero is centred (.hero is text-align:center, .hero__inner is 780px auto),
+   so the article column is centred to sit on the same axis. .prose stays
+   left-aligned inside it — centred body copy is unreadable at this length.
+   Scoped to the blog: /programs pairs .prose with a left-aligned kicker. */
+.post-body { max-width: 68ch; margin-inline: auto; }
+.post-body .prose { max-width: none; }
+
+.post-more__head { text-align: center; margin-bottom: 2.2rem; }
+.post-more__head .section-title { max-width: none; }
+
 .post-back { margin: 2.2rem 0 0; font-weight: 700; }
 .post-empty { color: var(--ink-soft); font-weight: 700; margin: 0; }
 
