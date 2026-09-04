@@ -1025,7 +1025,9 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
    ========================================================================= */
 .idboard {
   list-style: none; margin: 2rem 0 0; padding: 0; display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9rem;
+  /* Track capped rather than 1fr: a lone box would otherwise stretch the
+     full width of the wrap. Still lays out sanely if more are added back. */
+  grid-template-columns: repeat(auto-fit, minmax(190px, 280px)); gap: 0.9rem;
 }
 .idbox {
   display: flex; flex-direction: column; gap: 0.3rem;
