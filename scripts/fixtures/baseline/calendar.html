@@ -13,21 +13,16 @@
     gtag('config', 'G-HV902LVJ1B');
   </script>
 
-  <title>News — William Walker Elementary PTC</title>
-  <meta name="description" content="Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families." />
-  <link rel="canonical" href="https://williamwalkerptc.com/blog" />
-  <meta property="og:title" content="News — William Walker Elementary PTC" />
-  <meta property="og:description" content="Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families." />
-  <meta property="og:image" content="https://williamwalkerptc.com/assets/logo.png" />
-  <meta property="og:url" content="https://williamwalkerptc.com/blog" />
-  <meta property="og:type" content="website" />
+  <title>Calendar — William Walker Elementary PTC</title>
+  <meta name="description" content="Upcoming William Walker Elementary events and PTC meetings — school district calendar and PTC meetings in one place." />
+  <link rel="canonical" href="https://williamwalkerptc.com/calendar" />
   <meta name="theme-color" content="#2F67B2" />
-  <link rel="icon" href="/assets/logo.png" />
+  <link rel="icon" href="assets/logo.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -43,7 +38,7 @@
           </button>
           <div class="menu__panel" id="lang-menu" role="menu" aria-labelledby="lang-btn" hidden>
             <p class="menu__title" aria-hidden="true">Translate this page</p>
-            <button type="button" role="menuitemradio" aria-checked="true" class="menu__item" data-lang="en">English</button>
+            <button type="button" role="menuitemradio" aria-checked="true"  class="menu__item" data-lang="en">English</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="es">Español</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="zh-CN">中文</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="vi">Tiếng Việt</button>
@@ -81,7 +76,7 @@
 
     <header class="site-header">
       <a class="brand" href="/" aria-label="William Walker PTC home">
-        <img class="brand__logo" src="/assets/logo.png" width="226" height="223" alt="William Walker Elementary — Home of the Wildcats" />
+        <img class="brand__logo" src="assets/logo.png" width="226" height="223" alt="William Walker Elementary — Home of the Wildcats" />
         <span class="brand__text">PTC</span>
       </a>
       <nav class="main-nav" aria-label="Primary">
@@ -101,14 +96,14 @@
           <li><a href="/teachers">Teachers</a></li>
           <li><a href="/programs">Programs</a></li>
           <li><a href="/fundraising">Fundraising</a></li>
-          <li><a href="/calendar">Calendar</a></li>
+          <li><a href="/calendar" aria-current="page">Calendar</a></li>
           <li class="nav-item has-sub">
-            <button class="nav-sub-toggle is-current" aria-expanded="false" aria-controls="sub-about">
+            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about">
               About <span class="caret" aria-hidden="true"></span>
             </button>
             <ul id="sub-about" class="nav-sub">
               <li><a href="/#about">About the PTC</a></li>
-              <li><a href="/blog" aria-current="page">PTC news</a></li>
+              <li><a href="/blog">PTC news</a></li>
               <li><a href="/minutes">Meeting minutes</a></li>
               <li><a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">Board &amp; contacts <span aria-hidden="true">&#8599;</span></a></li>
             </ul>
@@ -120,37 +115,62 @@
   </div>
 
   <main id="main">
-    <section class="hero hero--gradient" aria-labelledby="hero-title">
-      <div class="hero__inner">
-        <p class="hero__eyebrow">William Walker PTC</p>
-        <h1 id="hero-title" class="hero__title">News</h1>
-        <p class="hero__lede">
-          Event recaps, fundraising results, and what the PTC is up to at
-          William Walker.
-        </p>
+    <section class="cal-head block block--white" aria-labelledby="cal-title">
+      <div class="wrap">
+        <p class="kicker kicker--blue">Calendar</p>
+        <h1 id="cal-title" class="section-title">What's coming up at William Walker.</h1>
+        <p class="lead">School events from the Beaverton School District calendar and our PTC meetings, together in one place.</p>
+
+        <div class="cal-controls">
+          <div class="cal-filters-wrap">
+            <span class="cal-controls__label" id="cal-filter-label">Filter events:</span>
+            <div class="cal-filters" role="group" aria-labelledby="cal-filter-label">
+              <button type="button" class="cal-chip is-active" data-filter="all" aria-pressed="true">All</button>
+              <button type="button" class="cal-chip" data-filter="ptc" aria-pressed="false"><span class="dot dot--ptc" aria-hidden="true"></span> PTC</button>
+              <button type="button" class="cal-chip" data-filter="noschool" aria-pressed="false"><span class="dot dot--noschool" aria-hidden="true"></span> No School</button>
+              <button type="button" class="cal-chip" data-filter="school" aria-pressed="false"><span class="dot dot--school" aria-hidden="true"></span> School events</button>
+              <button type="button" class="cal-chip" data-filter="district" aria-pressed="false"><span class="dot dot--district" aria-hidden="true"></span> District</button>
+            </div>
+          </div>
+          <div class="cal-subs">
+            <div class="cal-subscribe">
+              <button type="button" class="cal-subscribe__btn" id="cal-subscribe-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="dot" id="cal-subscribe-dot" aria-hidden="true"></span> <span id="cal-subscribe-label">Subscribe to all events</span>
+              </button>
+              <div class="cal-subscribe__menu" id="cal-subscribe-menu" role="menu" hidden>
+                <a role="menuitem" id="cal-subscribe-google" href="https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=https%3A%2F%2Fwilliamwalkerptc.com%2Fcalendar.ics" target="_blank" rel="noopener">Google Calendar <span class="cal-subscribe__note">copies link, then paste</span></a>
+                <a role="menuitem" id="cal-subscribe-ics" href="webcal://williamwalkerptc.com/calendar.ics">Apple / Outlook</a>
+                <button type="button" role="menuitem" class="cal-subscribe__copy" id="cal-subscribe-copy" data-url="https://williamwalkerptc.com/calendar.ics">Copy calendar link</button>
+                <a role="menuitem" class="cal-subscribe__alt" id="cal-subscribe-dl" href="/calendar.ics?download=1">Add existing events <span class="cal-subscribe__note">one-time — doesn't subscribe</span></a>
+              </div>
+            </div>
+            <span class="cal-subs__hint" id="cal-sub-hint">Select a filter to subscribe to just those events.</span>
+            <!-- shares the hint's row: the hint shows unfiltered, this shows filtered -->
+            <button type="button" class="cal-subs__share" id="cal-share" hidden>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+              <span id="cal-share-label">Copy link to this view</span>
+            </button>
+            <a class="cal-subscribe--ext" href="https://williamwalker.beaverton.k12.or.us/cf_calendar/cms_calendar_feeds.cfm?element_id=43556&calendar_ids=605,359&team_ids=" target="_blank" rel="noopener">
+              Beaverton SD calendar <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="block block--white" aria-label="Posts">
+    <section class="block block--white cal-body" aria-live="polite" aria-busy="true">
       <div class="wrap">
-        <div class="post-cards">
-          <article class="post-card">
-            <a class="post-card__link" href="/blog/walkerthon-is-coming"><div class="post-card__body"><p class="post-card__date"><time datetime="2026-09-03">September 3, 2026</time></p><h3>September Newsletter: Walkerthon is coming</h3><p>Our biggest fundraiser of the year is September 24, with a goal of $40,000. Here is the schedule, how to donate, ways to volunteer, and what else is on the fall calendar.</p><span class="post-card__more">Read more <span aria-hidden="true">→</span></span></div></a>
-          </article>
-        </div>
+        <div id="cal-status" class="cal-status">Loading events…</div>
+        <div id="cal-list" class="cal-list"></div>
       </div>
     </section>
   </main>
 
-  <!-- ============ FOOTER ============ -->
   <footer class="site-footer">
     <div class="wrap footer-grid">
       <div>
         <p class="footer-brand">William Walker Elementary PTC</p>
-        <address class="footer-address">
-          2350 Cedar Hills Blvd.<br />
-          Beaverton, OR 97005
-        </address>
+        <address class="footer-address">2350 Cedar Hills Blvd.<br />Beaverton, OR 97005</address>
         <a class="footer-social" href="mailto:williamwalkerptc@gmail.com">williamwalkerptc@gmail.com</a>
         <ul class="social-row" aria-label="William Walker PTC on social media">
           <li><a class="social-btn" href="https://www.facebook.com/williamwalkerPTC" target="_blank" rel="noopener" aria-label="William Walker PTC on Facebook"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.9h-2.34V22c4.78-.79 8.45-4.93 8.45-9.94z"/></svg></a></li>
@@ -173,23 +193,21 @@
         <a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">PTC Contacts <span aria-hidden="true">&#8599;</span></a>
       </nav>
       <p class="footer-note">
-        A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an independent organization and is not officially administered by the Beaverton School District.
+        A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an
+        independent organization and is not officially administered by the Beaverton
+        School District. School events shown here come from the district's public calendar.
       </p>
     </div>
     <p class="footer-copy">© <span id="year">2026</span> William Walker Parent Teacher Club, Inc.</p>
   </footer>
 
-  <!-- Google Translate init -->
   <script>
     function googleTranslateElementInit() {
-      new google.translate.TranslateElement(
-        { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false },
-        'google_translate_element'
-      );
+      new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false }, 'google_translate_element');
     }
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
-
-  <script src="/script.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="calendar.js" defer></script>
 </body>
 </html>

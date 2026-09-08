@@ -9,6 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import assert from 'node:assert';
+import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TMP = mkdtempSync(join(tmpdir(), 'ww-blog-'));
@@ -39,7 +40,7 @@ author: Test Author
 blurb: A one-line summary.
 ---
 Opening paragraph with **bold**, *italic*, \`code\`, an
-[external link](https://example.com) and an [internal one](https://williamwalkerptc.com/calendar).
+[external link](https://example.com) and an [internal one](${config.site.origin}/calendar).
 
 ## A heading
 
@@ -103,8 +104,8 @@ Body.
 
   /* ---- link targeting ---- */
   assert(p.includes('href="https://example.com" target="_blank"'), 'external link needs target=_blank');
-  assert(p.includes('href="https://williamwalkerptc.com/calendar">'), 'internal link must not open a new tab');
-  assert(!p.includes('williamwalkerptc.com/calendar" target='), 'internal link wrongly marked external');
+  assert(p.includes('href="' + config.site.origin + '/calendar">'), 'internal link must not open a new tab');
+  assert(!p.includes(config.site.origin + '/calendar" target='), 'internal link wrongly marked external');
 
   /* ---- no hero image on disk → gradient, and no broken reference ---- */
   assert(p.includes('hero--gradient'), 'missing hero should fall back to gradient');
@@ -113,8 +114,8 @@ Body.
   /* ---- shared chrome came through the extracted lib ---- */
   assert(p.includes('href="/styles.css"') && p.includes('src="/script.js"'), 'absolute asset paths');
   assert(p.includes('class="site-footer"'), 'footer missing');
-  assert(p.includes('williamwalkerptc@gmail.com'), 'footer contact missing');
-  assert(p.includes('<link rel="canonical" href="https://williamwalkerptc.com/blog/live" />'), 'canonical wrong');
+  assert(p.includes(config.org.email), 'footer contact missing');
+  assert(p.includes('<link rel="canonical" href="' + config.site.origin + '/blog/live" />'), 'canonical wrong');
 
   /* ---- structured data is present and parses ---- */
   const ld = p.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);

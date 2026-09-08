@@ -30,7 +30,8 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlink
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
-import { head, topbar, FOOTER } from './lib/chrome.mjs';
+import { head, topbar, footer } from './lib/chrome.mjs';
+import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Overridable so the smoke test can build a fixture set into a temp directory
@@ -38,7 +39,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT = process.env.BLOG_CONTENT_DIR || join(ROOT, 'content', 'blog');
 const OUT = process.env.BLOG_OUT_DIR || join(ROOT, 'blog');
 const ASSETS = join(ROOT, 'assets', 'blog');
-const SITE = 'https://williamwalkerptc.com';
+const SITE = config.site.origin;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -154,9 +155,10 @@ function postPage(p, posts) {
   return head({
     title: p.title + ' — William Walker Elementary PTC',
     description: p.blurb,
-    canonical: SITE + '/blog/' + p.slug,
-    ogImage: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + '/assets/logo.png',
-  }).replace('</head>\n', jsonLd(p) + '</head>\n')
+    path: '/blog/' + p.slug,
+    ogImage: assetExists(p.hero_image) ? assetUrl(p.hero_image) : undefined,
+    headExtra: jsonLd(p),
+  })
     + topbar('blog')
     + '\n  <main id="main">\n'
     + heroHtml(p)
@@ -169,7 +171,7 @@ function postPage(p, posts) {
     + '      </div>\n    </section>\n'
     + '\n' + moreHtml(p, posts)
     + '  </main>\n\n'
-    + FOOTER;
+    + footer();
 }
 
 function indexPage(posts) {
@@ -179,8 +181,7 @@ function indexPage(posts) {
   return head({
     title: 'News — William Walker Elementary PTC',
     description: 'Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families.',
-    canonical: SITE + '/blog',
-    ogImage: SITE + '/assets/logo.png',
+    path: '/blog',
   })
     + topbar('blog')
     + `
@@ -203,7 +204,7 @@ ${body}      </div>
   </main>
 
 `
-    + FOOTER;
+    + footer();
 }
 
 /* ---------- build ---------- */

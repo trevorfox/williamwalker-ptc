@@ -1,22 +1,31 @@
 #!/usr/bin/env node
 /* Smoke test for the programs build. Run: node scripts/build-programs.test.mjs */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-execFileSync('node', [join(ROOT, 'scripts', 'build-programs.mjs')], { stdio: 'inherit' });
 
-const read = (f) => readFileSync(join(ROOT, 'programs', f), 'utf8');
+// Build into a temp directory rather than through the real programs/, so a
+// failing run cannot leave the committed output half-written.
+const OUT = mkdtempSync(join(tmpdir(), 'programs-test-'));
+try {
+execFileSync('node', [join(ROOT, 'scripts', 'build-programs.mjs')], {
+  stdio: 'inherit',
+  env: { ...process.env, PROGRAMS_OUT_DIR: OUT },
+});
+
+const read = (f) => readFileSync(join(OUT, f), 'utf8');
 
 // detail pages exist for non-stubs
 for (const slug of ['walkerthon', 'field-trips', 'art-literacy']) {
-  assert(existsSync(join(ROOT, 'programs', slug + '.html')), slug + '.html missing');
+  assert(existsSync(join(OUT, slug + '.html')), slug + '.html missing');
 }
 // stubs do NOT get pages
-assert(!existsSync(join(ROOT, 'programs', 'mystery-science.html')), 'stub generated a page');
+assert(!existsSync(join(OUT, 'mystery-science.html')), 'stub generated a page');
 
 const wt = read('walkerthon.html');
 assert(wt.includes('id="impact"'), 'impact section missing');
@@ -40,3 +49,6 @@ assert(idx.includes('/programs/walkerthon'), 'index links detail page');
 assert(!idx.includes('/programs/mystery-science'), 'index must not link stubs');
 
 console.log('build-programs smoke test: OK');
+} finally {
+  rmSync(OUT, { recursive: true, force: true });
+}
