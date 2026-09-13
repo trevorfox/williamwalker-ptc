@@ -26,7 +26,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"September Newsletter: Walkerthon is coming","description":"Our biggest fundraiser of the year is September 24, with a goal of $40,000. Here is the schedule, how to donate, ways to volunteer, and what else is on the fall calendar.","datePublished":"2026-09-03","author":{"@type":"Person","name":"William Walker PTC"},"publisher":{"@type":"Organization","name":"William Walker Elementary PTC"},"mainEntityOfPage":"https://williamwalkerptc.com/blog/walkerthon-is-coming","image":"https://williamwalkerptc.com/assets/logo.png"}</script>
 </head>
@@ -44,7 +44,7 @@
           </button>
           <div class="menu__panel" id="lang-menu" role="menu" aria-labelledby="lang-btn" hidden>
             <p class="menu__title" aria-hidden="true">Translate this page</p>
-            <button type="button" role="menuitemradio" aria-checked="true"  class="menu__item" data-lang="en">English</button>
+            <button type="button" role="menuitemradio" aria-checked="true" class="menu__item" data-lang="en">English</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="es">Español</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="zh-CN">中文</button>
             <button type="button" role="menuitemradio" aria-checked="false" class="menu__item" data-lang="vi">Tiếng Việt</button>
@@ -104,12 +104,12 @@
           <li><a href="/fundraising">Fundraising</a></li>
           <li><a href="/calendar">Calendar</a></li>
           <li class="nav-item has-sub">
-            <button class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about">
+            <button class="nav-sub-toggle is-current" aria-expanded="false" aria-controls="sub-about">
               About <span class="caret" aria-hidden="true"></span>
             </button>
             <ul id="sub-about" class="nav-sub">
               <li><a href="/#about">About the PTC</a></li>
-              <li><a href="/blog">PTC news</a></li>
+              <li><a href="/blog" aria-current="page">PTC news</a></li>
               <li><a href="/minutes">Meeting minutes</a></li>
               <li><a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">Board &amp; contacts <span aria-hidden="true">&#8599;</span></a></li>
             </ul>
@@ -168,6 +168,19 @@
       </div>
     </section>
 
+    <section class="block block--white post-more" aria-labelledby="more-title">
+      <div class="wrap">
+        <div class="post-more__head">
+          <p class="kicker kicker--blue">More from the PTC</p>
+          <h2 id="more-title" class="section-title">Recent posts.</h2>
+        </div>
+        <div class="post-cards">
+          <article class="post-card">
+            <a class="post-card__link" href="/blog/pastathon"><div class="post-card__media post-card__media--contain"><img src="/assets/blog/pastathon/banner.png" alt="" loading="lazy" /></div><div class="post-card__body"><p class="post-card__date"><time datetime="2026-09-13">September 13, 2026</time></p><h3>The Pastathon is on: dine at Pastini on Tuesday, September 15</h3><p>Pastini Cedar Hills will donate 20% of sales from participating tables to William Walker on Tuesday, September 15. Mention the school when you dine in or take out. Plus a Walkerthon reminder and a thank-you to Jamba.</p><span class="post-card__more">Read more <span aria-hidden="true">→</span></span></div></a>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -201,9 +214,7 @@
         <a href="https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub" target="_blank" rel="noopener">PTC Contacts <span aria-hidden="true">&#8599;</span></a>
       </nav>
       <p class="footer-note">
-        A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an
-        independent organization and is not officially administered by the Beaverton
-        School District.
+        A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an independent organization and is not officially administered by the Beaverton School District.
       </p>
     </div>
     <p class="footer-copy">© <span id="year">2026</span> William Walker Parent Teacher Club, Inc.</p>

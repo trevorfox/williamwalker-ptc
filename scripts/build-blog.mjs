@@ -14,6 +14,9 @@
      author: Jane Smith                       (required — shown on the post)
      blurb:  one-liner                        (required; index card + meta description)
      hero_image: fall-carnival/hero.jpg       (optional; relative to assets/blog/)
+     hero_style: banner                       (optional; show hero_image undimmed
+                                               below the title instead of behind it —
+                                               for artwork with its own text/logo)
      draft:  true                             (optional; skipped by the build)
 
    `date` is an explicit field rather than being read from git, because
@@ -38,7 +41,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
    instead of writing through the real content and output folders. */
 const CONTENT = process.env.BLOG_CONTENT_DIR || join(ROOT, 'content', 'blog');
 const OUT = process.env.BLOG_OUT_DIR || join(ROOT, 'blog');
-const ASSETS = join(ROOT, 'assets', 'blog');
+const ASSETS = process.env.BLOG_ASSETS_DIR || join(ROOT, 'assets', 'blog');
 const SITE = config.site.origin;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
@@ -74,6 +77,7 @@ function loadPosts() {
         author: d.author,
         blurb: d.blurb,
         hero_image: d.hero_image || '',
+        banner: d.hero_style === 'banner',
         draft: !!d.draft,
         body: parsed.body,
       };
@@ -92,8 +96,16 @@ function metaHtml(p) {
     + ' <span aria-hidden="true">·</span> ' + esc(p.author) + '</p>';
 }
 
+/* A "banner" post keeps the gradient hero for the title and shows the artwork
+   at full width right under it, untouched — no dark overlay, no cropping. */
+function bannerHtml(p) {
+  if (!p.banner || !assetExists(p.hero_image)) return '';
+  return '    <figure class="post-banner"><img src="' + esc(assetUrl(p.hero_image))
+    + '" alt="" /></figure>\n';
+}
+
 function heroHtml(p) {
-  const hasImg = assetExists(p.hero_image);
+  const hasImg = assetExists(p.hero_image) && !p.banner;
   const cls = hasImg ? 'hero hero--image' : 'hero hero--gradient';
   const style = hasImg ? ' style="--hero-img: url(\'' + esc(assetUrl(p.hero_image)) + '\')"' : '';
   return '    <section class="' + cls + '"' + style + ' aria-labelledby="hero-title">\n'
@@ -107,8 +119,9 @@ function heroHtml(p) {
 
 function cardHtml(p) {
   const hasImg = assetExists(p.hero_image);
+  const mediaCls = 'post-card__media' + (p.banner ? ' post-card__media--contain' : '');
   const media = hasImg
-    ? '<div class="post-card__media"><img src="' + esc(assetUrl(p.hero_image)) + '" alt="" loading="lazy" /></div>'
+    ? '<div class="' + mediaCls + '"><img src="' + esc(assetUrl(p.hero_image)) + '" alt="" loading="lazy" /></div>'
     : '';
   return '          <article class="post-card">\n'
     + '            <a class="post-card__link" href="/blog/' + esc(p.slug) + '">' + media
@@ -162,6 +175,7 @@ function postPage(p, posts) {
     + topbar('blog')
     + '\n  <main id="main">\n'
     + heroHtml(p)
+    + bannerHtml(p)
     + '\n    <section class="block block--white" aria-label="' + esc(p.title) + '">\n'
     + '      <div class="wrap">\n'
     + '        <div class="post-body">\n'
