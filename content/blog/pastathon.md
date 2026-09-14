@@ -2,7 +2,7 @@
 title: "The Pastathon is on: dine at Pastini on Tuesday, September 15"
 date: 2026-09-13
 author: William Walker PTC
-blurb: Pastini Cedar Hills will donate 20% of sales from participating tables to William Walker on Tuesday, September 15. Mention the school when you dine in or take out. Plus a Walkerthon reminder and a thank-you to Jamba.
+blurb: Pastini Cedar Hills will donate 20% of sales from participating tables to William Walker on Tuesday, September 15. Mention the school when you dine in or take out. Plus a Walkerthon reminder and a thank-you to Jamba Juice.
 hero_image: pastathon/banner.png
 hero_style: banner
 ---
@@ -28,7 +28,7 @@ school earns.
 
 - **Bring the extended family.** Grandparents, neighbors, and coworkers all count. Anyone who mentions William Walker is in.
 - **Go early or go takeout.** Pastini does not take reservations, so if the wait is long, order to go and eat at home.
-- **Spread the word.** Forward this post, share it in the [parent WhatsApp group](https://chat.whatsapp.com/CTh14MIljaWKwbKk9HtUbK?mode=gi_t), or just text a few families from your kid's class.
+- **Spread the word.** Forward this post or just text a few families from your kid's class.
 
 Thank you to Pastini for hosting us. Please tell them so when you are there.
 
@@ -47,11 +47,11 @@ now, and it is the pledges that come in before the run that get us to our goal o
 More ways to raise money for the school, including the Fred Meyer and Office Depot
 programs, are on our [fundraising page](https://williamwalkerptc.com/fundraising).
 
-## Thank you, Jamba
+## Thank you, Jamba Juice
 
-We are excited to share that **Jamba has agreed to support the Walkerthon** with
+We are excited to share that **Jamba Juice has agreed to support the Walkerthon** with
 post-run drinks for our students. After all those laps, a smoothie is going to hit
-the spot. Thank you, Jamba, for backing our Wildcats.
+the spot. Thank you, Jamba Juice, for backing our Wildcats.
 
 ## Dates to know
 
