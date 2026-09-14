@@ -1,0 +1,18 @@
+{
+  "name": "williamwalker-ptc-site",
+  "private": true,
+  "description": "William Walker Elementary PTC website — static HTML generated from site.config.mjs, src/pages/, and content/.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build:config": "node scripts/build-config.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
+    "build:blog": "node scripts/build-blog.mjs",
+    "build:programs": "node scripts/build-programs.mjs",
+    "build:site": "npm run build:config && npm run build:pages && npm run build:blog && npm run build:programs",
+    "test": "node scripts/verify-pages.test.mjs && node scripts/build-blog.test.mjs && node scripts/build-programs.test.mjs && node scripts/supplies-page.test.mjs && node scripts/calendar-categorize.test.mjs",
+    "serve": "npx serve ."
+  }
+}

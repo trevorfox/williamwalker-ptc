@@ -2,44 +2,84 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/calendar.ics", "destination": "/api/calendar?format=ics" },
-    { "source": "/calendar-:only.ics", "destination": "/api/calendar?format=ics&only=:only" }
+    {
+      "source": "/calendar.ics",
+      "destination": "/api/calendar?format=ics"
+    },
+    {
+      "source": "/calendar-:only.ics",
+      "destination": "/api/calendar?format=ics&only=:only"
+    }
   ],
   "redirects": [
-    { "source": "/parents", "destination": "/families", "permanent": true },
+    {
+      "source": "/parents",
+      "destination": "/families",
+      "permanent": true
+    },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.williamwalkerptc.com"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.williamwalkerptc.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.williamwalkerptc.com"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/:path*",
       "permanent": true
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "wwptc.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "wwptc.org"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "wwptc.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "wwptc.org"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/:path*",
       "permanent": true
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "www.wwptc.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.wwptc.org"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/",
       "permanent": true
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.wwptc.org" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.wwptc.org"
+        }
+      ],
       "destination": "https://williamwalkerptc.com/:path*",
       "permanent": true
     }

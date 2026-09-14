@@ -7,8 +7,10 @@
    Edge-cached for an hour to be polite to the school server.
    ========================================================================= */
 
-const FEED_URL =
-  'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD';
+const cfg = require('./site.config.generated.cjs');
+const CAL = cfg.calendar;
+
+const FEED_URL = CAL.districtFeedUrl;
 
 // Every PTC event, monthly meetings included, lives in a Google Calendar owned
 // by williamwalkerptc@gmail.com ("WEBSITE PUBLIC CALENDAR"). Board members with
@@ -18,7 +20,13 @@ const FEED_URL =
 // one recurring event, because Google emits a recurring event as a single
 // VEVENT + RRULE, which parseICS does not expand.
 const PTC_FEED_URL =
-  'https://calendar.google.com/calendar/ical/d80a9ae1fa7fe9ae54e7433f4bf6d7213afc849d84fed26fedd6e7c6a9d2a47b%40group.calendar.google.com/public/basic.ics';
+  'https://calendar.google.com/calendar/ical/' + encodeURIComponent(CAL.googleCalendarId) + '/public/basic.ics';
+
+// Identifies us to the district's server, and namespaces the UIDs we mint for
+// district events (Google's own events keep their UIDs, so an edit updates a
+// subscriber's copy rather than duplicating it).
+const HOST = cfg.deploy.canonicalHost;
+const USER_AGENT = 'PTC-Calendar/1.0 (+' + HOST + ')';
 
 /* ---------- categorization ----------
    The district marks most cultural/religious observances with a phrase in the
@@ -27,20 +35,19 @@ const PTC_FEED_URL =
    Walker event like "Diwali Celebration Night" must NOT be treated as an
    observance. Anything unrecognized falls through to 'school' so it stays
    visible — a miscategorized event is untidy, a vanished one loses a family. */
-const OBSERVANCE_MARKER = 'Cultural & Religious';
-const OBSERVANCE_TITLES = [
-  'christmas', 'easter', 'diwali', 'five days of diwali', 'eid al-fitr',
-  'eid al-adha', 'lunar new year', 'rosh hashanah', 'yom kippur',
-];
-const NO_SCHOOL_RE = /no school|school closed|no students/i;
-const DISTRICT_RE = /school board|board retreat|budget committee|budget 101|superintendent search|long-range facilities|public hearing/i;
+const OBSERVANCE_MARKER = CAL.rules.observanceMarker;
+const OBSERVANCE_TITLES = CAL.rules.observanceTitles;
+const NO_SCHOOL_RE = new RegExp(CAL.rules.noSchool, 'i');
+const DISTRICT_RE = new RegExp(CAL.rules.district, 'i');
 
+// The merged feed's own name is not a category, so it is kept out of this map:
+// everything here is a value ?only= will accept.
 const FEED_NAMES = {
-  ptc: 'William Walker PTC Events',
-  noschool: 'William Walker — No School Days',
-  school: 'William Walker — School Events',
-  district: 'William Walker — District & Board',
-  observance: 'William Walker — Cultural & Religious Observances',
+  ptc: CAL.feedNames.ptc,
+  noschool: CAL.feedNames.noschool,
+  school: CAL.feedNames.school,
+  district: CAL.feedNames.district,
+  observance: CAL.feedNames.observance,
 };
 
 /* ---------- timezone ----------
@@ -49,18 +56,21 @@ const FEED_NAMES = {
    be. Correct in Beaverton, wrong on a device set to any other zone. The values
    are Pacific wall-clock, so we parse them as-is and label them on the way out.
    RRULE-based rather than fixed dates so the DST rules stay valid indefinitely. */
-const TZID = 'America/Los_Angeles';
+const TZID = CAL.timezone;
+const DST = CAL.dst;
 const VTIMEZONE = [
   'BEGIN:VTIMEZONE',
   'TZID:' + TZID,
   'X-LIC-LOCATION:' + TZID,
   'BEGIN:DAYLIGHT',
-  'TZOFFSETFROM:-0800', 'TZOFFSETTO:-0700', 'TZNAME:PDT',
-  'DTSTART:19700308T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+  'TZOFFSETFROM:' + DST.standardOffset, 'TZOFFSETTO:' + DST.daylightOffset, 'TZNAME:' + DST.daylightName,
+  'DTSTART:19700308T020000',
+  'RRULE:FREQ=YEARLY;BYMONTH=' + DST.daylightStart.month + ';BYDAY=' + DST.daylightStart.day,
   'END:DAYLIGHT',
   'BEGIN:STANDARD',
-  'TZOFFSETFROM:-0700', 'TZOFFSETTO:-0800', 'TZNAME:PST',
-  'DTSTART:19701101T020000', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+  'TZOFFSETFROM:' + DST.daylightOffset, 'TZOFFSETTO:' + DST.standardOffset, 'TZNAME:' + DST.standardName,
+  'DTSTART:19701101T020000',
+  'RRULE:FREQ=YEARLY;BYMONTH=' + DST.standardStart.month + ';BYDAY=' + DST.standardStart.day,
   'END:STANDARD',
   'END:VTIMEZONE',
 ];
@@ -80,12 +90,12 @@ function categorize(title, description, source) {
 }
 
 const DAY = 86400000;
-const BACK = 2;        // days back
-const FWD_PAGE = 365;  // page shows 1 year out
-const FWD_FEED = 400;  // subscribe feed reaches ~13 months out
+const BACK = CAL.window.backDays;
+const FWD_PAGE = CAL.window.pageDays;
+const FWD_FEED = CAL.window.feedDays;
 
 let _cache = { at: 0, events: null };
-const CACHE_MS = 60 * 60 * 1000;
+const CACHE_MS = CAL.cacheMinutes * 60 * 1000;
 
 module.exports = async (req, res) => {
   // Two ways in: the ?format=ics query the site's own fetch uses, and a clean
@@ -124,10 +134,10 @@ module.exports = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     if (isIcs) {
       var feed = only ? events.filter(function (e) { return e.category === only; }) : events;
-      var name = only ? FEED_NAMES[only] : 'William Walker PTC + School';
+      var name = only ? FEED_NAMES[only] : CAL.feedNames.merged;
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       if (isDownload) {
-        res.setHeader('Content-Disposition', 'attachment; filename="william-walker-' + (only || 'calendar') + '.ics"');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + CAL.downloadPrefix + '-' + (only || 'calendar') + '.ics"');
       }
       res.status(200).send(buildICS(feed, name, !only));
     } else {
@@ -142,7 +152,7 @@ module.exports = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=300');
     if (isIcs) {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-      res.status(200).send(buildICS(fallback, 'William Walker PTC Events', false));
+      res.status(200).send(buildICS(fallback, CAL.feedNames.ptc, false));
     } else {
       res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
     }
@@ -151,7 +161,7 @@ module.exports = async (req, res) => {
 
 /* ---------- fetch + parse an iCal feed ---------- */
 async function fetchFeed(feedUrl, source) {
-  const r = await fetch(feedUrl, { headers: { 'User-Agent': 'WWPTC-Calendar/1.0 (+williamwalkerptc.com)' } });
+  const r = await fetch(feedUrl, { headers: { 'User-Agent': USER_AGENT } });
   if (!r.ok) throw new Error(source + ' feed status ' + r.status);
   return parseICS(await r.text(), false, source);
 }
@@ -243,14 +253,14 @@ function toEvent(cur, source) {
 function buildICS(events, name, prefixPtc) {
   const stamp = icsStamp(new Date());
   const out = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//William Walker PTC//Calendar//EN',
-    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (name || 'William Walker PTC'),
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//' + cfg.org.nameShort + '//Calendar//EN',
+    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (name || CAL.feedNames.ptc),
     'X-WR-TIMEZONE:' + TZID,
   ].concat(VTIMEZONE);
   events.forEach((e, i) => {
     // Google events keep their own UID so an edit updates the subscriber's copy
     // instead of creating a duplicate next to the old one.
-    const uid = e.uid || `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@williamwalkerptc.com`;
+    const uid = e.uid || `${e.source}-${e.date}-${(e.startTime || 'allday').replace(':', '')}-${i}@${HOST}`;
     out.push('BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + stamp);
     if (e.allDay) {
       out.push('DTSTART;VALUE=DATE:' + e.date.replace(/-/g, ''));
@@ -262,7 +272,7 @@ function buildICS(events, name, prefixPtc) {
       out.push('DTSTART;TZID=' + TZID + ':' + e.date.replace(/-/g, '') + 'T' + e.startTime.replace(':', '') + '00');
       out.push('DTEND;TZID=' + TZID + ':' + e.date.replace(/-/g, '') + 'T' + end.replace(':', '') + '00');
     }
-    out.push('SUMMARY:' + escICS((prefixPtc && e.source === 'ptc' ? 'PTC: ' : '') + e.title));
+    out.push('SUMMARY:' + escICS((prefixPtc && e.source === 'ptc' ? CAL.orgEventPrefix : '') + e.title));
     if (e.location) out.push('LOCATION:' + escICS(e.location));
     if (e.description) out.push('DESCRIPTION:' + escICS(e.description));
     out.push('END:VEVENT');

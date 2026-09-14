@@ -33,13 +33,14 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlink
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
-import { head, topbar, FOOTER } from './lib/chrome.mjs';
+import { head, topbar, footer } from './lib/chrome.mjs';
+import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CONTENT = join(ROOT, 'content', 'programs');
-const OUT = join(ROOT, 'programs');
+const CONTENT = process.env.PROGRAMS_CONTENT_DIR || join(ROOT, 'content', 'programs');
+const OUT = process.env.PROGRAMS_OUT_DIR || join(ROOT, 'programs');
 const ASSETS = join(ROOT, 'assets', 'programs');
-const SITE = 'https://williamwalkerptc.com';
+const SITE = config.site.origin;
 const DEFAULT_DONATE = 'https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026';
 const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all PTC programs.';
 
@@ -173,8 +174,8 @@ function detailPage(p, entries) {
   return head({
     title: p.title + ' — William Walker Elementary PTC',
     description: p.blurb,
-    canonical: SITE + '/programs/' + p.slug,
-    ogImage: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + '/assets/logo.png',
+    path: '/programs/' + p.slug,
+    ogImage: assetExists(p.hero_image) ? assetUrl(p.hero_image) : undefined,
   })
     + topbar('programs')
     + '\n  <main id="main">\n'
@@ -188,7 +189,7 @@ function detailPage(p, entries) {
     + '\n' + impactHtml(p)
     + '\n' + moreHtml(p, entries)
     + '  </main>\n\n'
-    + FOOTER;
+    + footer();
 }
 
 function indexPage(entries) {
@@ -197,8 +198,7 @@ function indexPage(entries) {
   return head({
     title: 'Programs & Events — William Walker Elementary PTC',
     description: 'Everything the William Walker PTC funds and hosts — enrichment programs, school events, and how your support makes them happen.',
-    canonical: SITE + '/programs',
-    ogImage: SITE + '/assets/logo.png',
+    path: '/programs',
   })
     + topbar('programs')
     + `
@@ -240,7 +240,7 @@ ${events.map(cardHtml).join('\n')}
   </main>
 
 `
-    + FOOTER;
+    + footer();
 }
 
 /* ---------- build ---------- */
