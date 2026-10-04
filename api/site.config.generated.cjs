@@ -277,8 +277,12 @@ module.exports = {
         "to": "/families"
       },
       {
+        "from": "/blog/school-cents",
+        "to": "/blog/school-cents-october"
+      },
+      {
         "from": "/meeting-link",
-        "to": "https://meet.google.com/qqt-xssu-tcd",
+        "to": "https://meet.google.com/qsu-qztm-vqw",
         "permanent": false
       }
     ]
