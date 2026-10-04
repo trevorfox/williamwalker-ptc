@@ -2,6 +2,8 @@
 title: "Shop at Washington Square? Snap the receipt for William Walker"
 date: 2026-10-04
 author: William Walker PTC
+hero_image: school-cents/logo.png
+hero_style: banner
 blurb: Washington Square is sharing up to $15,000 with local schools through School Cents, and the share depends on how many receipts families upload. Every dollar is 5 points, six stores are double points in October, and it takes about a minute per receipt.
 ---
 Washington Square is giving away **up to $15,000 to local schools this year through

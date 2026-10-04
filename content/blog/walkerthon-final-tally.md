@@ -22,7 +22,7 @@ proposed budget** and help decide where this money goes.
 - **Check for a company match.** Many local employers match donations, including Adidas, Alaska Airlines, Apple, Columbia, Google, Intel, Kaiser, Microsoft, and Nike. A match can double your gift after the fact.
 - **Donations are open all year.** Give online through [Zeffy](https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026), or by cash or check to the PTC. All donations are tax deductible, and our tax ID is 26-3542951.
 - **Join the fundraising committee.** [Email us](mailto:williamwalkerptc@gmail.com?subject=Fundraising%20Committee) to help continue the work.
-- **Shop at Washington Square.** Every receipt you upload earns points for William Walker through School Cents, and six stores are double points in October. [Here is how it works](/blog/school-cents).
+- **Shop at Washington Square.** Every receipt you upload earns points for William Walker through School Cents, and six stores are double points in October. [Here is how it works](/blog/school-cents-october).
 
 ## Thank you, thank you, thank you
 
