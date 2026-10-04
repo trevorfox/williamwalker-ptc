@@ -41,6 +41,7 @@ title: Fall Carnival recap
 date: 2026-09-15
 author: Test Author
 blurb: A one-line summary.
+tags: community, fundraising
 ---
 Opening paragraph with **bold**, *italic*, \`code\`, an
 [external link](https://example.com) and an [internal one](${config.site.origin}/calendar).
@@ -60,6 +61,7 @@ title: An earlier post
 date: 2026-08-01
 author: Test Author
 blurb: Older, should sort below.
+tags: newsletter
 ---
 Body.
 `);
@@ -156,11 +158,49 @@ Body.
   assert(idx.includes('post-card__media post-card__media--contain'), 'banner card should fit the whole artwork instead of cropping');
   assert((idx.match(/post-card__media--contain/g) || []).length === 1, 'only the banner post should use the contain card');
 
+  /* ---- tags: chips on the post, static chips on cards, one page per used tag ---- */
+  const tagKeys = Object.keys(config.blog.tags);
+  assert(tagKeys.includes('fundraising') && tagKeys.includes('newsletter'), 'test assumes these tags exist in config');
+  assert(p.includes('<a class="tag-chip" href="/blog/tag/fundraising">'), 'post hero should link its tags');
+  assert(p.indexOf('/blog/tag/fundraising') > p.indexOf('hero-title') && p.indexOf('/blog/tag/fundraising') < p.indexOf('class="prose"'), 'tag chips belong in the hero');
+  assert(!idx.includes('<a class="tag-chip" href="/blog/tag/fundraising">'
+    + config.blog.tags.fundraising.label + '</a></li>'), 'cards must not nest a tag link inside the card link');
+  assert(idx.includes('<li><span class="tag-chip">' + config.blog.tags.fundraising.label + '</span></li>'), 'card should show static tag chips');
+  assert(built('tag/fundraising.html') && built('tag/community.html') && built('tag/newsletter.html'), 'tag pages missing');
+  const unused = tagKeys.find((k) => !['fundraising', 'community', 'newsletter'].includes(k));
+  if (unused) assert(!built('tag/' + unused + '.html'), 'a tag with no posts must not get a page');
+  const fund = read('tag/fundraising.html');
+  assert(fund.includes('/blog/live') && !fund.includes('/blog/older'), 'tag page lists the wrong posts');
+  assert(!fund.includes('/blog/unfinished'), 'tag page lists a draft');
+  assert(fund.includes('<link rel="canonical" href="' + config.site.origin + '/blog/tag/fundraising" />'), 'tag page canonical wrong');
+  assert(fund.includes('aria-current="page">' + config.blog.tags.fundraising.label + '</a>'), 'tag page should mark its own filter chip');
+  assert(!idx.includes('aria-current="page">' + config.blog.tags.fundraising.label), 'index must not mark a tag as current');
+  assert(idx.includes('class="tag-chip is-active" href="/blog"'), 'index should mark "All posts" as current');
+  if (unused) assert(!idx.includes('/blog/tag/' + unused + '"'), 'filter row must not link to an empty tag page');
+  const tagLd = JSON.parse(p.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1].replace(/\\u003c/g, '<'));
+  const expectedKeywords = tagKeys.filter((k) => ['community', 'fundraising'].includes(k)).map((k) => config.blog.tags[k].label).join(', ');
+  assert.strictEqual(tagLd.keywords, expectedKeywords, 'keywords should follow config order, not the order written in the post');
+
+  /* ---- an unknown tag is a build error, not a silent new page ---- */
+  post('typo.md', `---
+title: Typo in tag
+date: 2026-09-16
+author: Test Author
+blurb: Should fail the build.
+tags: fundrasing
+---
+Body.
+`);
+  assert.throws(build, /unknown tag "fundrasing"/, 'misspelled tag must fail the build');
+  rmSync(join(SRC, 'typo.md'));
+
   /* ---- stale output is cleared between builds ---- */
   rmSync(join(SRC, 'older.md'));
   build();
   assert(!built('older.html'), 'removing a post should remove its page');
   assert(built('live.html'), 'unrelated pages should survive a rebuild');
+  assert(!built('tag/newsletter.html'), 'a tag page whose last post is removed should disappear');
+  assert(built('tag/fundraising.html'), 'tag pages still in use should survive a rebuild');
 } finally {
   rmSync(TMP, { recursive: true, force: true });
 }

@@ -2,6 +2,7 @@
 title: "Walkerthon final tally: $36,017, a new high score"
 date: 2026-10-04
 author: William Walker PTC
+tags: newsletter, fundraising
 blurb: We set an ambitious $40,000 goal and our community came through with a record $36,017, with company matches still coming in. Here are the thank-yous, the October calendar, and what to expect at the October 7 PTC meeting, where we vote on this year's budget.
 hero_image: walkerthon-final-tally/hero.jpg
 ---

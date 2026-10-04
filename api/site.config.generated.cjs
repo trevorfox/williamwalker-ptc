@@ -126,6 +126,11 @@ module.exports = {
       "href": "/calendar"
     },
     {
+      "key": "blog",
+      "label": "News",
+      "href": "/blog"
+    },
+    {
       "label": "About",
       "id": "sub-about",
       "items": [
@@ -133,11 +138,6 @@ module.exports = {
           "key": "about",
           "label": "About the PTC",
           "href": "/#about"
-        },
-        {
-          "key": "blog",
-          "label": "PTC news",
-          "href": "/blog"
         },
         {
           "key": "minutes",
@@ -194,7 +194,7 @@ module.exports = {
         "href": "/teachers"
       },
       {
-        "label": "PTC news",
+        "label": "News",
         "href": "/blog"
       },
       {
@@ -212,6 +212,26 @@ module.exports = {
       }
     ],
     "note": "A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an independent organization and is not officially administered by the Beaverton School District."
+  },
+  "blog": {
+    "tags": {
+      "fundraising": {
+        "label": "Fundraising",
+        "blurb": "Walkerthon, dine-out nights, School Cents, and every other way the money comes in."
+      },
+      "community": {
+        "label": "Community",
+        "blurb": "Food nights, family events, and the things that make William Walker feel like a neighborhood."
+      },
+      "newsletter": {
+        "label": "Newsletter",
+        "blurb": "The biweekly PTC newsletter, posted here so it is easy to find later."
+      },
+      "events": {
+        "label": "Events",
+        "blurb": "Trunk or Treat, Field Day, the Book Fair, and other dates for the family calendar."
+      }
+    }
   },
   "calendar": {
     "districtFeedUrl": "https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD",

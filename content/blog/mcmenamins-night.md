@@ -2,6 +2,7 @@
 title: "Dine at McMenamins Cedar Hills on Tuesday, October 13 and half goes to William Walker"
 date: 2026-10-09
 author: William Walker PTC
+tags: community, fundraising
 blurb: McMenamins Cedar Hills is hosting a Friends & Family Night for William Walker on Tuesday, October 13, from 5 p.m. to close. 50% of all dine-in sales go to the school. No flyer or code needed. Just show up and eat.
 hero_image: mcmenamins-night/hero.jpg
 draft: true

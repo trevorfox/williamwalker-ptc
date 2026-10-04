@@ -2,6 +2,7 @@
 title: "September Newsletter: Walkerthon is coming"
 date: 2026-09-03
 author: William Walker PTC
+tags: newsletter, fundraising
 blurb: Our biggest fundraiser of the year is September 24, with a goal of $40,000. Here is the schedule, how to donate, ways to volunteer, and what else is on the fall calendar.
 ---
 Welcome to the first edition of our biweekly PTC newsletter. We held our first PTC
