@@ -129,15 +129,12 @@ const COMMON = {
 
 // Blog pages passed topbar('blog'), a key the old four-key implementation did
 // not recognize, so they highlighted nothing. The nav tree walk understands
-// submenu leaves, so they now mark both the link and the About toggle.
+// submenu leaves, so they now mark the link. (It also marked the About toggle
+// while News lived in that menu; since 2026-10-04 News is a top-level item, so
+// the toggle rewrite that used to live here no longer applies and the blog
+// baselines were re-snapshotted from the build.)
 const BLOG_NAV_FIX = {
-  rewrite: [
-    {
-      from: /class="nav-sub-toggle" aria-expanded="false" aria-controls="sub-about"/,
-      to: 'class="nav-sub-toggle is-current" aria-expanded="false" aria-controls="sub-about"',
-      why: 'About toggle now marks that the current page is inside it',
-    },
-  ],
+  rewrite: [],
   added: [{ re: /^<a href="\/blog" aria-current="page">$/, why: 'nav link to the current section is now marked' }],
   removed: [{ re: /^<a href="\/blog">$/, why: 'same link, before it was marked (the footer copy is untouched)' }],
 };

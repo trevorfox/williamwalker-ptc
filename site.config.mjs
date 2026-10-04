@@ -136,12 +136,12 @@ export default {
     { key: 'programs', label: 'Programs', href: '/programs' },
     { key: 'fundraising', label: 'Fundraising', href: '/fundraising' },
     { key: 'calendar', label: 'Calendar', href: '/calendar' },
+    { key: 'blog', label: 'News', href: '/blog' },
     {
       label: 'About',
       id: 'sub-about',
       items: [
         { key: 'about', label: 'About the PTC', href: '/#about' },
-        { key: 'blog', label: 'PTC news', href: '/blog' },
         { key: 'minutes', label: 'Meeting minutes', href: '/minutes' },
         { key: 'contacts', label: 'Board & contacts', href: BOARD_CONTACTS, external: true },
       ],
@@ -160,7 +160,7 @@ export default {
       { label: 'Families', href: '/families' },
       { label: 'Family FAQ', href: '/families/faq' },
       { label: 'Teachers', href: '/teachers' },
-      { label: 'PTC news', href: '/blog' },
+      { label: 'News', href: '/blog' },
       { label: 'Meeting minutes', href: '/minutes' },
       { label: 'Connect', href: '/#connect' },
       { label: 'PTC Contacts', href: BOARD_CONTACTS, external: true },
@@ -180,6 +180,32 @@ export default {
      "Subscribe", or RSS icon. Beaverton runs a ColdFusion CMS, hence the
      feed.cfm URL; Finalsite, Edlio, and Apptegy districts all differ, and a
      few publish no feed at all. Set districtFeedUrl to null to run PTC-only. */
+  /* ---------- blog / news ---------- */
+  blog: {
+    /* The tag vocabulary, in display order. A post's `tags:` line (comma-
+       separated) may only use keys from this list — the build fails on anything
+       else, so the taxonomy stays small on purpose. Each tag with at least one
+       post gets a page at /blog/tag/<key>; `blurb` is that page's lede. */
+    tags: {
+      fundraising: {
+        label: 'Fundraising',
+        blurb: 'Walkerthon, dine-out nights, School Cents, and every other way the money comes in.',
+      },
+      community: {
+        label: 'Community',
+        blurb: 'Food nights, family events, and the things that make William Walker feel like a neighborhood.',
+      },
+      newsletter: {
+        label: 'Newsletter',
+        blurb: 'The biweekly PTC newsletter, posted here so it is easy to find later.',
+      },
+      events: {
+        label: 'Events',
+        blurb: 'Trunk or Treat, Field Day, the Book Fair, and other dates for the family calendar.',
+      },
+    },
+  },
+
   calendar: {
     districtFeedUrl: 'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD',
 

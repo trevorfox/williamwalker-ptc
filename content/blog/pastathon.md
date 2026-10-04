@@ -2,6 +2,7 @@
 title: "The Pastathon is on: dine at Pastini on Tuesday, September 15"
 date: 2026-09-13
 author: William Walker PTC
+tags: community, fundraising
 blurb: Pastini Cedar Hills will donate 20% of sales from participating tables to William Walker on Tuesday, September 15. Mention the school when you dine in or take out. Plus a Walkerthon reminder and a thank-you to Jamba Juice.
 hero_image: pastathon/banner.png
 hero_style: banner

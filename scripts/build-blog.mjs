@@ -17,6 +17,10 @@
      hero_style: banner                       (optional; show hero_image undimmed
                                                below the title instead of behind it —
                                                for artwork with its own text/logo)
+     tags:   fundraising, community           (optional; comma-separated keys from
+                                               config.blog.tags — unknown keys fail
+                                               the build; each used tag gets a page
+                                               at /blog/tag/<key>)
      draft:  true                             (optional; skipped by the build)
 
    `date` is an explicit field rather than being read from git, because
@@ -43,6 +47,8 @@ const CONTENT = process.env.BLOG_CONTENT_DIR || join(ROOT, 'content', 'blog');
 const OUT = process.env.BLOG_OUT_DIR || join(ROOT, 'blog');
 const ASSETS = process.env.BLOG_ASSETS_DIR || join(ROOT, 'assets', 'blog');
 const SITE = config.site.origin;
+const TAGS = (config.blog && config.blog.tags) || {};
+const TAG_KEYS = Object.keys(TAGS);
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -53,6 +59,17 @@ function fail(msg) { console.error('build-blog: ' + msg); process.exit(1); }
 function fmtDate(iso) {
   const [y, m, d] = iso.split('-').map(Number);
   return MONTHS[m - 1] + ' ' + d + ', ' + y;
+}
+
+/* `tags: a, b` → ['a', 'b'], in config order, deduplicated. Unknown keys are a
+   hard error so a typo cannot silently create a one-post tag page. */
+function parseTags(raw, file) {
+  if (raw === undefined || raw === '') return [];
+  const given = String(raw).split(',').map(function (t) { return t.trim().toLowerCase(); }).filter(Boolean);
+  given.forEach(function (t) {
+    if (!TAGS[t]) fail(file + ': unknown tag "' + t + '" (allowed: ' + TAG_KEYS.join(', ') + ')');
+  });
+  return TAG_KEYS.filter(function (k) { return given.indexOf(k) !== -1; });
 }
 
 /* ---------- load + validate ---------- */
@@ -78,6 +95,7 @@ function loadPosts() {
         blurb: d.blurb,
         hero_image: d.hero_image || '',
         banner: d.hero_style === 'banner',
+        tags: parseTags(d.tags, f),
         draft: !!d.draft,
         body: parsed.body,
       };
@@ -104,15 +122,47 @@ function bannerHtml(p) {
     + '" alt="" /></figure>\n';
 }
 
+function tagUrl(k) { return '/blog/tag/' + k; }
+
+/* Linked chips (post hero). Cards use the static form because the whole card
+   is already one <a>, and anchors cannot nest. */
+function tagListHtml(tags, linked) {
+  if (!tags.length) return '';
+  return '<ul class="post-tags" aria-label="Topics">'
+    + tags.map(function (k) {
+      return linked
+        ? '<li><a class="tag-chip" href="' + tagUrl(k) + '">' + esc(TAGS[k].label) + '</a></li>'
+        : '<li><span class="tag-chip">' + esc(TAGS[k].label) + '</span></li>';
+    }).join('')
+    + '</ul>';
+}
+
+/* "All · Fundraising · Community …" row above a post list. Only tags that have
+   at least one post appear, so the row never links to an empty page. */
+function filtersHtml(usedTags, current) {
+  if (!usedTags.length) return '';
+  const chip = function (href, label, active) {
+    return '<a class="tag-chip' + (active ? ' is-active' : '') + '" href="' + href + '"'
+      + (active ? ' aria-current="page"' : '') + '>' + esc(label) + '</a>';
+  };
+  return '        <nav class="post-filters" aria-label="Filter posts by topic">\n'
+    + '          <span class="post-filters__label">Show:</span>\n'
+    + '          ' + chip('/blog', 'All posts', !current) + '\n'
+    + usedTags.map(function (k) { return '          ' + chip(tagUrl(k), TAGS[k].label, k === current); }).join('\n') + '\n'
+    + '        </nav>\n';
+}
+
 function heroHtml(p) {
   const hasImg = assetExists(p.hero_image) && !p.banner;
   const cls = hasImg ? 'hero hero--image' : 'hero hero--gradient';
   const style = hasImg ? ' style="--hero-img: url(\'' + esc(assetUrl(p.hero_image)) + '\')"' : '';
+  const tags = tagListHtml(p.tags, true);
   return '    <section class="' + cls + '"' + style + ' aria-labelledby="hero-title">\n'
     + '      <div class="hero__inner">\n'
     + '        <p class="hero__eyebrow">PTC News</p>\n'
     + '        <h1 id="hero-title" class="hero__title">' + esc(p.title) + '</h1>\n'
     + '        ' + metaHtml(p) + '\n'
+    + (tags ? '        ' + tags + '\n' : '')
     + '      </div>\n'
     + '    </section>\n';
 }
@@ -129,6 +179,7 @@ function cardHtml(p) {
     + '<p class="post-card__date"><time datetime="' + p.date + '">' + fmtDate(p.date) + '</time></p>'
     + '<h3>' + esc(p.title) + '</h3>'
     + '<p>' + esc(p.blurb) + '</p>'
+    + tagListHtml(p.tags, false)
     + '<span class="post-card__more">Read more <span aria-hidden="true">→</span></span>'
     + '</div></a>\n'
     + '          </article>';
@@ -160,6 +211,7 @@ function jsonLd(p) {
     mainEntityOfPage: SITE + '/blog/' + p.slug,
     image: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + '/assets/logo.png',
   };
+  if (p.tags.length) data.keywords = p.tags.map(function (k) { return TAGS[k].label; }).join(', ');
   return '  <script type="application/ld+json">' + JSON.stringify(data).replace(/</g, '\\u003c') + '</script>\n';
 }
 
@@ -188,32 +240,38 @@ function postPage(p, posts) {
     + footer();
 }
 
-function indexPage(posts) {
-  const body = posts.length
-    ? '        <div class="post-cards">\n' + posts.map(cardHtml).join('\n') + '\n        </div>\n'
+/* Tags that at least one live post uses, in config order. */
+function usedTags(posts) {
+  return TAG_KEYS.filter(function (k) {
+    return posts.some(function (p) { return p.tags.indexOf(k) !== -1; });
+  });
+}
+
+/* The index and every tag page are the same list page with a different hero
+   and a different slice of posts; `tag` is undefined for the index. */
+function listPage(shown, all, o) {
+  const body = shown.length
+    ? '        <div class="post-cards">\n' + shown.map(cardHtml).join('\n') + '\n        </div>\n'
     : '        <p class="post-empty">No posts yet — check back soon.</p>\n';
   return head({
-    title: 'News — William Walker Elementary PTC',
-    description: 'Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families.',
-    path: '/blog',
+    title: o.title + ' — William Walker Elementary PTC',
+    description: o.description,
+    path: o.path,
   })
     + topbar('blog')
     + `
   <main id="main">
     <section class="hero hero--gradient" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="hero__eyebrow">William Walker PTC</p>
-        <h1 id="hero-title" class="hero__title">News</h1>
-        <p class="hero__lede">
-          Event recaps, fundraising results, and what the PTC is up to at
-          William Walker.
-        </p>
+        <p class="hero__eyebrow">${esc(o.eyebrow)}</p>
+        <h1 id="hero-title" class="hero__title">${esc(o.heading)}</h1>
+        <p class="hero__lede">${esc(o.lede)}</p>
       </div>
     </section>
 
     <section class="block block--white" aria-label="Posts">
       <div class="wrap">
-${body}      </div>
+${filtersHtml(usedTags(all), o.tag)}${body}      </div>
     </section>
   </main>
 
@@ -221,11 +279,40 @@ ${body}      </div>
     + footer();
 }
 
+function indexPage(posts) {
+  return listPage(posts, posts, {
+    title: 'News',
+    heading: 'News',
+    eyebrow: 'William Walker PTC',
+    lede: 'Event recaps, fundraising results, and what the PTC is up to at William Walker.',
+    description: 'Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families.',
+    path: '/blog',
+  });
+}
+
+function tagPage(k, posts) {
+  const t = TAGS[k];
+  const shown = posts.filter(function (p) { return p.tags.indexOf(k) !== -1; });
+  return listPage(shown, posts, {
+    title: t.label + ' — News',
+    heading: t.label,
+    eyebrow: 'PTC News',
+    lede: t.blurb,
+    description: t.blurb,
+    path: tagUrl(k),
+    tag: k,
+  });
+}
+
 /* ---------- build ---------- */
 const posts = loadPosts();
-mkdirSync(OUT, { recursive: true });
+const TAG_OUT = join(OUT, 'tag');
+mkdirSync(TAG_OUT, { recursive: true });
 for (const f of readdirSync(OUT)) if (f.endsWith('.html')) unlinkSync(join(OUT, f));
+for (const f of readdirSync(TAG_OUT)) if (f.endsWith('.html')) unlinkSync(join(TAG_OUT, f));
 
 for (const p of posts) writeFileSync(join(OUT, p.slug + '.html'), postPage(p, posts));
 writeFileSync(join(OUT, 'index.html'), indexPage(posts));
-console.log('build-blog: wrote ' + posts.length + ' post(s) + index');
+const tags = usedTags(posts);
+for (const k of tags) writeFileSync(join(TAG_OUT, k + '.html'), tagPage(k, posts));
+console.log('build-blog: wrote ' + posts.length + ' post(s) + index + ' + tags.length + ' tag page(s)');

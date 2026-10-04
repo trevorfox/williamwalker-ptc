@@ -2,6 +2,7 @@
 title: Fall Carnival raised $4,200 for classroom grants
 date: 2026-10-18
 author: Jane Smith
+tags: fundraising, community
 blurb: Four hundred families, eleven volunteer shifts, and a dunk tank that never sat empty — here is what the night brought in and where it goes.
 hero_image: fall-carnival/hero.jpg
 draft: true
@@ -9,6 +10,11 @@ draft: true
 Copy this file to start a post. Rename it to the URL you want — `fall-carnival.md`
 becomes `williamwalkerptc.com/blog/fall-carnival` — then delete the `draft: true`
 line when it's ready to go live. Files starting with `_` are never built.
+
+`tags` is a comma-separated list and may only use the keys defined under `blog.tags`
+in `site.config.mjs` (currently fundraising, community, newsletter, events). Each tag
+gets a page at `/blog/tag/<tag>`, and the build fails on a tag it does not know, so add
+a new one to the config first.
 
 Hero images go in `assets/blog/<slug>/`, and `hero_image` is the path relative to
 that folder. Leave the field out and the post falls back to the brand gradient,

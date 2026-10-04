@@ -970,6 +970,27 @@ html.hc .program-card__body h3, html.hc .program-card__body p, html.hc .program-
 .post-more__head .section-title { max-width: none; }
 
 .post-back { margin: 2.2rem 0 0; font-weight: 700; }
+
+/* tag chips: static <span>s inside cards (the whole card is already a link),
+   real links in the post hero and in the filter row above the index */
+.post-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag-chip {
+  display: inline-flex; align-items: center; font-weight: 700; font-size: 0.8rem; line-height: 1.2;
+  letter-spacing: 0.02em; color: var(--blue-deep); background: var(--blue-tint);
+  border-radius: 999px; padding: 0.26rem 0.72rem; text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+a.tag-chip:hover { background: rgba(47,103,178,0.18); }
+.post-card .post-tags { margin-top: 0.1rem; }
+.hero .post-tags { justify-content: center; margin-top: 0.9rem; }
+.hero .tag-chip { color: #fff; background: rgba(255,255,255,0.14); border: 1.5px solid rgba(255,255,255,0.45); }
+.hero a.tag-chip:hover { background: rgba(255,255,255,0.26); }
+.post-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 1.6rem; }
+.post-filters__label { font-weight: 700; font-size: 0.86rem; color: var(--ink-soft); margin-right: 0.2rem; }
+.post-filters .tag-chip { font-size: 0.9rem; padding: 0.42rem 0.95rem; }
+.post-filters .tag-chip.is-active { background: var(--blue); color: #fff; }
+html.hc .tag-chip { border: 1.5px solid currentColor; }
+html.hc .post-filters .tag-chip.is-active { background: #003a8c; color: #fff; }
 .post-empty { color: var(--ink-soft); font-weight: 700; margin: 0; }
 
 .prose blockquote {
