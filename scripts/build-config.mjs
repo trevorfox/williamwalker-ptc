@@ -63,10 +63,13 @@ writeFileSync(
 const { deploy } = config;
 const canonical = 'https://' + deploy.canonicalHost;
 
+// Permanent (308) unless the entry opts out — browsers cache 308s, so a
+// target that gets edited (a meeting link, a seasonal form) should set
+// permanent: false to get a 307 instead.
 const redirects = (deploy.redirects || []).map((r) => ({
   source: r.from,
   destination: r.to,
-  permanent: true,
+  permanent: r.permanent !== false,
 }));
 
 // Apex and every path, per alias host. Two stanzas each because a wildcard

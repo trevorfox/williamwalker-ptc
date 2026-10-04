@@ -253,6 +253,10 @@ export default {
     // Old URLs kept alive so existing links and printed flyers still work.
     redirects: [
       { from: '/parents', to: '/families' },
+      // Short link for the monthly meeting's video call. The target changes
+      // when the calendar invite does, so it is NOT permanent: a 308 would be
+      // cached by browsers and keep sending people to a stale call.
+      { from: '/meeting-link', to: 'https://meet.google.com/qqt-xssu-tcd', permanent: false },
     ],
   },
 };

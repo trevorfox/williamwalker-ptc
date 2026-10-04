@@ -18,6 +18,11 @@
       "permanent": true
     },
     {
+      "source": "/meeting-link",
+      "destination": "https://meet.google.com/qqt-xssu-tcd",
+      "permanent": false
+    },
+    {
       "source": "/",
       "has": [
         {
