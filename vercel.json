@@ -18,6 +18,11 @@
       "permanent": true
     },
     {
+      "source": "/meeting-link",
+      "destination": "https://meet.google.com/ekc-ixva-xdt",
+      "permanent": false
+    },
+    {
       "source": "/",
       "has": [
         {

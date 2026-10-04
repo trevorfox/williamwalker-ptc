@@ -275,6 +275,11 @@ module.exports = {
       {
         "from": "/parents",
         "to": "/families"
+      },
+      {
+        "from": "/meeting-link",
+        "to": "https://meet.google.com/ekc-ixva-xdt",
+        "permanent": false
       }
     ]
   }
