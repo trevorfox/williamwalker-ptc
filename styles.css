@@ -992,6 +992,8 @@ a.tag-chip:hover { background: rgba(47,103,178,0.18); }
 html.hc .tag-chip { border: 1.5px solid currentColor; }
 html.hc .post-filters .tag-chip.is-active { background: #003a8c; color: #fff; }
 .post-empty { color: var(--ink-soft); font-weight: 700; margin: 0; }
+.posts-strip__more { margin: 1.6rem 0 0; font-weight: 800; }
+.posts-strip__more a { color: var(--blue); }
 
 .prose blockquote {
   margin: 1.6rem 0; padding: 0.2rem 0 0.2rem 1.1rem;

@@ -32,6 +32,15 @@
    A page needing extra <head> markup puts it in a sibling <name>.head.html —
    families/faq.html does this for its FAQPage JSON-LD.
 
+   A page may embed the newest posts carrying a blog tag:
+
+     <!-- latest-posts tag="fundraising" count="3" -->
+
+   It expands to the same card grid the blog uses plus an "All … news" link to
+   the tag page (scripts/lib/posts.mjs). The tag must exist in config.blog.tags.
+   Because the strip is baked in at build time, publishing a post with that tag
+   changes this page too — the full `npm run build:site` handles it.
+
    Unlike the blog and programs builds this does NOT clear its output first:
    it writes into the repository root, where deleting every *.html would take
    hand-maintained files with it. Renaming a page means deleting the old
@@ -44,6 +53,7 @@ import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseFrontmatter } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
+import { TAGS, loadPosts, latestStripHtml } from './lib/posts.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = process.env.PAGES_SRC_DIR || join(ROOT, 'src', 'pages');
@@ -92,6 +102,22 @@ function parse(file) {
   };
 }
 
+/* ---------- latest-posts strips ---------- */
+
+const STRIP_RE = /<!--\s*latest-posts\s+tag="([a-z-]+)"(?:\s+count="(\d+)")?\s*-->/g;
+let postsCache = null;
+function posts() {
+  if (!postsCache) postsCache = loadPosts(fail);
+  return postsCache;
+}
+
+function expandStrips(body, rel) {
+  return body.replace(STRIP_RE, function (_, tag, count) {
+    if (!TAGS[tag]) fail(rel + ': latest-posts tag "' + tag + '" is not in config.blog.tags');
+    return latestStripHtml(posts(), tag, count ? Number(count) : 3).replace(/\n$/, '');
+  });
+}
+
 /* ---------- render ---------- */
 
 function render(p) {
@@ -106,7 +132,7 @@ function render(p) {
     headExtra: p.headExtra,
   })
     + topbar(d.nav)
-    + '\n' + p.body + '\n\n'
+    + '\n' + expandStrips(p.body, p.rel) + '\n\n'
     + footer({
       scripts: (d.scripts || []).map((s) => s.src),
       noteSuffix: d.note_suffix,

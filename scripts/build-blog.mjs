@@ -4,6 +4,9 @@
 
    Usage:  node scripts/build-blog.mjs
 
+   Loading, validation, and the card markup live in scripts/lib/posts.mjs so
+   build-pages.mjs can embed "latest posts" strips with the same look.
+
    One .md file = one post. The FILENAME is the URL slug:
    content/blog/fall-carnival.md  →  https://williamwalkerptc.com/blog/fall-carnival
 
@@ -33,80 +36,25 @@
 
    Missing hero images degrade to the brand gradient.
    ========================================================================= */
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
+import { writeFileSync, readdirSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
+import { esc, renderMd } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
+import {
+  TAGS, loadPosts, usedTags, postsWithTag, fmtDate, assetUrl, assetExists,
+  tagUrl, tagListHtml, cardHtml,
+} from './lib/posts.mjs';
 import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Overridable so the smoke test can build a fixture set into a temp directory
-   instead of writing through the real content and output folders. */
-const CONTENT = process.env.BLOG_CONTENT_DIR || join(ROOT, 'content', 'blog');
+   instead of writing through the real output folder. (The content and assets
+   directories are overridden the same way, inside lib/posts.mjs.) */
 const OUT = process.env.BLOG_OUT_DIR || join(ROOT, 'blog');
-const ASSETS = process.env.BLOG_ASSETS_DIR || join(ROOT, 'assets', 'blog');
 const SITE = config.site.origin;
-const TAGS = (config.blog && config.blog.tags) || {};
-const TAG_KEYS = Object.keys(TAGS);
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'];
 
 function fail(msg) { console.error('build-blog: ' + msg); process.exit(1); }
-
-/* Format YYYY-MM-DD without going through Date(), which would parse the
-   string as UTC midnight and render as the previous day west of Greenwich. */
-function fmtDate(iso) {
-  const [y, m, d] = iso.split('-').map(Number);
-  return MONTHS[m - 1] + ' ' + d + ', ' + y;
-}
-
-/* `tags: a, b` → ['a', 'b'], in config order, deduplicated. Unknown keys are a
-   hard error so a typo cannot silently create a one-post tag page. */
-function parseTags(raw, file) {
-  if (raw === undefined || raw === '') return [];
-  const given = String(raw).split(',').map(function (t) { return t.trim().toLowerCase(); }).filter(Boolean);
-  given.forEach(function (t) {
-    if (!TAGS[t]) fail(file + ': unknown tag "' + t + '" (allowed: ' + TAG_KEYS.join(', ') + ')');
-  });
-  return TAG_KEYS.filter(function (k) { return given.indexOf(k) !== -1; });
-}
-
-/* ---------- load + validate ---------- */
-function loadPosts() {
-  if (!existsSync(CONTENT)) fail('content dir missing: ' + CONTENT);
-  const posts = readdirSync(CONTENT)
-    .filter(function (f) { return f.endsWith('.md') && !f.startsWith('_'); })
-    .sort()
-    .map(function (f) {
-      const parsed = parseFrontmatter(readFileSync(join(CONTENT, f), 'utf8'), f, fail);
-      const d = parsed.data;
-      ['title', 'date', 'author', 'blurb'].forEach(function (k) {
-        if (!d[k]) fail(f + ': missing required "' + k + '"');
-      });
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(d.date))) {
-        fail(f + ': "date" must be YYYY-MM-DD, got "' + d.date + '"');
-      }
-      return {
-        slug: f.replace(/\.md$/, ''),
-        title: d.title,
-        date: String(d.date),
-        author: d.author,
-        blurb: d.blurb,
-        hero_image: d.hero_image || '',
-        banner: d.hero_style === 'banner',
-        tags: parseTags(d.tags, f),
-        draft: !!d.draft,
-        body: parsed.body,
-      };
-    })
-    .filter(function (p) { return !p.draft; });
-  posts.sort(function (a, b) { return b.date.localeCompare(a.date) || a.title.localeCompare(b.title); });
-  return posts;
-}
-
-function assetUrl(rel) { return '/assets/blog/' + rel; }
-function assetExists(rel) { return !!rel && existsSync(join(ASSETS, rel)); }
 
 /* ---------- page pieces ---------- */
 function metaHtml(p) {
@@ -122,25 +70,10 @@ function bannerHtml(p) {
     + '" alt="" /></figure>\n';
 }
 
-function tagUrl(k) { return '/blog/tag/' + k; }
-
-/* Linked chips (post hero). Cards use the static form because the whole card
-   is already one <a>, and anchors cannot nest. */
-function tagListHtml(tags, linked) {
-  if (!tags.length) return '';
-  return '<ul class="post-tags" aria-label="Topics">'
-    + tags.map(function (k) {
-      return linked
-        ? '<li><a class="tag-chip" href="' + tagUrl(k) + '">' + esc(TAGS[k].label) + '</a></li>'
-        : '<li><span class="tag-chip">' + esc(TAGS[k].label) + '</span></li>';
-    }).join('')
-    + '</ul>';
-}
-
 /* "All · Fundraising · Community …" row above a post list. Only tags that have
    at least one post appear, so the row never links to an empty page. */
-function filtersHtml(usedTags, current) {
-  if (!usedTags.length) return '';
+function filtersHtml(used, current) {
+  if (!used.length) return '';
   const chip = function (href, label, active) {
     return '<a class="tag-chip' + (active ? ' is-active' : '') + '" href="' + href + '"'
       + (active ? ' aria-current="page"' : '') + '>' + esc(label) + '</a>';
@@ -148,7 +81,7 @@ function filtersHtml(usedTags, current) {
   return '        <nav class="post-filters" aria-label="Filter posts by topic">\n'
     + '          <span class="post-filters__label">Show:</span>\n'
     + '          ' + chip('/blog', 'All posts', !current) + '\n'
-    + usedTags.map(function (k) { return '          ' + chip(tagUrl(k), TAGS[k].label, k === current); }).join('\n') + '\n'
+    + used.map(function (k) { return '          ' + chip(tagUrl(k), TAGS[k].label, k === current); }).join('\n') + '\n'
     + '        </nav>\n';
 }
 
@@ -165,24 +98,6 @@ function heroHtml(p) {
     + (tags ? '        ' + tags + '\n' : '')
     + '      </div>\n'
     + '    </section>\n';
-}
-
-function cardHtml(p) {
-  const hasImg = assetExists(p.hero_image);
-  const mediaCls = 'post-card__media' + (p.banner ? ' post-card__media--contain' : '');
-  const media = hasImg
-    ? '<div class="' + mediaCls + '"><img src="' + esc(assetUrl(p.hero_image)) + '" alt="" loading="lazy" /></div>'
-    : '';
-  return '          <article class="post-card">\n'
-    + '            <a class="post-card__link" href="/blog/' + esc(p.slug) + '">' + media
-    + '<div class="post-card__body">'
-    + '<p class="post-card__date"><time datetime="' + p.date + '">' + fmtDate(p.date) + '</time></p>'
-    + '<h3>' + esc(p.title) + '</h3>'
-    + '<p>' + esc(p.blurb) + '</p>'
-    + tagListHtml(p.tags, false)
-    + '<span class="post-card__more">Read more <span aria-hidden="true">→</span></span>'
-    + '</div></a>\n'
-    + '          </article>';
 }
 
 function moreHtml(p, posts) {
@@ -240,13 +155,6 @@ function postPage(p, posts) {
     + footer();
 }
 
-/* Tags that at least one live post uses, in config order. */
-function usedTags(posts) {
-  return TAG_KEYS.filter(function (k) {
-    return posts.some(function (p) { return p.tags.indexOf(k) !== -1; });
-  });
-}
-
 /* The index and every tag page are the same list page with a different hero
    and a different slice of posts; `tag` is undefined for the index. */
 function listPage(shown, all, o) {
@@ -292,7 +200,7 @@ function indexPage(posts) {
 
 function tagPage(k, posts) {
   const t = TAGS[k];
-  const shown = posts.filter(function (p) { return p.tags.indexOf(k) !== -1; });
+  const shown = postsWithTag(posts, k);
   return listPage(shown, posts, {
     title: t.label + ' — News',
     heading: t.label,
@@ -305,7 +213,7 @@ function tagPage(k, posts) {
 }
 
 /* ---------- build ---------- */
-const posts = loadPosts();
+const posts = loadPosts(fail);
 const TAG_OUT = join(OUT, 'tag');
 mkdirSync(TAG_OUT, { recursive: true });
 for (const f of readdirSync(OUT)) if (f.endsWith('.html')) unlinkSync(join(OUT, f));
