@@ -278,7 +278,7 @@ module.exports = {
       },
       {
         "from": "/meeting-link",
-        "to": "https://meet.google.com/ekc-ixva-xdt",
+        "to": "https://meet.google.com/qqt-xssu-tcd",
         "permanent": false
       }
     ]
