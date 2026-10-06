@@ -245,13 +245,12 @@ body { top: 0 !important; }
 .hero__lede { font-size: clamp(1.08rem, 2vw, 1.32rem); color: var(--ink-soft); max-width: 620px; margin: 1.4rem auto 2rem; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
 .hero__next {
-  display: inline-block; margin-top: 1.6rem; padding: 0.5rem 1.1rem; border-radius: 999px;
-  background: var(--green-tint); border: 1px solid var(--line); color: var(--green-dark);
-  font-weight: 700; font-size: 0.98rem; text-decoration: none;
+  display: inline-block; margin-top: 1.6rem; color: var(--green-dark);
+  font-weight: 700; font-size: 0.98rem; text-decoration: underline; text-underline-offset: 0.2em;
 }
 .hero__next[hidden] { display: none; }
 .hero__next::after { content: " \2192"; }
-.hero__next:hover { background: var(--white); border-color: var(--green); }
+.hero__next:hover { color: var(--blue-dark); }
 
 /* ---------- buttons ---------- */
 .btn {
