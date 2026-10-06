@@ -38,6 +38,12 @@ if (!existsSync(join(ROOT, 'assets', 'programs', 'walkerthon', 'hero.jpg'))) {
   assert(wt.includes('hero--gradient'), 'missing hero image should fall back to gradient');
   assert(!wt.includes('/assets/programs/walkerthon/hero.jpg'), 'page references missing image');
 }
+// sponsors: grouped by tier; logo when the file exists, name tile when it doesn't
+assert(wt.includes('id="sponsors-title"'), 'sponsors section missing');
+assert(wt.indexOf('>Champion</h3>') < wt.indexOf('>Hero</h3>') && wt.indexOf('>Hero</h3>') < wt.indexOf('>Friend</h3>'), 'sponsor tiers out of order');
+assert(wt.includes('src="/assets/programs/walkerthon/sponsors/fine-counsel.png" alt="Fine Counsel"'), 'sponsor logo missing');
+assert(/<span class="sponsor__name">Qdoba<\/span>/.test(wt) === !existsSync(join(ROOT, 'assets', 'programs', 'walkerthon', 'sponsors', 'qdoba.png')), 'logo-less sponsor should fall back to name');
+assert(!read('field-trips.html').includes('sponsors-title'), 'sponsors section rendered without sponsors');
 // chrome + shared assets are absolute paths
 assert(wt.includes('href="/styles.css"') && wt.includes('src="/script.js"'), 'absolute asset paths');
 

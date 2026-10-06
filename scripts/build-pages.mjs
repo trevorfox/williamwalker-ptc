@@ -48,6 +48,11 @@
      <!-- faq-jsonld -->       (in a .head.html) FAQPage JSON-LD generated from
                                the page's own <details class="qa-item"> blocks
 
+   And a sponsor logo grid, from the sponsors list in a program's markdown
+   (scripts/lib/sponsors.mjs), so the list is kept in one place:
+
+     <!-- sponsors program="walkerthon" -->
+
    Unlike the blog and programs builds this does NOT clear its output first:
    it writes into the repository root, where deleting every *.html would take
    hand-maintained files with it. Renaming a page means deleting the old
@@ -62,6 +67,7 @@ import { parseFrontmatter } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
 import { TAGS, loadPosts, latestStripHtml } from './lib/posts.mjs';
 import { fillTokens, minutesHtml, faqJsonLd } from './lib/page-data.mjs';
+import { loadProgramSponsors, sponsorsHtml } from './lib/sponsors.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = process.env.PAGES_SRC_DIR || join(ROOT, 'src', 'pages');
@@ -126,6 +132,17 @@ function expandStrips(body, rel) {
   });
 }
 
+/* ---------- sponsor grids ---------- */
+
+const SPONSORS_RE = /^[ \t]*<!--\s*sponsors\s+program="([a-z0-9-]+)"\s*-->[ \t]*\n?/gm;
+
+function expandSponsors(body, rel) {
+  return body.replace(SPONSORS_RE, function (_, slug) {
+    const p = loadProgramSponsors(slug, rel, fail);
+    return sponsorsHtml(slug, p.sponsors, 'Our ' + p.title + ' sponsors.');
+  });
+}
+
 /* ---------- minutes, tokens, FAQ schema ---------- */
 
 const MINUTES_RE = /^[ \t]*<!--\s*minutes-list\s*-->[ \t]*\n?/m;
@@ -153,7 +170,7 @@ function expandHead(headExtra, body, rel, path) {
 
 function render(p) {
   const d = p.data;
-  const body = fillTokens(expandStrips(expandMinutes(p.body, p.rel), p.rel), p.rel, fail);
+  const body = fillTokens(expandStrips(expandSponsors(expandMinutes(p.body, p.rel), p.rel), p.rel), p.rel, fail);
   return head({
     title: d.title,
     description: d.description,

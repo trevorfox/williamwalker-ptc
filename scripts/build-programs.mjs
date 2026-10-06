@@ -21,6 +21,9 @@
        - image: field-trips/coast.jpg
          caption: Tidepooling at the coast
      donate_url: https://…               (optional override of the site default)
+     sponsors:                           (optional; logo grid — see scripts/lib/sponsors.mjs)
+       - name: Fine Counsel
+         tier: Hero
      review_note: …                      (ignored by the build; editorial flag)
 
    Body = story in markdown (## / ### headings, paragraphs, - lists,
@@ -34,6 +37,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
+import { checkSponsors, sponsorsHtml } from './lib/sponsors.mjs';
 import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -68,6 +72,7 @@ function loadEntries() {
       stub: !!d.stub, cta: d.cta || '', impact: d.impact || [],
       hero_image: d.hero_image || '', gallery: Array.isArray(d.gallery) ? d.gallery : [],
       donate_url: d.donate_url || DEFAULT_DONATE,
+      sponsors: checkSponsors(d.sponsors, f, fail),
       body: parsed.body,
     };
   });
@@ -186,6 +191,7 @@ function detailPage(p, entries) {
     + '        <div class="prose">\n' + renderMd(p.body, SITE) + '\n        </div>\n'
     + '      </div>\n    </section>\n'
     + '\n' + galleryHtml(p)
+    + (p.sponsors.length ? '\n' + sponsorsHtml(p.slug, p.sponsors) : '')
     + '\n' + impactHtml(p)
     + '\n' + moreHtml(p, entries)
     + '  </main>\n\n'

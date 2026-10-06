@@ -4,6 +4,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fillTokens, minutesHtml, faqJsonLd } from './lib/page-data.mjs';
+import { loadProgramSponsors, sponsorsHtml, slugify } from './lib/sponsors.mjs';
 import config from '../site.config.mjs';
 
 let failed = 0;
@@ -59,6 +60,16 @@ check('FAQ JSON-LD drops decorative arrows', !ld.mainEntity.some((q) => /[↗→
 check('FAQ JSON-LD site links are absolute', !ld.mainEntity.some((q) => /href="[/#]/.test(q.acceptedAnswer.text)));
 check('faqJsonLd finds nothing on a page without qa-items', faqJsonLd('<p>hi</p>', '/x').count === 0);
 
+/* ---------- sponsors ---------- */
+
+check('sponsor logo names drop apostrophes', slugify("Leo's Lair") === 'leos-lair');
+const wt = loadProgramSponsors('walkerthon', 't', fail);
+check('sponsors load from the program markdown', wt.sponsors.length > 0 && wt.title === 'Walkerthon');
+check('unknown sponsors program is a build error', throws(() => loadProgramSponsors('nope', 't', fail)));
+check('sponsor grid takes a custom title', sponsorsHtml('walkerthon', wt.sponsors, 'Our Walkerthon sponsors.').includes('>Our Walkerthon sponsors.</h2>'));
+const fundraising = readFileSync('fundraising.html', 'utf8');
+check('fundraising page shows the Walkerthon sponsors', fundraising.includes('>Our Walkerthon sponsors.</h2>') && fundraising.includes('alt="Fine Counsel"'));
+
 /* ---------- built output ---------- */
 
 function htmlFiles(dir) {
@@ -67,7 +78,7 @@ function htmlFiles(dir) {
     return e.name.endsWith('.html') ? [join(dir, e.name)] : [];
   });
 }
-const leftovers = htmlFiles('.').filter((f) => /\{\{|<!--\s*(minutes-list|faq-jsonld)\s*-->/.test(readFileSync(f, 'utf8')));
+const leftovers = htmlFiles('.').filter((f) => /\{\{|<!--\s*(minutes-list|faq-jsonld|sponsors)\s*-->/.test(readFileSync(f, 'utf8')));
 check('no unfilled {{tokens}} or fill markers in built pages', leftovers.length === 0);
 if (leftovers.length) console.log('    in: ' + leftovers.join(', '));
 
