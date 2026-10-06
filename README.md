@@ -46,6 +46,7 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 |---|---|
 | Org name, domain, email, address, social links | `site.config.mjs` |
 | Nav or footer links | `site.config.mjs` (`nav`, `footer.links`) |
+| Where every Donate button goes | `site.config.mjs` (`DONATE`). Pages use `{{links.donate}}`; blog posts keep the link they were written with. |
 | Google Analytics ID | `site.config.mjs` (`analytics.ga4Id`; `null` disables the tag) |
 | Pinned languages in the top bar | `site.config.mjs` (`i18n.languages`) |
 | Calendar feeds, event categorization | `site.config.mjs` (`calendar`) |

@@ -100,7 +100,9 @@ export default {
 
   /* ---------- off-site destinations ---------- */
   links: {
-    // Zeffy peer-to-peer page. Also the default for a program's donate button.
+    // Zeffy peer-to-peer page. Every Donate link on the site: the nav button,
+    // {{links.donate}} in src/pages/, and a program's default donate button.
+    // Blog posts keep the link they were written with.
     donate: DONATE,
     // Appears in the About menu and again in the footer.
     boardContacts: BOARD_CONTACTS,

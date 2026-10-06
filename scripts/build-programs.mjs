@@ -45,7 +45,7 @@ const CONTENT = process.env.PROGRAMS_CONTENT_DIR || join(ROOT, 'content', 'progr
 const OUT = process.env.PROGRAMS_OUT_DIR || join(ROOT, 'programs');
 const ASSETS = join(ROOT, 'assets', 'programs');
 const SITE = config.site.origin;
-const DEFAULT_DONATE = 'https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026';
+const DEFAULT_DONATE = config.links.donate;
 const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all PTC programs.';
 
 function fail(msg) { console.error('build-programs: ' + msg); process.exit(1); }
