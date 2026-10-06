@@ -46,12 +46,13 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 |---|---|
 | Org name, domain, email, address, social links | `site.config.mjs` |
 | Nav or footer links | `site.config.mjs` (`nav`, `footer.links`) |
+| Where every Donate button goes | `site.config.mjs` (`DONATE`). Pages use `{{links.donate}}`; blog posts keep the link they were written with. |
 | Google Analytics ID | `site.config.mjs` (`analytics.ga4Id`; `null` disables the tag) |
 | Pinned languages in the top bar | `site.config.mjs` (`i18n.languages`) |
 | Calendar feeds, event categorization | `site.config.mjs` (`calendar`) |
 | Domains and redirects | `site.config.mjs` (`deploy`), then `npm run build:config` |
 | Page copy | the matching file in `src/pages/` |
-| A blog post or program | the matching markdown in `content/` |
+| A blog post or program | the matching markdown in `content/`. The home page list of programs and events comes from `content/programs/` too: a program links there once it has a page (no `stub: true`), in `order`. |
 | Meeting minutes | `content/minutes.json` — one line per meeting: `{ "month": "2026-10", "url": "…" }`, plus `"draft": true` until approved. The Google Doc must be shared "Anyone with the link: Viewer". |
 | PTC meeting day or time | `site.config.mjs` (`meetings`). Pages use `{{meetings.time}}`; blog posts keep the time they were written with. |
 | A Family FAQ question | `src/pages/families/faq.html` only. The Google FAQ data in `faq.head.html` is generated from it. |

@@ -5,6 +5,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fillTokens, minutesHtml, faqJsonLd } from './lib/page-data.mjs';
 import { loadProgramSponsors, sponsorsHtml, slugify } from './lib/sponsors.mjs';
+import { loadPrograms, programListHtml } from './lib/programs.mjs';
 import config from '../site.config.mjs';
 
 let failed = 0;
@@ -70,6 +71,21 @@ check('sponsor grid takes a custom title', sponsorsHtml('walkerthon', wt.sponsor
 const fundraising = readFileSync('fundraising.html', 'utf8');
 check('fundraising page shows the Walkerthon sponsors', fundraising.includes('>Our Walkerthon sponsors.</h2>') && fundraising.includes('alt="Fine Counsel"'));
 
+/* ---------- home page programs list ---------- */
+
+const progs = loadPrograms(fail);
+const home = readFileSync('index.html', 'utf8');
+const pages = progs.filter((e) => !e.stub);
+check('home links every program and event that has a page', pages.every((e) => home.includes('href="/programs/' + e.slug + '"')));
+check('home lists every stub too, unlinked', progs.filter((e) => e.stub).every((e) => home.includes(e.title.replace(/&/g, '&amp;')) && !home.includes('href="/programs/' + e.slug + '"')));
+const list = programListHtml([
+  { slug: 'b', title: 'B', type: 'program', blurb: 'b', stub: true },
+  { slug: 'a', title: 'A & Co', type: 'program', blurb: 'a', stub: false },
+  { slug: 'e', title: 'E', type: 'event', blurb: 'An event.', stub: false },
+]);
+check('program pills link non-stubs and escape titles', list.includes('<li class="pill">B</li>') && list.includes('<a href="/programs/a">A &amp; Co</a>'));
+check('event cards carry the blurb and a link when there is a page', list.includes('<p>An event.</p>') && list.includes('href="/programs/e">Learn more'));
+
 /* ---------- built output ---------- */
 
 function htmlFiles(dir) {
@@ -78,7 +94,7 @@ function htmlFiles(dir) {
     return e.name.endsWith('.html') ? [join(dir, e.name)] : [];
   });
 }
-const leftovers = htmlFiles('.').filter((f) => /\{\{|<!--\s*(minutes-list|faq-jsonld|sponsors)\s*-->/.test(readFileSync(f, 'utf8')));
+const leftovers = htmlFiles('.').filter((f) => /\{\{|<!--\s*(minutes-list|faq-jsonld|sponsors|program-list)\s*-->/.test(readFileSync(f, 'utf8')));
 check('no unfilled {{tokens}} or fill markers in built pages', leftovers.length === 0);
 if (leftovers.length) console.log('    in: ' + leftovers.join(', '));
 
