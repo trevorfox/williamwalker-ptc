@@ -32,53 +32,23 @@
    Missing images degrade gracefully: hero → brand gradient, gallery
    entries skipped (section omitted if empty), cards → initial tile.
    ========================================================================= */
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
+import { writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
+import { esc, renderMd } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
-import { checkSponsors, sponsorsHtml } from './lib/sponsors.mjs';
+import { sponsorsHtml } from './lib/sponsors.mjs';
+import { loadPrograms } from './lib/programs.mjs';
 import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CONTENT = process.env.PROGRAMS_CONTENT_DIR || join(ROOT, 'content', 'programs');
 const OUT = process.env.PROGRAMS_OUT_DIR || join(ROOT, 'programs');
 const ASSETS = join(ROOT, 'assets', 'programs');
 const SITE = config.site.origin;
-const DEFAULT_DONATE = config.links.donate;
 const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all PTC programs.';
 
 function fail(msg) { console.error('build-programs: ' + msg); process.exit(1); }
 
-/* ---------- load + validate ---------- */
-function loadEntries() {
-  if (!existsSync(CONTENT)) fail('content dir missing: ' + CONTENT);
-  const entries = readdirSync(CONTENT).filter(function (f) { return f.endsWith('.md'); }).sort().map(function (f) {
-    const parsed = parseFrontmatter(readFileSync(join(CONTENT, f), 'utf8'), f, fail);
-    const d = parsed.data;
-    ['title', 'type', 'blurb'].forEach(function (k) { if (!d[k]) fail(f + ': missing required "' + k + '"'); });
-    if (d.type !== 'program' && d.type !== 'event') fail(f + ': type must be "program" or "event", got "' + d.type + '"');
-    if (!d.stub) {
-      if (!d.cta) fail(f + ': missing "cta" (required unless stub: true)');
-      if (!Array.isArray(d.impact) || !d.impact.length) fail(f + ': needs at least one impact tier (or stub: true)');
-      d.impact.forEach(function (t) {
-        if (typeof t.amount !== 'number' || !t.buys) fail(f + ': impact tiers need numeric "amount" + "buys"');
-      });
-    }
-    return {
-      slug: f.replace(/\.md$/, ''),
-      title: d.title, type: d.type, blurb: d.blurb,
-      order: typeof d.order === 'number' ? d.order : 999,
-      stub: !!d.stub, cta: d.cta || '', impact: d.impact || [],
-      hero_image: d.hero_image || '', gallery: Array.isArray(d.gallery) ? d.gallery : [],
-      donate_url: d.donate_url || DEFAULT_DONATE,
-      sponsors: checkSponsors(d.sponsors, f, fail),
-      body: parsed.body,
-    };
-  });
-  entries.sort(function (a, b) { return a.order - b.order || a.title.localeCompare(b.title); });
-  return entries;
-}
 
 function assetUrl(rel) { return '/assets/programs/' + rel; }
 function assetExists(rel) { return !!rel && existsSync(join(ASSETS, rel)); }
@@ -218,7 +188,7 @@ function indexPage(entries) {
           here's what the PTC makes happen at William Walker, and how you can help.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--green" href="${DEFAULT_DONATE}" target="_blank" rel="noopener">Donate <span aria-hidden="true">↗</span></a>
+          <a class="btn btn--green" href="${config.links.donate}" target="_blank" rel="noopener">Donate <span aria-hidden="true">↗</span></a>
           <a class="btn btn--blue" href="/#get-involved">Sign up for updates</a>
         </div>
       </div>
@@ -250,7 +220,7 @@ ${events.map(cardHtml).join('\n')}
 }
 
 /* ---------- build ---------- */
-const entries = loadEntries();
+const entries = loadPrograms(fail);
 mkdirSync(OUT, { recursive: true });
 for (const f of readdirSync(OUT)) if (f.endsWith('.html')) unlinkSync(join(OUT, f));
 
