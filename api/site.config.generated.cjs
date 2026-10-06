@@ -63,7 +63,8 @@ module.exports = {
   },
   "meetings": {
     "day": "first Wednesday",
-    "time": "5:45–7:00 PM"
+    "time": "5:45–7:00 PM",
+    "online": "Google Meet"
   },
   "social": [
     {
