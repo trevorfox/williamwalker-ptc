@@ -102,7 +102,8 @@ function decode(s) {
 }
 
 /* Google accepts a small set of HTML tags in an Answer's text. Keep links and
-   lists, drop the "PTC guidance" source tag and the decorative arrows, and
+   lists, drop the "PTC guidance" source tag, the decorative arrows and anything
+   hidden until script.js fills it in (the next-meeting date), and
    strip every attribute except href. Site links are made absolute, since the
    data is read away from the page. */
 function absoluteHref(href, pagePath) {
@@ -115,6 +116,7 @@ function answerHtml(html, pagePath) {
   return html
     .replace(/<p class="src-tag[^"]*">[\s\S]*?<\/p>/g, '')
     .replace(/\s*<span aria-hidden="true">[\s\S]*?<\/span>/g, '')
+    .replace(/<span [^>]*\shidden>[\s\S]*?<\/span>/g, '')
     .replace(/<(\w+)(\s[^>]*)?>/g, function (_, tag, attrs) {
       const href = attrs && /\shref="([^"]*)"/.exec(attrs);
       return '<' + tag + (href ? ' href="' + absoluteHref(href[1], pagePath) + '"' : '') + '>';

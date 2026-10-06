@@ -205,8 +205,8 @@ nav: teachers
           </p>
         </div>
         <div class="meeting-card">
-          <p class="meeting-card__label">When we meet</p>
-          <p class="meeting-card__when">{{meetings.day|cap}} <span>of every month</span></p>
+          <p class="meeting-card__label" data-next-meeting-swap="Next meeting">When we meet</p>
+          <p class="meeting-card__when"><b data-next-meeting-date>{{meetings.day|cap}}</b> <span data-next-meeting-swap="{{meetings.day|cap}} of every month">of every month</span></p>
           <ul class="meeting-card__facts">
             <li><span class="meeting-card__k">Time</span> {{meetings.time}}</li>
             <li><span class="meeting-card__k">Where</span> School cafeteria + {{meetings.online}}</li>
