@@ -359,6 +359,68 @@
     });
   }
 
+  /* ---------- next PTC meeting date ----------
+     Pages name the meeting generically ("First Wednesday"). When the calendar
+     feed has an upcoming PTC meeting, swap in its real date. Markup hooks:
+       [data-next-meeting-date]   text becomes "Wednesday, November 4"
+       [data-next-meeting-swap]   text becomes the attribute's value, with
+                                  {date}, {short} ("Wed, Nov 4") and {time}
+                                  ("5:45 PM") filled in
+       [data-next-meeting-show]   un-hidden
+     Any failure (or no meeting ahead, e.g. summer) leaves the page as written.
+     The header menu carries a hook, so this runs on every page: the answer is
+     kept in sessionStorage for the day to spare the feed. */
+  (function nextMeeting() {
+    if (!window.fetch || !window.Intl) return;
+    var KEY = 'wwptc-next-meeting';
+    var today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date());
+
+    function fmt(date, opts) {
+      opts.timeZone = 'UTC';
+      return new Date(date + 'T12:00:00Z').toLocaleDateString('en-US', opts);
+    }
+    function fmtTime(t) {
+      var p = String(t || '').split(':'), h = +p[0];
+      if (p.length < 2 || isNaN(h)) return '';
+      return ((h + 11) % 12 + 1) + ':' + p[1] + (h < 12 ? ' AM' : ' PM');
+    }
+    function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+    function render(m) {
+      var date = fmt(m.date, { weekday: 'long', month: 'long', day: 'numeric' });
+      var short = fmt(m.date, { weekday: 'short', month: 'short', day: 'numeric' });
+      var time = fmtTime(m.time);
+      each('[data-next-meeting-date]', function (el) { el.textContent = date; });
+      each('[data-next-meeting-swap]', function (el) {
+        el.textContent = el.getAttribute('data-next-meeting-swap')
+          .replace('{date}', date).replace('{short}', short)
+          .replace(time ? '{time}' : ', {time}', time);
+      });
+      each('[data-next-meeting-show]', function (el) { el.hidden = false; });
+    }
+
+    try {
+      var hit = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+      if (hit && hit.on === today && hit.date >= today) { render(hit); return; }
+    } catch (e) {}
+
+    fetch('/api/calendar')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var next = null;
+        (data.events || []).forEach(function (e) {
+          if (e.source !== 'ptc' || e.date < today) return;
+          if (!/^ptc (general |monthly )?meeting$/i.test(String(e.title || '').trim())) return;
+          if (!next || e.date < next.date) next = e;
+        });
+        if (!next) return;
+        var m = { on: today, date: next.date, time: next.startTime };
+        try { sessionStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {}
+        render(m);
+      })
+      .catch(function () { /* keep the generic wording */ });
+  })();
+
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();

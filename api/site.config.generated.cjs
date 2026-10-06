@@ -102,6 +102,11 @@ module.exports = {
           "key": "fundraising",
           "label": "Fundraising",
           "href": "/fundraising"
+        },
+        {
+          "label": "PTC meetings",
+          "href": "/calendar?show=ptc",
+          "nextMeeting": "Next meeting: {short}"
         }
       ]
     },

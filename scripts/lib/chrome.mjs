@@ -26,7 +26,8 @@ export function absolute(path) {
 /* External links open in a new tab and carry a ↗ so the jump is not a
    surprise — except the Donate CTA, where the button already says so. */
 function linkAttrs(item) {
-  return item.external ? ' target="_blank" rel="noopener"' : '';
+  return (item.external ? ' target="_blank" rel="noopener"' : '')
+    + (item.nextMeeting ? ' data-next-meeting-swap="' + esc(item.nextMeeting) + '"' : '');
 }
 function linkLabel(item) {
   const label = esc(item.label);

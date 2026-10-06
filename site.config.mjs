@@ -130,6 +130,8 @@ export default {
         { key: 'faq', label: 'Family FAQ', href: '/families/faq' },
         { key: 'supplies', label: 'School supplies', href: '/supplies' },
         { key: 'fundraising', label: 'Fundraising', href: '/fundraising' },
+        // script.js rewrites this label once the calendar feed has a date
+        { label: 'PTC meetings', href: '/calendar?show=ptc', nextMeeting: 'Next meeting: {short}' },
       ],
     },
     { key: 'teachers', label: 'Teachers', href: '/teachers' },

@@ -96,6 +96,7 @@
               <li><a href="/families/faq">Family FAQ</a></li>
               <li><a href="/supplies">School supplies</a></li>
               <li><a href="/fundraising">Fundraising</a></li>
+              <li><a href="/calendar?show=ptc" data-next-meeting-swap="Next meeting: {short}">PTC meetings</a></li>
             </ul>
           </li>
           <li><a href="/teachers">Teachers</a></li>
@@ -130,7 +131,7 @@
         </h1>
         <p class="hero__lede">
           A parent- and staff-run nonprofit that supports every student at
-          William Walker Elementary — powered by volunteers, funded by families.
+          William Walker Elementary — powered by volunteers, funded by community.
         </p>
         <div class="hero__actions">
           <a class="btn btn--blue" href="#get-involved">Sign up for updates</a>
@@ -138,6 +139,7 @@
             Donate <span aria-hidden="true">↗</span>
           </a>
         </div>
+        <a class="hero__next" href="/calendar?show=ptc" data-next-meeting-swap="Next PTC meeting: {date}, {time}" data-next-meeting-show hidden>PTC meetings</a>
       </div>
     </section>
 
@@ -146,7 +148,17 @@
       <div class="wrap">
         <p class="kicker kicker--blue">About the PTC</p>
         <div class="about-grid">
-          <h2 id="about-title" class="section-title">Family &amp; community support for every Wildcat.</h2>
+          <div>
+            <h2 id="about-title" class="section-title">Family &amp; community support for every Wildcat.</h2>
+            <div class="mission">
+              <p class="mission__label">Our mission</p>
+              <p class="mission__text">
+                <span>Support learning.</span>
+                <span>Support teaching.</span>
+                <span>Support community.</span>
+              </p>
+            </div>
+          </div>
           <div class="about-body">
             <p class="lead">
               The William Walker Parent Teacher Club is a nonprofit
@@ -286,8 +298,8 @@
           </p>
         </div>
         <div class="meeting-card">
-          <p class="meeting-card__label">When we meet</p>
-          <p class="meeting-card__when">First Wednesday <span>of every month</span></p>
+          <p class="meeting-card__label" data-next-meeting-swap="Next meeting">When we meet</p>
+          <p class="meeting-card__when"><b data-next-meeting-date>First Wednesday</b> <span data-next-meeting-swap="First Wednesday of every month">of every month</span></p>
           <ul class="meeting-card__facts">
             <li><span class="meeting-card__k">Time</span> 5:45 – 7:00&nbsp;PM</li>
             <li><span class="meeting-card__k">Season</span> September through June</li>
