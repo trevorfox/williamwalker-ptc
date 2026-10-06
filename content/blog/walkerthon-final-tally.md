@@ -49,14 +49,10 @@ And finally, **a special thank you to our amazing sponsors.** We appreciate ever
 business that gave to our school, and we will be adding them to our website and more.
 We would especially like to thank our highest sponsors:
 
-- Camila's Mexican Food
-- Cedar Hills Crossing
-- Kirby Nagelhout Construction Co.
-- Leo's Lair Pub & Eats
-- Portland Orthodontic Group
-- Swag Northwest
+<!-- sponsors program="walkerthon" tier="Champion" -->
 
-Please thank them too, the next time you are in.
+Please thank them too, the next time you are in. You can see
+[all of our Walkerthon sponsors](/programs/walkerthon) on the Walkerthon page.
 
 ## Dates to know
 
