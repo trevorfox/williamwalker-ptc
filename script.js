@@ -364,7 +364,7 @@
      feed has an upcoming PTC meeting, swap in its real date. Markup hooks:
        [data-next-meeting-date]   text becomes "Wednesday, November 4"
        [data-next-meeting-swap]   text becomes the attribute's value, with
-                                  {date}, {short} ("Wed, Nov 4") and {time}
+                                  {date}, {short} ("Wed, Nov 4"), {day} ("November 4") and {time}
                                   ("5:45 PM") filled in
        [data-next-meeting-show]   un-hidden
      Any failure (or no meeting ahead, e.g. summer) leaves the page as written.
@@ -389,11 +389,12 @@
     function render(m) {
       var date = fmt(m.date, { weekday: 'long', month: 'long', day: 'numeric' });
       var short = fmt(m.date, { weekday: 'short', month: 'short', day: 'numeric' });
+      var day = fmt(m.date, { month: 'long', day: 'numeric' });
       var time = fmtTime(m.time);
       each('[data-next-meeting-date]', function (el) { el.textContent = date; });
       each('[data-next-meeting-swap]', function (el) {
         el.textContent = el.getAttribute('data-next-meeting-swap')
-          .replace('{date}', date).replace('{short}', short)
+          .replace('{date}', date).replace('{short}', short).replace('{day}', day)
           .replace(time ? '{time}' : ', {time}', time);
       });
       each('[data-next-meeting-show]', function (el) { el.hidden = false; });
