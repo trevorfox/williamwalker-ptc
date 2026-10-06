@@ -41,6 +41,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, renderMd } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
+import { loadProgramSponsors, sponsorGrid } from './lib/sponsors.mjs';
 import {
   TAGS, loadPosts, usedTags, postsWithTag, fmtDate, assetUrl, assetExists,
   tagUrl, tagListHtml, cardHtml,
@@ -100,6 +101,26 @@ function heroHtml(p) {
     + '    </section>\n';
 }
 
+/* A post can show a program's sponsor logos, from that program's sponsors
+   list (scripts/lib/sponsors.mjs), with a line of its own:
+
+     <!-- sponsors program="walkerthon" tier="Champion" -->
+
+   tier is optional; without it every sponsor shows in one grid. */
+const SPONSORS_RE = /^<!--\s*sponsors\s+program="([a-z0-9-]+)"(?:\s+tier="([^"]+)")?\s*-->$/;
+
+function bodyHtml(p) {
+  const rel = p.slug + '.md';
+  return p.body.split(/\n{2,}/).map(function (b) {
+    const m = b.trim().match(SPONSORS_RE);
+    if (!m) return renderMd(b, SITE);
+    const list = loadProgramSponsors(m[1], rel, fail).sponsors
+      .filter(function (s) { return !m[2] || s.tier === m[2]; });
+    if (!list.length) fail(rel + ': no "' + m[2] + '" sponsors in program "' + m[1] + '"');
+    return sponsorGrid(m[1], list, '').trimEnd();
+  }).filter(Boolean).join('\n');
+}
+
 function moreHtml(p, posts) {
   const others = posts.filter(function (o) { return o.slug !== p.slug; }).slice(0, 3);
   if (!others.length) return '';
@@ -146,7 +167,7 @@ function postPage(p, posts) {
     + '\n    <section class="block block--white" aria-label="' + esc(p.title) + '">\n'
     + '      <div class="wrap">\n'
     + '        <div class="post-body">\n'
-    + '          <div class="prose">\n' + renderMd(p.body, SITE) + '\n          </div>\n'
+    + '          <div class="prose">\n' + bodyHtml(p) + '\n          </div>\n'
     + '          <p class="post-back"><a href="/blog">← All posts</a></p>\n'
     + '        </div>\n'
     + '      </div>\n    </section>\n'

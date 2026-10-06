@@ -52,6 +52,23 @@ function logoFor(slug, s) {
   return '';
 }
 
+// One <ul> of logo tiles. Also used on its own inside a blog post
+// (build-blog.mjs, <!-- sponsors program="…" tier="…" -->).
+export function sponsorGrid(slug, sponsors, indent) {
+  return indent + '<ul class="sponsor-grid">\n'
+    + sponsors.map(function (s) {
+      const logo = logoFor(slug, s);
+      const inner = logo
+        ? '<img src="/assets/programs/' + esc(logo) + '" alt="' + esc(s.name) + '" loading="lazy" />'
+        : '<span class="sponsor__name">' + esc(s.name) + '</span>';
+      const body = s.url
+        ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
+        : inner;
+      return indent + '  <li class="sponsor' + (logo ? '' : ' sponsor--text') + '">' + body + '</li>';
+    }).join('\n')
+    + '\n' + indent + '</ul>\n';
+}
+
 export function sponsorsHtml(slug, sponsors, title) {
   if (!sponsors.length) return '';
   const tiers = [];
@@ -62,18 +79,7 @@ export function sponsorsHtml(slug, sponsors, title) {
     + '        <h2 id="sponsors-title" class="section-title">' + esc(title || 'Our sponsors.') + '</h2>\n'
     + tiers.map(function (tier) {
       return '        <h3 class="sponsor-tier">' + esc(tier) + '</h3>\n'
-        + '        <ul class="sponsor-grid">\n'
-        + sponsors.filter(function (s) { return s.tier === tier; }).map(function (s) {
-          const logo = logoFor(slug, s);
-          const inner = logo
-            ? '<img src="/assets/programs/' + esc(logo) + '" alt="' + esc(s.name) + '" loading="lazy" />'
-            : '<span class="sponsor__name">' + esc(s.name) + '</span>';
-          const body = s.url
-            ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
-            : inner;
-          return '          <li class="sponsor' + (logo ? '' : ' sponsor--text') + '">' + body + '</li>';
-        }).join('\n')
-        + '\n        </ul>\n';
+        + sponsorGrid(slug, sponsors.filter(function (s) { return s.tier === tier; }), '        ');
     }).join('')
     + '      </div>\n    </section>\n';
 }
