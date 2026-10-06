@@ -41,6 +41,13 @@
    Because the strip is baked in at build time, publishing a post with that tag
    changes this page too — the full `npm run build:site` handles it.
 
+   Three more fills, all in scripts/lib/page-data.mjs:
+
+     {{meetings.time}}         a string from site.config.mjs ({{x|cap}} capitalizes)
+     <!-- minutes-list -->     the /minutes archive, from content/minutes.json
+     <!-- faq-jsonld -->       (in a .head.html) FAQPage JSON-LD generated from
+                               the page's own <details class="qa-item"> blocks
+
    Unlike the blog and programs builds this does NOT clear its output first:
    it writes into the repository root, where deleting every *.html would take
    hand-maintained files with it. Renaming a page means deleting the old
@@ -54,6 +61,7 @@ import { fileURLToPath } from 'node:url';
 import { parseFrontmatter } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
 import { TAGS, loadPosts, latestStripHtml } from './lib/posts.mjs';
+import { fillTokens, minutesHtml, faqJsonLd } from './lib/page-data.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = process.env.PAGES_SRC_DIR || join(ROOT, 'src', 'pages');
@@ -118,10 +126,34 @@ function expandStrips(body, rel) {
   });
 }
 
+/* ---------- minutes, tokens, FAQ schema ---------- */
+
+const MINUTES_RE = /^[ \t]*<!--\s*minutes-list\s*-->[ \t]*\n?/m;
+const MINUTES_FILE = process.env.MINUTES_FILE || join(ROOT, 'content', 'minutes.json');
+
+function expandMinutes(body, rel) {
+  if (!MINUTES_RE.test(body)) return body;
+  let entries;
+  try { entries = JSON.parse(readFileSync(MINUTES_FILE, 'utf8')); }
+  catch (e) { fail(rel + ': cannot read content/minutes.json — ' + e.message); }
+  return body.replace(MINUTES_RE, () => minutesHtml(entries, rel, fail));
+}
+
+const FAQ_RE = /^[ \t]*<!--\s*faq-jsonld\s*-->[ \t]*$/m;
+
+function expandHead(headExtra, body, rel, path) {
+  const filled = fillTokens(headExtra, rel, fail);
+  if (!FAQ_RE.test(filled)) return filled;
+  const ld = faqJsonLd(body, path);
+  if (!ld.count) fail(rel + ': <!-- faq-jsonld --> but the page has no <details class="qa-item"> blocks');
+  return filled.replace(FAQ_RE, () => ld.html);
+}
+
 /* ---------- render ---------- */
 
 function render(p) {
   const d = p.data;
+  const body = fillTokens(expandStrips(expandMinutes(p.body, p.rel), p.rel), p.rel, fail);
   return head({
     title: d.title,
     description: d.description,
@@ -129,10 +161,10 @@ function render(p) {
     ogTitle: d.og_title,
     ogDescription: d.og_description,
     ogImage: d.og_image,
-    headExtra: p.headExtra,
+    headExtra: expandHead(p.headExtra, body, p.rel, p.path),
   })
     + topbar(d.nav)
-    + '\n' + expandStrips(p.body, p.rel) + '\n\n'
+    + '\n' + body + '\n\n'
     + footer({
       scripts: (d.scripts || []).map((s) => s.src),
       noteSuffix: d.note_suffix,

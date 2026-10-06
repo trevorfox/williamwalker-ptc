@@ -61,6 +61,10 @@ module.exports = {
     "donate": "https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026",
     "boardContacts": "https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub"
   },
+  "meetings": {
+    "day": "first Wednesday",
+    "time": "5:45–7:00 PM"
+  },
   "social": [
     {
       "platform": "facebook",
