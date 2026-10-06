@@ -6,6 +6,36 @@ cta: Fuel the Walkerthon
 hero_image: walkerthon/hero.jpg
 order: 10
 review_note: story + amounts drafted by Claude — confirm details and dollar figures with the PTC board/treasurer
+sponsors:
+  - name: Camillas
+    tier: Champion
+  - name: Leo's Lair
+    tier: Champion
+  - name: Cedar Hill Crossing
+    tier: Champion
+  - name: Swag NW Screen Printing
+    tier: Champion
+  - name: Kirby Nagelhout Construction
+    tier: Champion
+  - name: Portland Orthodontic Group
+    tier: Champion
+  - name: IPA Physio
+    tier: Hero
+  - name: Spruce Vet Urgent Care
+    tier: Hero
+  - name: Pine Tree Dentist
+    tier: Friend
+  - name: Cedar Park Family Dental
+    tier: Friend
+  - name: Omega Gymnastics
+    tier: Friend
+  - name: Elizabeth Nathan Realty
+    tier: Friend
+  - name: Fine Counsel
+    tier: Friend
+    url: https://fine-counsel.com
+  - name: Qdoba
+    tier: Friend
 impact:
   - amount: 25
     buys: prizes and celebration supplies for a whole classroom
