@@ -21,13 +21,9 @@
        - image: field-trips/coast.jpg
          caption: Tidepooling at the coast
      donate_url: https://…               (optional override of the site default)
-     sponsors:                           (optional; grouped by tier, tiers in
-       - name: Fine Counsel               first-appearance order)
-         tier: Champion
-         url: https://…                  (optional)
-     Sponsor logos are found by name: assets/programs/<slug>/sponsors/
-     <name-slug>.{svg,png,webp,jpg} ("Leo's Lair" → leos-lair.png). No
-     file → the sponsor's name is shown as a text tile instead.
+     sponsors:                           (optional; logo grid — see scripts/lib/sponsors.mjs)
+       - name: Fine Counsel
+         tier: Hero
      review_note: …                      (ignored by the build; editorial flag)
 
    Body = story in markdown (## / ### headings, paragraphs, - lists,
@@ -41,6 +37,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { esc, parseFrontmatter, renderMd } from './lib/md.mjs';
 import { head, topbar, footer } from './lib/chrome.mjs';
+import { checkSponsors, sponsorsHtml } from './lib/sponsors.mjs';
 import config from '../site.config.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -54,19 +51,6 @@ const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donat
 function fail(msg) { console.error('build-programs: ' + msg); process.exit(1); }
 
 /* ---------- load + validate ---------- */
-function slugify(s) {
-  return s.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-
-function loadSponsors(list, f) {
-  if (list === undefined) return [];
-  if (!Array.isArray(list)) fail(f + ': "sponsors" must be a list');
-  list.forEach(function (s) {
-    if (!s.name || !s.tier) fail(f + ': sponsors need "name" + "tier"');
-  });
-  return list;
-}
-
 function loadEntries() {
   if (!existsSync(CONTENT)) fail('content dir missing: ' + CONTENT);
   const entries = readdirSync(CONTENT).filter(function (f) { return f.endsWith('.md'); }).sort().map(function (f) {
@@ -88,7 +72,7 @@ function loadEntries() {
       stub: !!d.stub, cta: d.cta || '', impact: d.impact || [],
       hero_image: d.hero_image || '', gallery: Array.isArray(d.gallery) ? d.gallery : [],
       donate_url: d.donate_url || DEFAULT_DONATE,
-      sponsors: loadSponsors(d.sponsors, f),
+      sponsors: checkSponsors(d.sponsors, f, fail),
       body: parsed.body,
     };
   });
@@ -141,40 +125,6 @@ function galleryHtml(p) {
         + '          </figure>';
     }).join('\n')
     + '\n        </div>\n      </div>\n    </section>\n';
-}
-
-const LOGO_EXTS = ['svg', 'png', 'webp', 'jpg'];
-
-function sponsorLogo(p, s) {
-  const base = p.slug + '/sponsors/' + slugify(s.name);
-  for (const ext of LOGO_EXTS) if (assetExists(base + '.' + ext)) return base + '.' + ext;
-  return '';
-}
-
-function sponsorsHtml(p) {
-  if (!p.sponsors.length) return '';
-  const tiers = [];
-  p.sponsors.forEach(function (s) { if (tiers.indexOf(s.tier) < 0) tiers.push(s.tier); });
-  return '    <section class="block block--white" aria-labelledby="sponsors-title">\n'
-    + '      <div class="wrap">\n'
-    + '        <p class="kicker kicker--blue">Thank You</p>\n'
-    + '        <h2 id="sponsors-title" class="section-title">Our sponsors.</h2>\n'
-    + tiers.map(function (tier) {
-      return '        <h3 class="sponsor-tier">' + esc(tier) + '</h3>\n'
-        + '        <ul class="sponsor-grid">\n'
-        + p.sponsors.filter(function (s) { return s.tier === tier; }).map(function (s) {
-          const logo = sponsorLogo(p, s);
-          const inner = logo
-            ? '<img src="' + esc(assetUrl(logo)) + '" alt="' + esc(s.name) + '" loading="lazy" />'
-            : '<span class="sponsor__name">' + esc(s.name) + '</span>';
-          const body = s.url
-            ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
-            : inner;
-          return '          <li class="sponsor' + (logo ? '' : ' sponsor--text') + '">' + body + '</li>';
-        }).join('\n')
-        + '\n        </ul>\n';
-    }).join('')
-    + '      </div>\n    </section>\n';
 }
 
 function impactHtml(p) {
@@ -241,7 +191,7 @@ function detailPage(p, entries) {
     + '        <div class="prose">\n' + renderMd(p.body, SITE) + '\n        </div>\n'
     + '      </div>\n    </section>\n'
     + '\n' + galleryHtml(p)
-    + (p.sponsors.length ? '\n' + sponsorsHtml(p) : '')
+    + (p.sponsors.length ? '\n' + sponsorsHtml(p.slug, p.sponsors) : '')
     + '\n' + impactHtml(p)
     + '\n' + moreHtml(p, entries)
     + '  </main>\n\n'
