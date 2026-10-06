@@ -106,6 +106,18 @@ export default {
     boardContacts: BOARD_CONTACTS,
   },
 
+  /* ---------- monthly PTC meeting ----------
+     Pages say {{meetings.time}}, {{meetings.day}} and {{meetings.online}} instead of typing these
+     out, so a schedule change is this one edit plus `npm run build:site`.
+     {{meetings.day|cap}} capitalizes the first letter for the start of a line.
+     Blog posts keep the literal time they were published with. */
+  meetings: {
+    day: 'first Wednesday',
+    time: '5:45–7:00 PM',
+    // The video-call option. The link itself is the /meeting-link redirect below.
+    online: 'Google Meet',
+  },
+
   // platform must be one of the icons chrome.mjs knows: facebook, instagram,
   // whatsapp. Drop an entry to drop the button.
   social: [

@@ -9,7 +9,7 @@ value that names this school lives in one file.
 ```
 site.config.mjs   ← the name, domain, nav, footer, calendar feeds, analytics ID
 src/pages/        ← the eight main pages: frontmatter + <main> content
-content/          ← markdown for /blog and /programs
+content/          ← markdown for /blog and /programs; minutes.json for /minutes
 scripts/lib/      ← chrome.mjs (head/nav/footer) + md.mjs (markdown, frontmatter)
 styles.css        ← all styling
 script.js         ← accessibility toolbar, language menu, mobile nav, scroll reveal
@@ -29,7 +29,7 @@ re-run the build.
 
 ```bash
 npm run build:site   # everything: config, pages, blog, programs
-npm test             # all five test suites
+npm test             # all six test suites
 npm run serve        # http://localhost:3000
 ```
 
@@ -52,6 +52,9 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 | Domains and redirects | `site.config.mjs` (`deploy`), then `npm run build:config` |
 | Page copy | the matching file in `src/pages/` |
 | A blog post or program | the matching markdown in `content/` |
+| Meeting minutes | `content/minutes.json` — one line per meeting: `{ "month": "2026-10", "url": "…" }`, plus `"draft": true` until approved. The Google Doc must be shared "Anyone with the link: Viewer". |
+| PTC meeting day or time | `site.config.mjs` (`meetings`). Pages use `{{meetings.time}}`; blog posts keep the time they were written with. |
+| A Family FAQ question | `src/pages/families/faq.html` only. The Google FAQ data in `faq.head.html` is generated from it. |
 | Colors, spacing, type | `styles.css` |
 
 Editing the nav used to mean touching `chrome.mjs` and all eight hand-written
