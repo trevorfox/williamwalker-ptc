@@ -23,6 +23,9 @@ sponsors:
     tier: Hero
   - name: Spruce Vet Urgent Care
     tier: Hero
+  - name: Fine Counsel
+    tier: Hero
+    url: https://fine-counsel.com
   - name: Pine Tree Dentist
     tier: Friend
   - name: Cedar Park Family Dental
@@ -31,9 +34,6 @@ sponsors:
     tier: Friend
   - name: Elizabeth Nathan Realty
     tier: Friend
-  - name: Fine Counsel
-    tier: Friend
-    url: https://fine-counsel.com
   - name: Qdoba
     tier: Friend
 impact:
