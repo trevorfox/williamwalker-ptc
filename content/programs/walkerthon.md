@@ -7,11 +7,11 @@ hero_image: walkerthon/hero.jpg
 order: 10
 review_note: story + amounts drafted by Claude — confirm details and dollar figures with the PTC board/treasurer
 sponsors:
-  - name: Camillas
+  - name: Camila's Mexican Food
     tier: Champion
   - name: Leo's Lair
     tier: Champion
-  - name: Cedar Hill Crossing
+  - name: Cedar Hills Crossing
     tier: Champion
   - name: Swag NW Screen Printing
     tier: Champion
@@ -26,7 +26,7 @@ sponsors:
   - name: Fine Counsel
     tier: Hero
     url: https://fine-counsel.com
-  - name: Pine Tree Dentist
+  - name: Pine Tree Pediatric Dentistry
     tier: Friend
   - name: Cedar Park Family Dental
     tier: Friend
