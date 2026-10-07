@@ -36,6 +36,8 @@ sponsors:
     tier: Friend
   - name: Qdoba
     tier: Friend
+  - name: Sweet Bacon Cafe
+    tier: Friend
 impact:
   - amount: 25
     buys: prizes and celebration supplies for a whole classroom
