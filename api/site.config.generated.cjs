@@ -109,6 +109,11 @@ module.exports = {
           "href": "/fundraising"
         },
         {
+          "key": "volunteer",
+          "label": "Volunteer",
+          "href": "/volunteer"
+        },
+        {
           "label": "PTC meetings",
           "href": "/calendar?show=ptc",
           "nextMeeting": "Next meeting: {short}"
@@ -129,6 +134,11 @@ module.exports = {
       "key": "fundraising",
       "label": "Fundraising",
       "href": "/fundraising"
+    },
+    {
+      "key": "volunteer",
+      "label": "Volunteer",
+      "href": "/volunteer"
     },
     {
       "key": "calendar",
@@ -190,6 +200,10 @@ module.exports = {
       {
         "label": "Fundraising",
         "href": "/fundraising"
+      },
+      {
+        "label": "Volunteer",
+        "href": "/volunteer"
       },
       {
         "label": "Families",

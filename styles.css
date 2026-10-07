@@ -622,6 +622,14 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 /* =========================================================================
    Responsive
    ========================================================================= */
+/* nine top-level items only fit beside the logo above ~1080px; between there
+   and the hamburger breakpoint, tighten the links instead of letting them
+   slide under the brand */
+@media (max-width: 1080px) and (min-width: 861px) {
+  .nav-list { gap: 0; }
+  .nav-list a, .nav-sub-toggle { padding-left: 0.45rem; padding-right: 0.45rem; font-size: 0.9rem; }
+  .nav-cta { margin-left: 0.3rem; padding-left: 0.7rem !important; padding-right: 0.7rem !important; }
+}
 @media (max-width: 860px) {
   .about-grid, .meetings-wrap, .signup { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }

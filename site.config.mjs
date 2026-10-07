@@ -144,6 +144,7 @@ export default {
         { key: 'faq', label: 'Family FAQ', href: '/families/faq' },
         { key: 'supplies', label: 'School supplies', href: '/supplies' },
         { key: 'fundraising', label: 'Fundraising', href: '/fundraising' },
+        { key: 'volunteer', label: 'Volunteer', href: '/volunteer' },
         // script.js rewrites this label once the calendar feed has a date
         { label: 'PTC meetings', href: '/calendar?show=ptc', nextMeeting: 'Next meeting: {short}' },
       ],
@@ -151,6 +152,7 @@ export default {
     { key: 'teachers', label: 'Teachers', href: '/teachers' },
     { key: 'programs', label: 'Programs', href: '/programs' },
     { key: 'fundraising', label: 'Fundraising', href: '/fundraising' },
+    { key: 'volunteer', label: 'Volunteer', href: '/volunteer' },
     { key: 'calendar', label: 'Calendar', href: '/calendar' },
     { key: 'blog', label: 'News', href: '/blog' },
     {
@@ -173,6 +175,7 @@ export default {
       { label: 'Calendar', href: '/calendar' },
       { label: 'Supplies', href: '/supplies' },
       { label: 'Fundraising', href: '/fundraising' },
+      { label: 'Volunteer', href: '/volunteer' },
       { label: 'Families', href: '/families' },
       { label: 'Family FAQ', href: '/families/faq' },
       { label: 'Teachers', href: '/teachers' },
