@@ -332,6 +332,13 @@ body { top: 0 !important; }
   transition: border-color 0.15s ease, gap 0.15s ease;
 }
 .way__link:hover { border-color: #fff; gap: 0.6rem; }
+/* numbered steps read top to bottom: one column, number beside the text */
+.ways--stack { grid-template-columns: 1fr; max-width: 46rem; }
+.ways--stack .way { display: grid; grid-template-columns: 2.6rem 1fr; column-gap: 1.3rem; align-items: start; }
+.ways--stack .way__num { grid-row: 1 / span 3; line-height: 1.2; }
+.ways--stack .way > :not(.way__num) { grid-column: 2; }
+.ways--stack .way h3 { margin-top: 0; }
+.ways--stack .way__link { justify-self: start; }
 
 .signup {
   display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(1.4rem, 4vw, 3rem); align-items: start;
