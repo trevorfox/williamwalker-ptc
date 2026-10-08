@@ -8,7 +8,7 @@
    build-pages.mjs can embed "latest posts" strips with the same look.
 
    One .md file = one post. The FILENAME is the URL slug:
-   content/blog/fall-carnival.md  →  https://williamwalkerptc.com/blog/fall-carnival
+   content/blog/fall-carnival.md  →  <site.origin>/blog/fall-carnival
 
    Frontmatter (flat scalars only — see scripts/lib/md.mjs):
 
@@ -143,9 +143,9 @@ function jsonLd(p) {
     description: p.blurb,
     datePublished: p.date,
     author: { '@type': 'Person', name: p.author },
-    publisher: { '@type': 'Organization', name: 'William Walker Elementary PTC' },
+    publisher: { '@type': 'Organization', name: config.org.name },
     mainEntityOfPage: SITE + '/blog/' + p.slug,
-    image: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + '/assets/logo.png',
+    image: assetExists(p.hero_image) ? SITE + assetUrl(p.hero_image) : SITE + config.brand.ogImage,
   };
   if (p.tags.length) data.keywords = p.tags.map(function (k) { return TAGS[k].label; }).join(', ');
   return '  <script type="application/ld+json">' + JSON.stringify(data).replace(/</g, '\\u003c') + '</script>\n';
@@ -154,7 +154,7 @@ function jsonLd(p) {
 /* ---------- pages ---------- */
 function postPage(p, posts) {
   return head({
-    title: p.title + ' — William Walker Elementary PTC',
+    title: p.title + ' — ' + config.org.name,
     description: p.blurb,
     path: '/blog/' + p.slug,
     ogImage: assetExists(p.hero_image) ? assetUrl(p.hero_image) : undefined,
@@ -183,7 +183,7 @@ function listPage(shown, all, o) {
     ? '        <div class="post-cards">\n' + shown.map(cardHtml).join('\n') + '\n        </div>\n'
     : '        <p class="post-empty">No posts yet — check back soon.</p>\n';
   return head({
-    title: o.title + ' — William Walker Elementary PTC',
+    title: o.title + ' — ' + config.org.name,
     description: o.description,
     path: o.path,
   })
@@ -212,9 +212,9 @@ function indexPage(posts) {
   return listPage(posts, posts, {
     title: 'News',
     heading: 'News',
-    eyebrow: 'William Walker PTC',
-    lede: 'Event recaps, fundraising results, and what the PTC is up to at William Walker.',
-    description: 'Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families.',
+    eyebrow: config.org.nameShort,
+    lede: config.blog.index.lede,
+    description: config.blog.index.description,
     path: '/blog',
   });
 }

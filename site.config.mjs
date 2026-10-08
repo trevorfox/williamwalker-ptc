@@ -40,10 +40,19 @@ export default {
     // Legal entity, footer copyright only.
     legalName: 'William Walker Parent Teacher Club, Inc.',
     email: 'williamwalkerptc@gmail.com',
+    // The volunteer coordinator's inbox, on the Teachers and Volunteer pages.
+    volunteerEmail: 'williamwalkervolunteer@gmail.com',
     address: {
       street: '2350 Cedar Hills Blvd.',
       cityStateZip: 'Beaverton, OR 97005',
     },
+  },
+
+  /* ---------- the school ---------- */
+  school: {
+    // The school's own site. Pages link it as {{school.website}} and show
+    // {{school.website|host}} as the link text.
+    website: 'https://williamwalker.beaverton.k12.or.us/',
   },
 
   /* ---------- where it lives ---------- */
@@ -108,6 +117,13 @@ export default {
     boardContacts: BOARD_CONTACTS,
   },
 
+  /* ---------- fundraising IDs ---------- */
+  fundraising: {
+    // Office Depot 5% Back to Schools ID. Printed on every supply list and on
+    // the Fundraising page, so it is the one ID worth naming once.
+    officeDepotId: '70243444',
+  },
+
   /* ---------- monthly PTC meeting ----------
      Pages say {{meetings.time}}, {{meetings.day}} and {{meetings.online}} instead of typing these
      out, so a schedule change is this one edit plus `npm run build:site`.
@@ -121,11 +137,13 @@ export default {
   },
 
   // platform must be one of the icons chrome.mjs knows: facebook, instagram,
-  // whatsapp. Drop an entry to drop the button.
+  // whatsapp. Drop an entry to drop the button. `label` is the footer icon's
+  // aria-label; `name` and `meta` are the two lines of text in a page's
+  // <!-- social-links --> list.
   social: [
-    { platform: 'facebook', url: 'https://www.facebook.com/williamwalkerPTC', label: 'William Walker PTC on Facebook' },
-    { platform: 'instagram', url: 'https://www.instagram.com/williamwalkerptc/', label: 'William Walker PTC on Instagram' },
-    { platform: 'whatsapp', url: 'https://chat.whatsapp.com/CTh14MIljaWKwbKk9HtUbK?mode=gi_t', label: 'Join the William Walker PTC WhatsApp group' },
+    { platform: 'facebook', url: 'https://www.facebook.com/williamwalkerPTC', label: 'William Walker PTC on Facebook', name: 'Facebook', meta: 'facebook.com/williamwalkerPTC' },
+    { platform: 'instagram', url: 'https://www.instagram.com/williamwalkerptc/', label: 'William Walker PTC on Instagram', name: 'Instagram', meta: '@williamwalkerptc' },
+    { platform: 'whatsapp', url: 'https://chat.whatsapp.com/CTh14MIljaWKwbKk9HtUbK?mode=gi_t', label: 'Join the William Walker PTC WhatsApp group', name: 'WhatsApp', meta: 'Join the parent group chat' },
   ],
 
   /* ---------- primary navigation ----------
@@ -190,17 +208,13 @@ export default {
       + 'School District.',
   },
 
-  /* ---------- calendar feeds ----------
-     Read by api/calendar.js, which merges the district feed with the PTC's own
-     Google Calendar and republishes both as JSON and as .ics.
-
-     FINDING YOUR DISTRICT FEED is the hardest part of setting this site up.
-     It is whatever URL your school's calendar page offers behind an "iCal",
-     "Subscribe", or RSS icon. Beaverton runs a ColdFusion CMS, hence the
-     feed.cfm URL; Finalsite, Edlio, and Apptegy districts all differ, and a
-     few publish no feed at all. Set districtFeedUrl to null to run PTC-only. */
   /* ---------- blog / news ---------- */
   blog: {
+    // The /blog index: the line under its heading, and its meta description.
+    index: {
+      lede: 'Event recaps, fundraising results, and what the PTC is up to at William Walker.',
+      description: 'Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families.',
+    },
     /* The tag vocabulary, in display order. A post's `tags:` line (comma-
        separated) may only use keys from this list — the build fails on anything
        else, so the taxonomy stays small on purpose. Each tag with at least one
@@ -225,6 +239,28 @@ export default {
     },
   },
 
+  /* ---------- programs ---------- */
+  programs: {
+    // The /programs index: the line under its heading, and its meta description.
+    index: {
+      lede: "Every program on this page is funded by families and run by volunteers — here's what the PTC makes happen at William Walker, and how you can help.",
+      description: 'Everything the William Walker PTC funds and hosts — enrichment programs, school events, and how your support makes them happen.',
+    },
+    // Heading over the "keep exploring" cards at the foot of a program page.
+    // The mascot lives here rather than in the build script.
+    moreHeading: 'More ways Wildcats win.',
+  },
+
+  /* ---------- calendar feeds ----------
+     Read by api/calendar.js, which merges the district feed with the PTC's own
+     Google Calendar and republishes both as JSON and as .ics. src/pages/calendar.html passes
+     googleCalendarId and deploy.canonicalHost to calendar.js as data attributes.
+
+     FINDING YOUR DISTRICT FEED is the hardest part of setting this site up.
+     It is whatever URL your school's calendar page offers behind an "iCal",
+     "Subscribe", or RSS icon. Beaverton runs a ColdFusion CMS, hence the
+     feed.cfm URL; Finalsite, Edlio, and Apptegy districts all differ, and a
+     few publish no feed at all. Set districtFeedUrl to null to run PTC-only. */
   calendar: {
     districtFeedUrl: 'https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD',
 

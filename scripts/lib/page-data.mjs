@@ -22,14 +22,24 @@ import config from '../../site.config.mjs';
 
 /* ---------- {{tokens}} ---------- */
 
-const TOKEN_RE = /\{\{\s*([a-zA-Z][\w.]*)\s*(\|\s*cap\s*)?\}\}/g;
+const TOKEN_RE = /\{\{\s*([a-zA-Z][\w.]*)\s*(?:\|\s*(cap|url|host)\s*)?\}\}/g;
 
-export function fillTokens(html, rel, fail) {
-  return html.replace(TOKEN_RE, function (_, path, cap) {
+/* |cap   capitalize the first letter, for the start of a line
+   |url   percent-encode, for a value going inside another URL's query string
+   |host  a URL without its scheme or trailing slash, for showing as link text */
+const FILTERS = {
+  cap: (v) => v.charAt(0).toUpperCase() + v.slice(1),
+  url: (v) => encodeURIComponent(v),
+  host: (v) => v.replace(/^[a-z]+:\/\//, '').replace(/\/$/, ''),
+};
+
+// `raw` skips HTML-escaping, for frontmatter values that head() escapes itself.
+export function fillTokens(html, rel, fail, raw) {
+  return html.replace(TOKEN_RE, function (_, path, filter) {
     const value = path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), config);
     if (typeof value !== 'string') fail(rel + ': {{' + path + '}} is not a string in site.config.mjs');
-    const s = cap ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-    return esc(s);
+    const s = filter ? FILTERS[filter](value) : value;
+    return raw ? s : esc(s);
   });
 }
 

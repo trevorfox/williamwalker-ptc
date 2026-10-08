@@ -1,5 +1,5 @@
 ---
-title: Fundraising — William Walker Elementary PTC
+title: Fundraising — {{org.name}}
 description: Ways to support William Walker Elementary — donate to Walkerthon, double your gift with an employer match, and earn money for William Walker while you shop at Washington Square, Fred Meyer, Office Depot, through Box Tops, and by redeeming TerraCycle points.
 nav: fundraising
 ---
@@ -18,9 +18,9 @@ nav: fundraising
         <ul class="idboard" aria-label="William Walker PTC codes and IDs">
           <li class="idbox">
             <p class="idbox__label">Office Depot school ID</p>
-            <p class="idbox__code">70243444</p>
+            <p class="idbox__code">{{fundraising.officeDepotId}}</p>
             <div class="idbox__actions">
-              <button type="button" class="idbox__copy" data-copy="70243444" data-id="office-depot" hidden>Copy</button>
+              <button type="button" class="idbox__copy" data-copy="{{fundraising.officeDepotId}}" data-id="office-depot" hidden>Copy</button>
               <a class="idbox__more" href="#office-depot">How it works</a>
             </div>
           </li>
@@ -127,7 +127,7 @@ nav: fundraising
             <p class="match-note">
               Not on the list? It is still worth a look, since many companies match and
               never advertise it.
-              <a href="mailto:williamwalkerptc@gmail.com?subject=Employer%20donation%20match">Email us</a>
+              <a href="mailto:{{org.email}}?subject=Employer%20donation%20match">Email us</a>
               if you need anything from the PTC to finish a form.
             </p>
           </div>
@@ -177,7 +177,7 @@ nav: fundraising
           <article class="event-card" id="office-depot">
             <h4>Office Depot &mdash; 5% back</h4>
             <p>
-              Give William Walker&rsquo;s school ID <strong>70243444</strong> when you pay, in
+              Give William Walker&rsquo;s school ID <strong>{{fundraising.officeDepotId}}</strong> when you pay, in
               any store or on a phone order, and William Walker earns credits worth 5% of your
               school-supply purchase. It works all year, not just at back-to-school.
               The ID has to be given at checkout &mdash; online orders can&rsquo;t be
