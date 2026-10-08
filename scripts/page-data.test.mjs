@@ -68,6 +68,7 @@ const wt = loadProgramSponsors('walkerthon', 't', fail);
 check('sponsors load from the program markdown', wt.sponsors.length > 0 && wt.title === 'Walkerthon');
 check('unknown sponsors program is a build error', throws(() => loadProgramSponsors('nope', 't', fail)));
 check('sponsor grid takes a custom title', sponsorsHtml('walkerthon', wt.sponsors, 'Our Walkerthon sponsors.').includes('>Our Walkerthon sponsors.</h2>'));
+check('own_page_only sponsors are left out of embeds', !wt.sponsors.some((s) => s.own_page_only));
 const fundraising = readFileSync('fundraising.html', 'utf8');
 check('fundraising page shows the Walkerthon sponsors', fundraising.includes('>Our Walkerthon sponsors.</h2>') && fundraising.includes('alt="Fine Counsel"'));
 

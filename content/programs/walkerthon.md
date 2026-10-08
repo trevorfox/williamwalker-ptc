@@ -38,6 +38,9 @@ sponsors:
     tier: Friend
   - name: Sweet Bacon Cafe
     tier: Friend
+  - name: Jamba Juice
+    tier: Friend
+    own_page_only: true
 impact:
   - amount: 25
     buys: prizes and celebration supplies for a whole classroom

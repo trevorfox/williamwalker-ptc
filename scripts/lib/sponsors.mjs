@@ -8,6 +8,8 @@
        - name: Fine Counsel
          tier: Hero
          url: https://…        (optional)
+         own_page_only: true   (optional; only on the program's own page,
+                                left out wherever the list is embedded)
 
    Tiers render in first-appearance order. Logos are found by name:
    assets/programs/<slug>/sponsors/<name-slug>.{svg,png,webp,jpg}
@@ -37,11 +39,13 @@ export function checkSponsors(list, f, fail) {
 }
 
 // { title, sponsors } for a program, read from content/programs/<slug>.md.
+// For embedding on another page or post, so own_page_only sponsors are dropped.
 export function loadProgramSponsors(slug, rel, fail) {
   const file = join(CONTENT, slug + '.md');
   if (!existsSync(file)) fail(rel + ': sponsors program "' + slug + '" has no content/programs/' + slug + '.md');
   const d = parseFrontmatter(readFileSync(file, 'utf8'), slug + '.md', fail).data;
-  const sponsors = checkSponsors(d.sponsors, slug + '.md', fail);
+  const sponsors = checkSponsors(d.sponsors, slug + '.md', fail)
+    .filter(function (s) { return !s.own_page_only; });
   if (!sponsors.length) fail(rel + ': sponsors program "' + slug + '" lists no sponsors');
   return { title: d.title, sponsors: sponsors };
 }
