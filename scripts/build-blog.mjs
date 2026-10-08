@@ -93,7 +93,7 @@ function heroHtml(p) {
   const tags = tagListHtml(p.tags, true);
   return '    <section class="' + cls + '"' + style + ' aria-labelledby="hero-title">\n'
     + '      <div class="hero__inner">\n'
-    + '        <p class="hero__eyebrow">PTC News</p>\n'
+    + '        <p class="hero__eyebrow">' + esc(config.org.abbrev) + ' News</p>\n'
     + '        <h1 id="hero-title" class="hero__title">' + esc(p.title) + '</h1>\n'
     + '        ' + metaHtml(p) + '\n'
     + (tags ? '        ' + tags + '\n' : '')
@@ -127,7 +127,7 @@ function moreHtml(p, posts) {
   return '    <section class="block block--white post-more" aria-labelledby="more-title">\n'
     + '      <div class="wrap">\n'
     + '        <div class="post-more__head">\n'
-    + '          <p class="kicker kicker--blue">More from the PTC</p>\n'
+    + '          <p class="kicker kicker--blue">More from the ' + esc(config.org.abbrev) + '</p>\n'
     + '          <h2 id="more-title" class="section-title">Recent posts.</h2>\n'
     + '        </div>\n'
     + '        <div class="post-cards">\n'
@@ -225,7 +225,7 @@ function tagPage(k, posts) {
   return listPage(shown, posts, {
     title: t.label + ' — News',
     heading: t.label,
-    eyebrow: 'PTC News',
+    eyebrow: config.org.abbrev + ' News',
     lede: t.blurb,
     description: t.blurb,
     path: tagUrl(k),

@@ -16,10 +16,13 @@
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   var CATEGORIES = ['ptc', 'noschool', 'school', 'district', 'observance'];
-  var LABELS = { ptc: 'PTC', noschool: 'No School', school: 'School', district: 'District', observance: 'Observance' };
+  // The group's abbreviation (PTC, PTA, PTO…), from site.config.mjs by way of
+  // a data attribute on #cal-list. 'ptc' stays as the internal category key.
+  var ORG = listEl.getAttribute('data-org-abbrev') || 'PTC';
+  var LABELS = { ptc: ORG, noschool: 'No School', school: 'School', district: 'District', observance: 'Observance' };
   // observance has no chip, but ?show=observance is still a valid deep link
   var SUB_LABELS = {
-    all: 'all events', ptc: 'PTC meetings', noschool: 'No School days',
+    all: 'all events', ptc: ORG + ' meetings', noschool: 'No School days',
     school: 'School events', district: 'District events', observance: 'Observances',
   };
   // Feed URLs are built as extensionful paths — /calendar.ics, /calendar-ptc.ics —
@@ -399,7 +402,7 @@
       render();
       if (data && data.ok === false) {
         statusEl.hidden = false;
-        statusEl.textContent = 'Showing PTC events only — the school district calendar is temporarily unavailable.';
+        statusEl.textContent = 'Showing ' + ORG + ' events only — the school district calendar is temporarily unavailable.';
         statusEl.classList.add('cal-status--warn');
       }
     })

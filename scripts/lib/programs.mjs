@@ -53,7 +53,7 @@ export function programListHtml(entries) {
   const programs = entries.filter(function (e) { return e.type === 'program'; });
   const events = entries.filter(function (e) { return e.type === 'event'; });
   return '        <h3 class="subhead subhead--light">Programs &amp; enrichment we fund</h3>\n'
-    + '        <ul class="pill-list" aria-label="Programs and enrichment funded by the PTC">\n'
+    + '        <ul class="pill-list" aria-label="Programs and enrichment funded by the ' + esc(config.org.abbrev) + '">\n'
     + programs.map(function (e) {
       const t = esc(e.title);
       return '          <li class="pill">' + (e.stub ? t : '<a href="/programs/' + esc(e.slug) + '">' + t + '</a>') + '</li>';
