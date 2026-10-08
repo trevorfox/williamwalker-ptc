@@ -81,7 +81,7 @@ Here is what to expect:
 - 🌐 **Spanish translation is available.**
 - 💻 **Can't make it in person?** We will have a virtual option.
 
-📄 [Minutes from our last meeting](https://docs.google.com/document/d/1vZBLBiUtbBJvQ1MXn7lbaxIk_I4r-3x2eGDrm4ZnTZM/edit?usp=sharing)
+📄 [Minutes from our last meeting](https://docs.google.com/document/d/e/2PACX-1vQ1FHQuSYAlvXbs94Q0tJ0_UWw5Ta3oA9dxCKEJJnUDJD5z6MyEIm9FTfDzGgeTxoxuL3nu5c1-AINO/pub)
 are posted. Take a look at what we are working on.
 
 Meetings are the first Wednesday of every month at William Walker from 5:45 to 7:00 p.m.
