@@ -9,7 +9,7 @@ Welcome to the first edition of our biweekly PTC newsletter. We held our first P
 meeting of the year on Wednesday and had a great turnout of administrators, teachers,
 and parents.
 
-📄 [Read the September meeting minutes](https://docs.google.com/document/d/1vZBLBiUtbBJvQ1MXn7lbaxIk_I4r-3x2eGDrm4ZnTZM/edit?usp=sharing)
+📄 [Read the September meeting minutes](https://docs.google.com/document/d/e/2PACX-1vQ1FHQuSYAlvXbs94Q0tJ0_UWw5Ta3oA9dxCKEJJnUDJD5z6MyEIm9FTfDzGgeTxoxuL3nu5c1-AINO/pub)
 to see what we have been working on.
 
 ## Walkerthon is September 24
