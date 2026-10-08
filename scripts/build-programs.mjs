@@ -12,7 +12,7 @@
      blurb: one-liner                    (required; index card + meta description)
      order: 20                           (index sort within its type group)
      stub: true                          (index-card only — no page generated)
-     cta: Send a Wildcat on a trip       (required unless stub)
+     cta: Send a student on a trip       (required unless stub)
      impact:                             (required unless stub)
        - amount: 5
          buys: one student's field trip

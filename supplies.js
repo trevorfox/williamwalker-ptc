@@ -1,12 +1,12 @@
 /* =========================================================================
-   William Walker PTC — supplies page
+   Supplies page
    - Every supply item links to an Office Depot search. Queries are built at
      page load from the English item text (before Google Translate mutates
      the DOM), so translated pages still search in English. data-q on an
      <li> overrides the derived query.
    - "Print this list" flags one grade + <body> with print classes and calls
      window.print(); @media print rules in styles.css render a one-sheet
-     checklist headed by the 5% Back to Schools ID (70243444).
+     checklist headed by the 5% Back to Schools ID.
    - No affiliate params anywhere — the school ID given at checkout is the
      entire earning mechanism.
    ========================================================================= */

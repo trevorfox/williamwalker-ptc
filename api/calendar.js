@@ -12,8 +12,8 @@ const CAL = cfg.calendar;
 
 const FEED_URL = CAL.districtFeedUrl;
 
-// Every PTC event, monthly meetings included, lives in a Google Calendar owned
-// by williamwalkerptc@gmail.com ("WEBSITE PUBLIC CALENDAR"). Board members with
+// Every PTC event, monthly meetings included, lives in a public Google Calendar
+// owned by the group's own account (calendar.googleCalendarId). Board members with
 // edit access add and move events there; nothing needs a commit or deploy. Its
 // public ICS is fetched exactly like the district feed. Meetings are entered as
 // individual events (ten per school year, first Wednesday, 6–7 PM) rather than
@@ -32,7 +32,7 @@ const USER_AGENT = 'PTC-Calendar/1.0 (+' + HOST + ')';
    The district marks most cultural/religious observances with a phrase in the
    DESCRIPTION field. It's applied inconsistently, so a short exact-title list
    patches the ones that slip through. Exact-title, never substring: a real
-   Walker event like "Diwali Celebration Night" must NOT be treated as an
+   school event like "Diwali Celebration Night" must NOT be treated as an
    observance. Anything unrecognized falls through to 'school' so it stays
    visible — a miscategorized event is untidy, a vanished one loses a family. */
 const OBSERVANCE_MARKER = CAL.rules.observanceMarker;
@@ -53,8 +53,8 @@ const FEED_NAMES = {
 /* ---------- timezone ----------
    The district feed emits floating times — DTSTART:20250820T143000, no Z, no
    TZID, no VTIMEZONE — so "2:30 PM" means 2:30 wherever the reader happens to
-   be. Correct in Beaverton, wrong on a device set to any other zone. The values
-   are Pacific wall-clock, so we parse them as-is and label them on the way out.
+   be. Correct at the school, wrong on a device set to any other zone. The values
+   are the school's wall-clock time, so we parse them as-is and label them on the way out.
    RRULE-based rather than fixed dates so the DST rules stay valid indefinitely. */
 const TZID = CAL.timezone;
 const DST = CAL.dst;
@@ -213,7 +213,7 @@ function parseDT(field) {
   const time = `${v.slice(9, 11)}:${v.slice(11, 13)}`;
   // The district feed emits floating Pacific wall-clock times (no Z, no TZID).
   // Google's public feed emits UTC with a trailing Z, so "20261014T000000Z" is
-  // really 5:00 PM on the 13th in Beaverton; convert before the date is used.
+  // really 5:00 PM on the 13th in Pacific time; convert before the date is used.
   if (/Z$/.test(v)) return utcToPacific(date, time);
   return { date, time, allDay: false };
 }

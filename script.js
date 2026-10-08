@@ -1,5 +1,5 @@
 /* =========================================================================
-   William Walker PTC — interactivity
+   Site-wide interactivity
    - Accessibility toolbar (text size, high contrast, underline links)
    - Preferences persist in localStorage
    - Mobile nav
