@@ -12,7 +12,8 @@
     "build:blog": "node scripts/build-blog.mjs",
     "build:programs": "node scripts/build-programs.mjs",
     "build:site": "npm run build:config && npm run build:pages && npm run build:blog && npm run build:programs",
-    "test": "node scripts/verify-pages.test.mjs && node scripts/page-data.test.mjs && node scripts/build-blog.test.mjs && node scripts/build-programs.test.mjs && node scripts/supplies-page.test.mjs && node scripts/calendar-categorize.test.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "test": "node scripts/config-example.test.mjs && node scripts/verify-pages.test.mjs && node scripts/page-data.test.mjs && node scripts/build-blog.test.mjs && node scripts/build-programs.test.mjs && node scripts/supplies-page.test.mjs && node scripts/calendar-categorize.test.mjs",
     "serve": "npx serve ."
   }
 }
