@@ -44,7 +44,8 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 
 | To change | Edit |
 |---|---|
-| Org name, domain, email, address, social links | `site.config.mjs` |
+| Org name, domain, email, address, social links | `site.config.mjs`. Page titles use `{{org.name}}`, mailto links use `{{org.email}}` and `{{org.volunteerEmail}}`, and `<!-- social-links -->` renders the labeled account list. |
+| School website, Office Depot school ID | `site.config.mjs` (`school.website`, `fundraising.officeDepotId`) |
 | Nav or footer links | `site.config.mjs` (`nav`, `footer.links`) |
 | Where every Donate button goes | `site.config.mjs` (`DONATE`). Pages use `{{links.donate}}`; blog posts keep the link they were written with. |
 | Google Analytics ID | `site.config.mjs` (`analytics.ga4Id`; `null` disables the tag) |
@@ -196,21 +197,22 @@ Most of this is not specific to William Walker. To reuse it you would replace
 `site.config.mjs`, `assets/logo.png`, the palette in `styles.css`, and the copy
 in `src/pages/` and `content/`.
 
-Not yet extracted, and still hand-written in page copy: supply lists, the family
-FAQ (whose answers are duplicated between the visible accordion and its JSON-LD),
-the families link tiles, the board roster, the minutes archive, and the homepage
-program and event lists. Those want their own data files before this is a
-template anyone could pick up. The hardest part of setting it up elsewhere is
-finding your district's iCal feed URL, which every school CMS exposes
-differently.
+Facts that repeat across pages (the org name in titles, both email addresses,
+the school website, the Office Depot ID, the social accounts) are config tokens.
+Prose that mentions the school by name is left as prose: a fork rewrites that
+copy anyway, and tokens in every sentence would make the pages hard to read.
 
-**One duplication to know about.** `calendar.js` runs in the browser as a classic
-script, so it cannot import `site.config.mjs`. It still hardcodes `FEED_HOST` and
-`GOOGLE_PTC_CAL_ID` — and that calendar ID is the same value as
-`calendar.googleCalendarId` in the config. Change the PTC calendar and you must
-change both. Neither has an obviously right fix: `location.host` would be correct
-for the subscribe feed but would make the "copy link" button share a preview URL
-when used on a preview deploy, and passing the calendar ID down means either
-adding it to the `/api/calendar` JSON response (and handling the subscribe menu
-rendering before that resolves) or emitting a config global on every page. Worth
-deciding deliberately rather than by default.
+Not yet extracted, and still hand-written in page copy: supply lists, the
+family FAQ answers, the families link tiles, and
+the board roster. Those want their own data files before this is a template
+anyone could pick up. The hardest part of setting it up elsewhere is finding
+your district's iCal feed URL, which every school CMS exposes differently.
+
+**How `calendar.js` gets its config.** It runs in the browser as a classic
+script, so it cannot import `site.config.mjs`. Instead `src/pages/calendar.html`
+writes `deploy.canonicalHost` and `calendar.googleCalendarId` onto `#cal-list`
+as `data-site-host` and `data-org-calendar-id`, and the script reads them from
+there. It uses the canonical host rather than `location.host` so a link copied
+on a preview deploy still points at the real site. The timezone and DST rules for the per-event `.ics` download come
+down with the `/api/calendar` JSON response (`timezone`, `vtimezone`), so the
+script keeps no copy of those either.

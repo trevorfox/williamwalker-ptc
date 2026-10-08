@@ -1,5 +1,5 @@
 ---
-title: Calendar — William Walker Elementary PTC
+title: Calendar — {{org.name}}
 description: Upcoming William Walker Elementary events and PTC meetings — school district calendar and PTC meetings in one place.
 nav: calendar
 scripts:
@@ -30,9 +30,9 @@ note_suffix: School events shown here come from the district's public calendar.
                 <span class="dot" id="cal-subscribe-dot" aria-hidden="true"></span> <span id="cal-subscribe-label">Subscribe to all events</span>
               </button>
               <div class="cal-subscribe__menu" id="cal-subscribe-menu" role="menu" hidden>
-                <a role="menuitem" id="cal-subscribe-google" href="https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=https%3A%2F%2Fwilliamwalkerptc.com%2Fcalendar.ics" target="_blank" rel="noopener">Google Calendar <span class="cal-subscribe__note">copies link, then paste</span></a>
-                <a role="menuitem" id="cal-subscribe-ics" href="webcal://williamwalkerptc.com/calendar.ics">Apple / Outlook</a>
-                <button type="button" role="menuitem" class="cal-subscribe__copy" id="cal-subscribe-copy" data-url="https://williamwalkerptc.com/calendar.ics">Copy calendar link</button>
+                <a role="menuitem" id="cal-subscribe-google" href="https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid={{site.origin|url}}%2Fcalendar.ics" target="_blank" rel="noopener">Google Calendar <span class="cal-subscribe__note">copies link, then paste</span></a>
+                <a role="menuitem" id="cal-subscribe-ics" href="webcal://{{deploy.canonicalHost}}/calendar.ics">Apple / Outlook</a>
+                <button type="button" role="menuitem" class="cal-subscribe__copy" id="cal-subscribe-copy" data-url="{{site.origin}}/calendar.ics">Copy calendar link</button>
                 <a role="menuitem" class="cal-subscribe__alt" id="cal-subscribe-dl" href="/calendar.ics?download=1">Add existing events <span class="cal-subscribe__note">one-time — doesn't subscribe</span></a>
               </div>
             </div>
@@ -53,7 +53,7 @@ note_suffix: School events shown here come from the district's public calendar.
     <section class="block block--white cal-body" aria-live="polite" aria-busy="true">
       <div class="wrap">
         <div id="cal-status" class="cal-status">Loading events…</div>
-        <div id="cal-list" class="cal-list"></div>
+        <div id="cal-list" class="cal-list" data-site-host="{{deploy.canonicalHost}}" data-org-calendar-id="{{calendar.googleCalendarId}}"></div>
       </div>
     </section>
   </main>

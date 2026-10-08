@@ -1,7 +1,7 @@
 ---
-title: William Walker Elementary PTC — Home of the Wildcats
+title: {{org.name}} — Home of the Wildcats
 description: The William Walker Elementary Parent Teacher Club (PTC) — a parent- and staff-run nonprofit supporting every Wildcat through volunteering and fundraising. Sign up for updates and get involved.
-og_title: William Walker Elementary PTC
+og_title: {{org.name}}
 og_description: A parent- and staff-run nonprofit supporting every Wildcat at William Walker Elementary. Volunteer, give, and stay in the loop.
 ---
   <main id="main">
@@ -162,21 +162,21 @@ og_description: A parent- and staff-run nonprofit supporting every Wildcat at Wi
         <h2 id="connect-title" class="section-title section-title--light">Stay in touch with your PTC.</h2>
         <ul class="connect-grid" aria-label="Ways to connect with the PTC">
           <li>
-            <a class="connect-card" href="mailto:williamwalkerptc@gmail.com">
+            <a class="connect-card" href="mailto:{{org.email}}">
               <span class="connect-card__icon" aria-hidden="true">✉</span>
               <span class="connect-card__body">
                 <span class="connect-card__name">Email us</span>
-                <span class="connect-card__meta">williamwalkerptc@gmail.com</span>
+                <span class="connect-card__meta">{{org.email}}</span>
               </span>
               <span class="connect-card__arrow" aria-hidden="true">→</span>
             </a>
           </li>
           <li>
-            <a class="connect-card" href="https://williamwalker.beaverton.k12.or.us/" target="_blank" rel="noopener">
+            <a class="connect-card" href="{{school.website}}" target="_blank" rel="noopener">
               <span class="connect-card__icon" aria-hidden="true">⌂</span>
               <span class="connect-card__body">
                 <span class="connect-card__name">School Website</span>
-                <span class="connect-card__meta">williamwalker.beaverton.k12.or.us</span>
+                <span class="connect-card__meta">{{school.website|host}}</span>
               </span>
               <span class="connect-card__arrow" aria-hidden="true">↗</span>
             </a>

@@ -135,7 +135,7 @@ function moreHtml(p, entries) {
   return '    <section class="block block--white" aria-labelledby="more-title">\n'
     + '      <div class="wrap">\n'
     + '        <p class="kicker kicker--blue">Keep Exploring</p>\n'
-    + '        <h2 id="more-title" class="section-title">More ways Wildcats win.</h2>\n'
+    + '        <h2 id="more-title" class="section-title">' + esc(config.programs.moreHeading) + '</h2>\n'
     + '        <div class="program-cards">\n'
     + sibs.map(cardHtml).join('\n')
     + '\n        </div>\n'
@@ -147,7 +147,7 @@ function moreHtml(p, entries) {
 function detailPage(p, entries) {
   const kicker = p.type === 'event' ? 'The Event' : 'The Story';
   return head({
-    title: p.title + ' — William Walker Elementary PTC',
+    title: p.title + ' — ' + config.org.name,
     description: p.blurb,
     path: '/programs/' + p.slug,
     ogImage: assetExists(p.hero_image) ? assetUrl(p.hero_image) : undefined,
@@ -172,8 +172,8 @@ function indexPage(entries) {
   const programs = entries.filter(function (e) { return e.type === 'program'; });
   const events = entries.filter(function (e) { return e.type === 'event'; });
   return head({
-    title: 'Programs & Events — William Walker Elementary PTC',
-    description: 'Everything the William Walker PTC funds and hosts — enrichment programs, school events, and how your support makes them happen.',
+    title: 'Programs & Events — ' + config.org.name,
+    description: config.programs.index.description,
     path: '/programs',
   })
     + topbar('programs')
@@ -181,11 +181,10 @@ function indexPage(entries) {
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="hero__eyebrow">William Walker PTC</p>
+        <p class="hero__eyebrow">${esc(config.org.nameShort)}</p>
         <h1 id="hero-title" class="hero__title">Programs &amp; Events</h1>
         <p class="hero__lede">
-          Every program on this page is funded by families and run by volunteers —
-          here's what the PTC makes happen at William Walker, and how you can help.
+          ${esc(config.programs.index.lede)}
         </p>
         <div class="hero__actions">
           <a class="btn btn--green" href="${config.links.donate}" target="_blank" rel="noopener">Donate <span aria-hidden="true">↗</span></a>

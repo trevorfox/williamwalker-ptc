@@ -8,10 +8,14 @@ module.exports = {
     "abbrev": "PTC",
     "legalName": "William Walker Parent Teacher Club, Inc.",
     "email": "williamwalkerptc@gmail.com",
+    "volunteerEmail": "williamwalkervolunteer@gmail.com",
     "address": {
       "street": "2350 Cedar Hills Blvd.",
       "cityStateZip": "Beaverton, OR 97005"
     }
+  },
+  "school": {
+    "website": "https://williamwalker.beaverton.k12.or.us/"
   },
   "site": {
     "origin": "https://williamwalkerptc.com",
@@ -61,6 +65,9 @@ module.exports = {
     "donate": "https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026",
     "boardContacts": "https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub"
   },
+  "fundraising": {
+    "officeDepotId": "70243444"
+  },
   "meetings": {
     "day": "first Wednesday",
     "time": "5:45–7:00 PM",
@@ -70,17 +77,23 @@ module.exports = {
     {
       "platform": "facebook",
       "url": "https://www.facebook.com/williamwalkerPTC",
-      "label": "William Walker PTC on Facebook"
+      "label": "William Walker PTC on Facebook",
+      "name": "Facebook",
+      "meta": "facebook.com/williamwalkerPTC"
     },
     {
       "platform": "instagram",
       "url": "https://www.instagram.com/williamwalkerptc/",
-      "label": "William Walker PTC on Instagram"
+      "label": "William Walker PTC on Instagram",
+      "name": "Instagram",
+      "meta": "@williamwalkerptc"
     },
     {
       "platform": "whatsapp",
       "url": "https://chat.whatsapp.com/CTh14MIljaWKwbKk9HtUbK?mode=gi_t",
-      "label": "Join the William Walker PTC WhatsApp group"
+      "label": "Join the William Walker PTC WhatsApp group",
+      "name": "WhatsApp",
+      "meta": "Join the parent group chat"
     }
   ],
   "nav": [
@@ -238,6 +251,10 @@ module.exports = {
     "note": "A parent- and staff-run 501(c)(3) nonprofit. The William Walker PTC is an independent organization and is not officially administered by the Beaverton School District."
   },
   "blog": {
+    "index": {
+      "lede": "Event recaps, fundraising results, and what the PTC is up to at William Walker.",
+      "description": "Updates from the William Walker Parent Teacher Club — event recaps, fundraising results, and news for Wildcat families."
+    },
     "tags": {
       "fundraising": {
         "label": "Fundraising",
@@ -256,6 +273,13 @@ module.exports = {
         "blurb": "Trunk or Treat, Field Day, the Book Fair, and other dates for the family calendar."
       }
     }
+  },
+  "programs": {
+    "index": {
+      "lede": "Every program on this page is funded by families and run by volunteers — here's what the PTC makes happen at William Walker, and how you can help.",
+      "description": "Everything the William Walker PTC funds and hosts — enrichment programs, school events, and how your support makes them happen."
+    },
+    "moreHeading": "More ways Wildcats win."
   },
   "calendar": {
     "districtFeedUrl": "https://williamwalker.beaverton.k12.or.us/cf_calendar/feed.cfm?type=ical&feedID=D01CB9F2CFC24422970C40EED73565FD",

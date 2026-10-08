@@ -74,6 +74,8 @@ const VTIMEZONE = [
   'END:STANDARD',
   'END:VTIMEZONE',
 ];
+// Both also go out in the JSON response, so calendar.js can build single-event
+// .ics files without keeping its own copy of the zone rules.
 
 function isObservance(title, description) {
   if (String(description || '').indexOf(OBSERVANCE_MARKER) !== -1) return true;
@@ -144,7 +146,7 @@ module.exports = async (req, res) => {
       const cut = isoOffset(FWD_PAGE);
       const page = events.filter((e) => e.date <= cut);
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      res.status(200).json({ ok: true, count: page.length, events: page });
+      res.status(200).json({ ok: true, count: page.length, timezone: TZID, vtimezone: VTIMEZONE, events: page });
     }
   } catch (err) {
     // Last good merge if we have one, else whatever the Google feed gave us.
@@ -154,7 +156,7 @@ module.exports = async (req, res) => {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.status(200).send(buildICS(fallback, CAL.feedNames.ptc, false));
     } else {
-      res.status(200).json({ ok: false, error: 'school_feed_unavailable', events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
+      res.status(200).json({ ok: false, error: 'school_feed_unavailable', timezone: TZID, vtimezone: VTIMEZONE, events: fallback.filter((e) => e.date <= isoOffset(FWD_PAGE)) });
     }
   }
 };

@@ -23,6 +23,9 @@ function throws(fn) {
 
 check('token resolves from site.config.mjs', fillTokens('at {{meetings.time}}', 't', fail) === 'at ' + config.meetings.time);
 check('|cap capitalizes the first letter', fillTokens('{{meetings.day|cap}}', 't', fail).startsWith(config.meetings.day[0].toUpperCase()));
+check('|url percent-encodes', fillTokens('{{site.origin|url}}', 't', fail) === encodeURIComponent(config.site.origin));
+check('|host drops the scheme and trailing slash', !/^https?:|\/$/.test(fillTokens('{{school.website|host}}', 't', fail)));
+check('raw mode skips HTML-escaping', fillTokens('{{org.name}}', 't', fail, true) === config.org.name);
 check('unknown token is a build error', throws(() => fillTokens('{{meetings.nope}}', 't', fail)));
 check('non-string token is a build error', throws(() => fillTokens('{{meetings}}', 't', fail)));
 

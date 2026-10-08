@@ -43,7 +43,9 @@
 
    Three more fills, all in scripts/lib/page-data.mjs:
 
-     {{meetings.time}}         a string from site.config.mjs ({{x|cap}} capitalizes)
+     {{meetings.time}}         a string from site.config.mjs; also works in the
+                               frontmatter. Filters: {{x|cap}}, {{x|url}}, {{x|host}}
+     <!-- social-links -->     the labeled list of config.social accounts
      <!-- minutes-list -->     the /minutes archive, from content/minutes.json
      <!-- faq-jsonld -->       (in a .head.html) FAQPage JSON-LD generated from
                                the page's own <details class="qa-item"> blocks
@@ -69,7 +71,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseFrontmatter } from './lib/md.mjs';
-import { head, topbar, footer } from './lib/chrome.mjs';
+import { head, topbar, footer, socialLinksHtml } from './lib/chrome.mjs';
 import { TAGS, loadPosts, latestStripHtml } from './lib/posts.mjs';
 import { fillTokens, minutesHtml, faqJsonLd } from './lib/page-data.mjs';
 import { loadProgramSponsors, sponsorsHtml } from './lib/sponsors.mjs';
@@ -171,6 +173,12 @@ function expandMinutes(body, rel) {
   return body.replace(MINUTES_RE, () => minutesHtml(entries, rel, fail));
 }
 
+const SOCIAL_RE = /^[ \t]*<!--\s*social-links\s*-->[ \t]*\n?/gm;
+
+function expandSocial(body) {
+  return body.replace(SOCIAL_RE, () => socialLinksHtml());
+}
+
 const FAQ_RE = /^[ \t]*<!--\s*faq-jsonld\s*-->[ \t]*$/m;
 
 function expandHead(headExtra, body, rel, path) {
@@ -184,8 +192,11 @@ function expandHead(headExtra, body, rel, path) {
 /* ---------- render ---------- */
 
 function render(p) {
-  const d = p.data;
-  const body = fillTokens(expandStrips(expandSponsors(expandProgramList(expandMinutes(p.body, p.rel)), p.rel), p.rel), p.rel, fail);
+  const d = {};
+  for (const k of Object.keys(p.data)) {
+    d[k] = typeof p.data[k] === 'string' ? fillTokens(p.data[k], p.rel, fail, true) : p.data[k];
+  }
+  const body = fillTokens(expandSocial(expandStrips(expandSponsors(expandProgramList(expandMinutes(p.body, p.rel)), p.rel), p.rel)), p.rel, fail);
   return head({
     title: d.title,
     description: d.description,

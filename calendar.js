@@ -27,7 +27,11 @@
   // and query strings; the district's feed (…/calendar_605.ics) subscribes fine
   // where our query-string URL did not. Same endpoint either way, via rewrites
   // in vercel.json. feedPath() is the single place that shape is decided.
-  var FEED_HOST = 'williamwalkerptc.com';
+  // The canonical host and the org's Google Calendar ID come from
+  // site.config.mjs, by way of data attributes the build writes on #cal-list.
+  // The canonical host rather than location.host, so a link copied on a
+  // preview deploy still points at the real site.
+  var FEED_HOST = listEl.getAttribute('data-site-host') || location.host;
   // /u/0/ matters: the bare /calendar/r/... form dead-ends on a generic settings
   // screen on Android, while /calendar/u/0/r/... opens the actual add-by-URL box.
   // cid is still passed for desktop, where it prefills; mobile ignores it and
@@ -38,9 +42,9 @@
   // the Calendar app on a phone. No paste step, and Google-to-Google
   // subscriptions refresh in minutes where an ICS URL refreshes about daily.
   // The other filters are feeds our function builds, so they keep the URL flow.
-  var GOOGLE_PTC_CAL_ID = 'd80a9ae1fa7fe9ae54e7433f4bf6d7213afc849d84fed26fedd6e7c6a9d2a47b@group.calendar.google.com';
+  var GOOGLE_PTC_CAL_ID = listEl.getAttribute('data-org-calendar-id') || '';
   var GOOGLE_PTC_ADD_URL = 'https://calendar.google.com/calendar/u/0/r?cid=' + encodeURIComponent(GOOGLE_PTC_CAL_ID);
-  function googleIsDirect() { return filter === 'ptc'; }
+  function googleIsDirect() { return filter === 'ptc' && !!GOOGLE_PTC_CAL_ID; }
   function feedPath(f) { return f === 'all' ? '/calendar.ics' : '/calendar-' + f + '.ics'; }
   function feedUrl(scheme, f) { return scheme + '://' + FEED_HOST + feedPath(f); }
 
@@ -79,16 +83,12 @@
   /* ----- "add to calendar" link builders -----
      Times from the feed are Pacific wall-clock but carry no zone, so every
      generated event has to name one or it drifts on a device set elsewhere.
-     Mirrors the VTIMEZONE the /api/calendar feed emits. */
-  var TZID = 'America/Los_Angeles';
-  var VTIMEZONE = [
-    'BEGIN:VTIMEZONE', 'TZID:' + TZID, 'X-LIC-LOCATION:' + TZID,
-    'BEGIN:DAYLIGHT', 'TZOFFSETFROM:-0800', 'TZOFFSETTO:-0700', 'TZNAME:PDT',
-    'DTSTART:19700308T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU', 'END:DAYLIGHT',
-    'BEGIN:STANDARD', 'TZOFFSETFROM:-0700', 'TZOFFSETTO:-0800', 'TZNAME:PST',
-    'DTSTART:19701101T020000', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU', 'END:STANDARD',
-    'END:VTIMEZONE',
-  ];
+     The zone and its VTIMEZONE block arrive with the /api/calendar response
+     (from site.config.mjs), so they are set before any event renders. A cached
+     response from before the API sent them leaves both empty, and timed events
+     then go out as floating wall-clock times, the way the district feed does. */
+  var TZID = '';
+  var VTIMEZONE = [];
 
   function addDaysStr(dateStr, n) {
     var p = dateStr.split('-');
@@ -106,18 +106,18 @@
     if (e.location) u += '&location=' + encodeURIComponent(e.location);
     if (e.description) u += '&details=' + encodeURIComponent(e.description);
     // without ctz Google reads the bare timestamps in the viewer's own zone
-    if (!e.allDay) u += '&ctz=' + encodeURIComponent(TZID);
+    if (!e.allDay && TZID) u += '&ctz=' + encodeURIComponent(TZID);
     return u;
   }
   function icsEsc(v) { return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
   function icsHref(e) {
-    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WWPTC//Calendar//EN'];
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//' + FEED_HOST + '//Calendar//EN'];
     // VTIMEZONE must precede the VEVENT that references it; all-day events are
     // date-only and carry no zone, so they don't need the block
     if (!e.allDay) L = L.concat(VTIMEZONE);
-    L.push('BEGIN:VEVENT', 'UID:' + (e.uid || e.date + (e.startTime || '') + '@williamwalkerptc.com'));
+    L.push('BEGIN:VEVENT', 'UID:' + (e.uid || e.date + (e.startTime || '') + '@' + FEED_HOST));
     if (e.allDay) { L.push('DTSTART;VALUE=DATE:' + ymd(e.date), 'DTEND;VALUE=DATE:' + ymd(addDaysStr(e.date, 1))); }
-    else { var end = e.endTime || addHourStr(e.startTime); L.push('DTSTART;TZID=' + TZID + ':' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND;TZID=' + TZID + ':' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
+    else { var end = e.endTime || addHourStr(e.startTime), tz = TZID ? ';TZID=' + TZID : ''; L.push('DTSTART' + tz + ':' + ymd(e.date) + 'T' + e.startTime.replace(':', '') + '00', 'DTEND' + tz + ':' + ymd(e.date) + 'T' + end.replace(':', '') + '00'); }
     L.push('SUMMARY:' + icsEsc(e.title));
     if (e.location) L.push('LOCATION:' + icsEsc(e.location));
     if (e.description) L.push('DESCRIPTION:' + icsEsc(e.description));
@@ -383,6 +383,7 @@
     .then(function (r) { return r.json(); })
     .then(function (data) {
       allEvents = (data && data.events) || [];
+      if (data && data.timezone && data.vtimezone) { TZID = data.timezone; VTIMEZONE = data.vtimezone; }
       bodyEl && bodyEl.setAttribute('aria-busy', 'false');
       bindFilters();
       bindAddMenus();

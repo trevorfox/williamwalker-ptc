@@ -186,6 +186,26 @@ function socialButtons() {
   }).join('\n');
 }
 
+/* The big labeled version of the same accounts, for a page's "Follow along"
+   section: <!-- social-links --> in src/pages/. `name` and `meta` are the two
+   lines of text beside the icon. */
+export function socialLinksHtml() {
+  const items = social.map((s) => {
+    const icon = SOCIAL_ICONS[s.platform];
+    if (!icon) throw new Error('chrome: no icon for social platform "' + s.platform + '"');
+    return `          <li>
+            <a class="social-link" href="${esc(s.url)}" target="_blank" rel="noopener">
+              <span class="social-link__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">${icon}</svg></span>
+              <span>
+                <span class="social-link__name">${esc(s.name)}</span>
+                <span class="social-link__meta">${esc(s.meta)}</span>
+              </span>
+            </a>
+          </li>`;
+  }).join('\n');
+  return '        <ul class="social-links" aria-label="' + esc(org.nameShort) + ' social accounts">\n' + items + '\n        </ul>\n';
+}
+
 /* o.scripts    extra <script src> after /script.js, in order. The calendar,
                 supplies and FAQ pages each need their own behavior file, and
                 it has to load after the shared one.
