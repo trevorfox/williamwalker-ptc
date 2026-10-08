@@ -1,5 +1,5 @@
 /* =========================================================================
-   William Walker PTC — Family FAQ (/families/faq)
+   Family FAQ (/families/faq)
    - Deep-link support: #question-id opens that <details> and scrolls to it
    - GA4: faq_question_open (question id) on manual expand
    ========================================================================= */

@@ -1,7 +1,7 @@
 /* =========================================================================
-   William Walker Elementary PTC
-   Palette — matched exactly to the school logo:
-     blue #2F67B2 · green #079A48 · white + shades only
+   Site styles
+   Palette — two brand colors (primary --blue, accent --green), each with
+     deep / dark / tint shades, plus white and ink. Edit the :root block.
    Font: Figtree (clean sans, no serif)
    ========================================================================= */
 

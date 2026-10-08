@@ -219,3 +219,11 @@ there. It uses the canonical host rather than `location.host` so a link copied
 on a preview deploy still points at the real site. The timezone and DST rules for the per-event `.ics` download come
 down with the `/api/calendar` JSON response (`timezone`, `vtimezone`), so the
 script keeps no copy of those either.
+
+## License
+
+The code is MIT licensed: the build scripts, the calendar function, the
+stylesheet and the browser scripts. The William Walker PTC's own content is not:
+the page copy, blog posts and program write-ups, and everything in `assets/`
+(logo, photos, flyers, sponsor logos) remain all rights reserved. See
+[LICENSE](LICENSE).

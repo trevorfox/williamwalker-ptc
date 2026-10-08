@@ -12,7 +12,7 @@
      blurb: one-liner                    (required; index card + meta description)
      order: 20                           (index sort within its type group)
      stub: true                          (index-card only — no page generated)
-     cta: Send a Wildcat on a trip       (required unless stub)
+     cta: Send a student on a trip       (required unless stub)
      impact:                             (required unless stub)
        - amount: 5
          buys: one student's field trip
@@ -45,7 +45,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = process.env.PROGRAMS_OUT_DIR || join(ROOT, 'programs');
 const ASSETS = join(ROOT, 'assets', 'programs');
 const SITE = config.site.origin;
-const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all PTC programs.';
+const FINEPRINT = 'Amounts are examples of what gifts like yours cover — donations support all ' + config.org.abbrev + ' programs.';
 
 function fail(msg) { console.error('build-programs: ' + msg); process.exit(1); }
 
@@ -63,7 +63,7 @@ function heroHtml(p) {
   const hasImg = assetExists(p.hero_image);
   const cls = hasImg ? 'hero hero--image' : 'hero hero--gradient';
   const style = hasImg ? ' style="--hero-img: url(\'' + esc(assetUrl(p.hero_image)) + '\')"' : '';
-  const eyebrow = p.type === 'event' ? 'A PTC Event' : 'Programs & Enrichment';
+  const eyebrow = p.type === 'event' ? 'A ' + config.org.abbrev + ' Event' : 'Programs & Enrichment';
   return '    <section class="' + cls + '"' + style + ' aria-labelledby="hero-title">\n'
     + '      <div class="hero__inner">\n'
     + '        <p class="hero__eyebrow">' + eyebrow + '</p>\n'
@@ -139,7 +139,7 @@ function moreHtml(p, entries) {
     + '        <div class="program-cards">\n'
     + sibs.map(cardHtml).join('\n')
     + '\n        </div>\n'
-    + '        <p style="margin-top: 1.6rem;"><a href="/programs">See everything the PTC supports <span aria-hidden="true">→</span></a></p>\n'
+    + '        <p style="margin-top: 1.6rem;"><a href="/programs">See everything the ' + esc(config.org.abbrev) + ' supports <span aria-hidden="true">→</span></a></p>\n'
     + '      </div>\n    </section>\n';
 }
 
@@ -196,7 +196,7 @@ function indexPage(entries) {
     <section class="block block--white" aria-labelledby="programs-title">
       <div class="wrap">
         <p class="kicker kicker--blue">Programs &amp; Enrichment</p>
-        <h2 id="programs-title" class="section-title">What the PTC funds.</h2>
+        <h2 id="programs-title" class="section-title">What the ${esc(config.org.abbrev)} funds.</h2>
         <div class="program-cards">
 ${programs.map(cardHtml).join('\n')}
         </div>
@@ -206,7 +206,7 @@ ${programs.map(cardHtml).join('\n')}
     <section class="block block--blue" aria-labelledby="events-title">
       <div class="wrap">
         <p class="kicker kicker--onblue">Events</p>
-        <h2 id="events-title" class="section-title section-title--light">What the PTC hosts.</h2>
+        <h2 id="events-title" class="section-title section-title--light">What the ${esc(config.org.abbrev)} hosts.</h2>
         <div class="program-cards">
 ${events.map(cardHtml).join('\n')}
         </div>

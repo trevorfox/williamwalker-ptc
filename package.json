@@ -2,7 +2,7 @@
   "name": "williamwalker-ptc-site",
   "private": true,
   "description": "William Walker Elementary PTC website — static HTML generated from site.config.mjs, src/pages/, and content/.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=18"
   },

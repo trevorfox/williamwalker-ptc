@@ -66,8 +66,8 @@ grep -rniE 'william walker|wildcat|beaverton' src/pages content | less
 - **`content/blog/`** has the original posts. Delete them all except
   `_template.md`, and copy that to start a post. Remove their images from
   `assets/blog/` too.
-- **`content/minutes.json`** lists meeting minutes. Empty it to `[]` and add
-  your own.
+- **`content/minutes.json`** lists meeting minutes. Empty it to `[]` (the page
+  then says none are posted yet) and add your own as you go.
 - **`assets/families-qr.png` / `.svg`** encode the original site's URL.
   Regenerate them: `npx qrcode -e H -o assets/families-qr.png "https://your-site/families"`.
 
