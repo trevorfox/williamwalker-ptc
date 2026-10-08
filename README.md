@@ -29,7 +29,8 @@ re-run the build.
 
 ```bash
 npm run build:site   # everything: config, pages, blog, programs
-npm test             # all six test suites
+npm test             # all seven test suites
+npm run snapshot     # accept the current build as the new verify-pages baseline
 npm run serve        # http://localhost:3000
 ```
 
@@ -45,7 +46,7 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 | To change | Edit |
 |---|---|
 | Org name, domain, email, address, social links | `site.config.mjs`. Page titles use `{{org.name}}`, mailto links use `{{org.email}}` and `{{org.volunteerEmail}}`, and `<!-- social-links -->` renders the labeled account list. |
-| School website, Office Depot school ID | `site.config.mjs` (`school.website`, `fundraising.officeDepotId`) |
+| School website, Office Depot school ID, sign-up and grant forms | `site.config.mjs` (`school.website`, `fundraising.officeDepotId`, `links.signupForm`, `links.grantForm`) |
 | Nav or footer links | `site.config.mjs` (`nav`, `footer.links`) |
 | Where every Donate button goes | `site.config.mjs` (`DONATE`). Pages use `{{links.donate}}`; blog posts keep the link they were written with. |
 | Google Analytics ID | `site.config.mjs` (`analytics.ga4Id`; `null` disables the tag) |
@@ -167,19 +168,20 @@ npm test
 
 | Suite | Covers |
 |---|---|
-| `verify-pages.test.mjs` | every generated page against a pre-refactor snapshot |
+| `config-example.test.mjs` | `site.config.example.mjs` has the same keys as the real config |
+| `verify-pages.test.mjs` | every generated page against a committed snapshot |
 | `build-blog.test.mjs` | the blog build, in a temp dir, against fixtures |
 | `build-programs.test.mjs` | the programs build, in a temp dir |
 | `supplies-page.test.mjs` | the shipped supplies page and its print/GA wiring |
 | `calendar-categorize.test.mjs` | event categorization and iCal parsing |
 
-`verify-pages` is a **migration artifact**. `scripts/fixtures/baseline/` holds
-the pages exactly as they shipped before the chrome was extracted, and the test
-diffs current output against them, ignoring formatting and allowing a declared
-list of intended changes. It is what proved the refactor changed nothing it
-should not have. Once an intentional design change lands, re-snapshot the
-baseline or retire the suite — do not add allowances to silence a diff you have
-not explained.
+`verify-pages` began as a migration check: `scripts/fixtures/baseline/` held the
+pages as they shipped before the chrome was extracted, and the test proved the
+refactor changed nothing it should not have. It now guards against unintended
+changes to built output. It diffs every generated page against the baseline,
+ignoring formatting. When a diff is one you meant, check it, then run
+`npm run snapshot` to accept the current build as the new baseline. Do not add
+allowances to silence a diff you have not explained.
 
 ## Deploy
 
@@ -194,8 +196,9 @@ vercel --prod   # manual fallback, only if a push doesn't auto-deploy
 ## Forking this for another school
 
 Most of this is not specific to William Walker. To reuse it you would replace
-`site.config.mjs`, `assets/logo.png`, the palette in `styles.css`, and the copy
-in `src/pages/` and `content/`.
+`site.config.mjs` (start from `site.config.example.mjs`), `assets/logo.png`, the
+palette in `styles.css`, and the copy in `src/pages/` and `content/`.
+**[docs/forking.md](docs/forking.md) is the step-by-step guide.**
 
 Facts that repeat across pages (the org name in titles, both email addresses,
 the school website, the Office Depot ID, the social accounts) are config tokens.

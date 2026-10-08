@@ -115,6 +115,11 @@ export default {
     donate: DONATE,
     // Appears in the About menu and again in the footer.
     boardContacts: BOARD_CONTACTS,
+    // Google Forms, owned by the PTC's own Google account so anyone can open
+    // them. The home page embeds the sign-up form; append ?embedded=true there.
+    signupForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform',
+    // Teacher grant application, on the Teachers page.
+    grantForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfznm67PG8ODYf0hS76AUXwMHDByFJ3JzKkeX7fYnXDRTvR5A/viewform',
   },
 
   /* ---------- fundraising IDs ---------- */
