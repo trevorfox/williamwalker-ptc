@@ -42,6 +42,7 @@ check('minutes sort newest first within a year', html.indexOf('September 2026') 
 check('only the first year heading carries the id', (html.match(/id="minutes-year"/g) || []).length === 1);
 check('draft entries say Draft', /September 2026<\/span>\s*<span class="connect-card__meta">Draft minutes/.test(html));
 check('other entries say Approved', /June 2026<\/span>\s*<span class="connect-card__meta">Approved minutes/.test(html));
+check('an empty list renders a placeholder, not an error', minutesHtml([], 't', fail).includes('id="minutes-year"'));
 check('bad month is a build error', throws(() => minutesHtml([{ month: 'Sept 2026', url: 'https://x' }], 't', fail)));
 check('non-https url is a build error', throws(() => minutesHtml([{ month: '2026-09', url: 'http://x' }], 't', fail)));
 check('duplicate month is a build error', throws(() => minutesHtml([

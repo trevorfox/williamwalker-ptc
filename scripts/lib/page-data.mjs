@@ -69,7 +69,13 @@ function minutesCard(e) {
 }
 
 export function minutesHtml(entries, rel, fail) {
-  if (!Array.isArray(entries) || !entries.length) fail(rel + ': content/minutes.json must be a non-empty list');
+  if (!Array.isArray(entries)) fail(rel + ': content/minutes.json must be a list');
+  // A new site has no minutes yet. The heading keeps its id, which the page's
+  // section is labelled by.
+  if (!entries.length) {
+    return '        <h2 id="minutes-year" class="section-title section-title--light">No minutes posted yet</h2>\n'
+      + '        <p class="lead lead--light">Minutes appear here once they are approved.</p>\n';
+  }
   const seen = new Set();
   const list = entries.map(function (e, i) {
     const where = rel + ': content/minutes.json entry ' + (i + 1);
