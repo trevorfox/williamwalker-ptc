@@ -65,7 +65,7 @@ module.exports = {
     "donate": "https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026",
     "boardContacts": "https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub",
     "signupForm": "https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform",
-    "grantForm": "https://docs.google.com/forms/d/e/1FAIpQLSfznm67PG8ODYf0hS76AUXwMHDByFJ3JzKkeX7fYnXDRTvR5A/viewform"
+    "grantForm": "https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform"
   },
   "fundraising": {
     "officeDepotId": "70243444"

@@ -119,7 +119,7 @@ export default {
     // them. The home page embeds the sign-up form; append ?embedded=true there.
     signupForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform',
     // Teacher grant application, on the Teachers page.
-    grantForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfznm67PG8ODYf0hS76AUXwMHDByFJ3JzKkeX7fYnXDRTvR5A/viewform',
+    grantForm: 'https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform',
   },
 
   /* ---------- fundraising IDs ---------- */
