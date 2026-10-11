@@ -1,7 +1,7 @@
 ---
 title: Staff PD Expenses
 type: program
-blurb: Helping William Walker's teachers grow — the PTC chips in on professional development costs.
+blurb: Fueling William Walker's staff on professional development days — the PTC provides food so teachers can focus on learning.
 order: 140
 stub: true
 ---

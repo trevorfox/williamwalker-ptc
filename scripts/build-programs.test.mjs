@@ -48,7 +48,7 @@ assert(!read('field-trips.html').includes('sponsors-title'), 'sponsors section r
 assert(wt.includes('href="/styles.css"') && wt.includes('src="/script.js"'), 'absolute asset paths');
 
 const idx = read('index.html');
-for (const t of ['Walkerthon', 'Field Trips', 'Art Literacy', 'Mystery Science', 'Kindness Fund', 'Trunk or Treat']) {
+for (const t of ['Walkerthon', 'Field Trips', 'Art Literacy', 'Mystery Science', 'Kinder Pumpkin Patch', 'Trunk or Treat']) {
   assert(idx.includes(t), 'index missing: ' + t);
 }
 assert(idx.includes('/programs/walkerthon'), 'index links detail page');
