@@ -1,7 +1,7 @@
 ---
 title: Kindness Fund
 type: program
-blurb: Quiet, immediate help for William Walker families in need — coats, shoes, groceries, whatever a hard week calls for.
+blurb: Essential support for William Walker families facing hardship — given quietly, when it's needed most.
 order: 150
 stub: true
 ---
