@@ -46,7 +46,7 @@ Individual builds: `build:config`, `build:pages`, `build:blog`, `build:programs`
 | To change | Edit |
 |---|---|
 | Org name, domain, email, address, social links | `site.config.mjs`. Page titles use `{{org.name}}`, mailto links use `{{org.email}}` and `{{org.volunteerEmail}}`, and `<!-- social-links -->` renders the labeled account list. |
-| School website, Office Depot school ID, sign-up and grant forms | `site.config.mjs` (`school.website`, `fundraising.officeDepotId`, `links.signupForm`, `links.grantForm`) |
+| School website, Office Depot school ID, sign-up, grant, and reimbursement forms | `site.config.mjs` (`school.website`, `fundraising.officeDepotId`, `links.signupForm`, `links.grantForm`, `links.reimbursementForm`) |
 | Nav or footer links | `site.config.mjs` (`nav`, `footer.links`) |
 | Where every Donate button goes | `site.config.mjs` (`DONATE`). Pages use `{{links.donate}}`; blog posts keep the link they were written with. |
 | Google Analytics ID | `site.config.mjs` (`analytics.ga4Id`; `null` disables the tag) |

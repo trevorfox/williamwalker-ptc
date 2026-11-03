@@ -3,6 +3,7 @@ title: Walkerthon
 type: event
 blurb: Our signature fall fundraiser — the whole school runs, laps get counted, and the community rallies behind our Wildcats.
 cta: Fuel the Walkerthon
+donate_url: https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026
 hero_image: walkerthon/hero.jpg
 order: 10
 review_note: story + amounts drafted by Claude — confirm details and dollar figures with the PTC board/treasurer

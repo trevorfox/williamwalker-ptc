@@ -24,7 +24,7 @@
 /* URLs that appear in more than one place below. Being a JS module rather than
    JSON is what lets these be named once and referenced — which is most of the
    reason this file is .mjs. */
-const DONATE = 'https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026';
+const DONATE = 'https://www.zeffy.com/en-US/donation-form/support-the-william-walker-ptc-2026-2027-school-year';
 // Published (File > Share > Publish to web) so it needs no Google login.
 const BOARD_CONTACTS = 'https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub';
 
@@ -109,8 +109,9 @@ export default {
 
   /* ---------- off-site destinations ---------- */
   links: {
-    // Zeffy peer-to-peer page. Every Donate link on the site: the nav button,
-    // {{links.donate}} in src/pages/, and a program's default donate button.
+    // Zeffy general donation form. Every Donate link on the site: the nav button,
+    // {{links.donate}} in src/pages/, and a program's default donate button
+    // (the Walkerthon program overrides it with `donate_url`).
     // Blog posts keep the link they were written with.
     donate: DONATE,
     // Appears in the About menu and again in the footer.
@@ -120,6 +121,8 @@ export default {
     signupForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform',
     // Teacher grant application, on the Teachers page.
     grantForm: 'https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform',
+    // Check request form for discretionary fund reimbursements, on the Teachers page.
+    reimbursementForm: 'https://docs.google.com/document/d/1b7rg5BazYfhEHk09-JHA3Tnr3dVQA9RfS05Za8tg1Wc/edit?usp=sharing',
   },
 
   /* ---------- fundraising IDs ---------- */

@@ -1,7 +1,7 @@
 ---
 title: PTC Grant Program
 type: program
-blurb: Staff can apply for PTC grants to fund big ideas — special projects, classroom tools, and new opportunities for students.
+blurb: Staff, families, and community members can apply for PTC grants to fund projects that enhance academics and community building at William Walker.
 order: 110
 stub: true
 ---
