@@ -245,7 +245,7 @@ function toEvent(cur, source) {
   // District descriptions are mostly boilerplate used only for categorization.
   // PTC descriptions are written by the board for families, so they ship.
   if (source === 'ptc') {
-    if (cur.description) ev.description = unescapeICSText(cur.description).slice(0, 1500);
+    if (cur.description) ev.description = htmlToText(unescapeICSText(cur.description)).slice(0, 1500);
     if (cur.uid) ev.uid = cur.uid;
   }
   return ev;
@@ -308,6 +308,38 @@ function unescapeICSText(v) {
   return v.replace(/\\n/gi, '\n').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\')
     .split('\n').map((l) => l.replace(/[ \t]+/g, ' ').trim()).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
+// Google Calendar stores a description as HTML once anyone formats it (bold,
+// lists, links) in the editor or sends HTML through the API, and the ICS feed
+// passes that markup through verbatim. The page escapes descriptions, so turn
+// the HTML into plain text here: block tags become line breaks, list items
+// (Google appends the Meet details as plain lines, so existing breaks stay),
+// become bullets, and links become their URL so the page can link them again.
+function htmlToText(v) {
+  if (!/<\/?[a-z][^>]*>/i.test(v)) return v;
+  const decode = (s) => s
+    .replace(/&nbsp;/gi, ' ').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(+n))
+    .replace(/&#x([0-9a-f]+);/gi, (m, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&amp;/gi, '&');
+  const strip = (s) => s.replace(/<[^>]*>/g, '');
+  const text = v
+    .replace(/<a\b[^>]*?href\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi, (m, href, inner) => {
+      const label = decode(strip(inner)).trim();
+      let url = decode(href).trim();
+      if (/^mailto:/i.test(url)) return label || url.replace(/^mailto:/i, '');
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url.replace(/^\/+/, '');
+      const bare = (s) => s.replace(/^https?:\/\//i, '').replace(/\/$/, '').toLowerCase();
+      return !label || bare(label) === bare(url) ? url : label + ' (' + url + ')';
+    })
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '\n• ')
+    .replace(/<\/(p|div|ul|ol|h[1-6]|blockquote)>/gi, '\n\n')
+    .replace(/<(p|div|ul|ol|h[1-6]|blockquote)\b[^>]*>/gi, '\n');
+  return decode(strip(text))
+    .split('\n').map((l) => l.replace(/[ \t]+/g, ' ').trim()).join('\n')
+    .replace(/\n{3,}/g, '\n\n').trim();
+}
 function escICS(v) {
   return String(v).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 }
@@ -315,4 +347,5 @@ function escICS(v) {
 /* ---------- test hooks (see scripts/calendar-categorize.test.mjs) ---------- */
 module.exports.categorize = categorize;
 module.exports.isObservance = isObservance;
+module.exports.htmlToText = htmlToText;
 module.exports.parseICSForTest = function (raw, source) { return parseICS(raw, true, source); };
