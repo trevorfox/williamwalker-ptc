@@ -62,7 +62,7 @@ module.exports = {
     ]
   },
   "links": {
-    "donate": "https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026",
+    "donate": "https://www.zeffy.com/en-US/donation-form/support-the-william-walker-ptc-2026-2027-school-year",
     "boardContacts": "https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub",
     "signupForm": "https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform",
     "grantForm": "https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform",
@@ -190,7 +190,7 @@ module.exports = {
     },
     {
       "label": "Donate",
-      "href": "https://www.zeffy.com/en-US/peer-to-peer/walkerthon--2026",
+      "href": "https://www.zeffy.com/en-US/donation-form/support-the-william-walker-ptc-2026-2027-school-year",
       "cta": true,
       "external": true
     }
