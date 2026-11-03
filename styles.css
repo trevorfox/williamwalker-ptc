@@ -818,6 +818,13 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 .sponsor__name { font-weight: 800; font-size: 1.05rem; text-align: center; color: var(--ink); }
 /* the same grid inside a blog post */
 .prose .sponsor-grid { margin: 1.4rem 0; padding: 0; }
+/* Fundraising page: a fixed three-across grid, tightened on phones so logos still fit. */
+.sponsors--3up .sponsor-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 600px) {
+  .sponsors--3up .sponsor-grid { gap: 0.6rem; }
+  .sponsors--3up .sponsor { min-height: 80px; padding: 0.6rem; }
+  .sponsors--3up .sponsor img { max-height: 52px; }
+}
 .prose .sponsor { margin: 0; }
 
 /* impact tiles (on green block) */
