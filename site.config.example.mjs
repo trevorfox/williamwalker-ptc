@@ -68,6 +68,7 @@ export default {
     // Workspace form is sign-in-walled and cannot be transferred out.
     signupForm: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform',
     grantForm: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform',
+    reimbursementForm: 'https://docs.google.com/document/d/YOUR_DOC_ID/edit?usp=sharing',
   },
 
   fundraising: {

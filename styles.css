@@ -827,6 +827,7 @@ html.hc .cal-date, html.hc .cal-tag { border: 1px solid #000; }
 .impact-card__buys { display: block; margin-top: 0.5rem; color: rgba(255,255,255,0.92); font-weight: 600; }
 .impact-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
 .fineprint--light { color: rgba(255,255,255,0.85); opacity: 1; }
+.fineprint--light a { color: #fff; }
 
 /* program cards (index + "more programs") */
 .program-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; margin-top: 2rem; }

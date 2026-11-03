@@ -120,6 +120,8 @@ export default {
     signupForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform',
     // Teacher grant application, on the Teachers page.
     grantForm: 'https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform',
+    // Check request form for discretionary fund reimbursements, on the Teachers page.
+    reimbursementForm: 'https://docs.google.com/document/d/1b7rg5BazYfhEHk09-JHA3Tnr3dVQA9RfS05Za8tg1Wc/edit?usp=sharing',
   },
 
   /* ---------- fundraising IDs ---------- */
