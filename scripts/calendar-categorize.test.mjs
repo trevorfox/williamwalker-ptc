@@ -84,4 +84,17 @@ eq(byTitle('Totally Unknown New Event Type').category, 'school', 'unknown title 
 eq(byTitle('Diwali Celebration Night').category, 'school', 'substring guard holds through parser');
 eq(byTitle('Chuseok').category, 'observance', 'marker survives DESCRIPTION unescaping');
 
+// --- PTC descriptions written as HTML in Google Calendar render as text ---
+const { htmlToText } = cal;
+eq(htmlToText('Plain text\nstays as is'), 'Plain text\nstays as is', 'plain text untouched');
+eq(htmlToText('📞 JOIN VIRTUALLY: <a href="http://wwptc.org/meeting-link">http://wwptc.org/meeting-link</a><br><br>Monthly PTC meeting.'),
+  '📞 JOIN VIRTUALLY: http://wwptc.org/meeting-link\n\nMonthly PTC meeting.', 'br and self-labeled link');
+eq(htmlToText('<p>Start here.</p><p><b>Stores</b></p><ul><li>Bethany: 503</li><li>Hillsboro</li></ul><p>Bath &amp; Body</p>'),
+  'Start here.\n\nStores\n\n• Bethany: 503\n• Hillsboro\n\nBath & Body', 'paragraphs, bullets, entities');
+eq(htmlToText('<a href="https://my.bottledrop.com/Give/View/973014">donate here</a>'),
+  'donate here (https://my.bottledrop.com/Give/View/973014)', 'labeled link keeps its URL');
+eq(htmlToText('Email <a href="mailto:a@b.org">a@b.org</a>'), 'Email a@b.org', 'mailto link keeps the address');
+const htmlFeed = 'BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:x1\r\nDTSTART;VALUE=DATE:20261115\r\nDTEND;VALUE=DATE:20261116\r\nSUMMARY:BottleDrop\r\nDESCRIPTION:<p>Turn cans into support\\, really.</p><ul><li><b>Online:</b> give</li></ul>\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+eq(cal.parseICSForTest(htmlFeed, 'ptc')[0].description, 'Turn cans into support, really.\n\n• Online: give', 'feed description arrives as text');
+
 console.log('ok — ' + n + ' assertions passed (incl. fixture)');
