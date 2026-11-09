@@ -116,6 +116,9 @@ export default {
     donate: DONATE,
     // Appears in the About menu and again in the footer.
     boardContacts: BOARD_CONTACTS,
+    // Both on /governance.
+    budget: 'https://drive.google.com/file/d/1yCWgDmCn_3UWggVhSO8zFdIyxdw3Hjib/view',
+    bylaws: 'https://docs.google.com/document/d/1BeISLnhIkOYCOQjPYCaO9cDS5_YS3RtO/edit',
     // Google Forms, owned by the PTC's own Google account so anyone can open
     // them. The home page embeds the sign-up form; append ?embedded=true there.
     signupForm: 'https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform',
@@ -186,6 +189,7 @@ export default {
       id: 'sub-about',
       items: [
         { key: 'about', label: 'About the PTC', href: '/#about' },
+        { key: 'governance', label: 'PTC documents', href: '/governance' },
         { key: 'minutes', label: 'Meeting minutes', href: '/minutes' },
         { key: 'contacts', label: 'Board & contacts', href: BOARD_CONTACTS, external: true },
       ],
@@ -206,6 +210,7 @@ export default {
       { label: 'Family FAQ', href: '/families/faq' },
       { label: 'Teachers', href: '/teachers' },
       { label: 'News', href: '/blog' },
+      { label: 'PTC documents', href: '/governance' },
       { label: 'Meeting minutes', href: '/minutes' },
       { label: 'Connect', href: '/#connect' },
       { label: 'PTC Contacts', href: BOARD_CONTACTS, external: true },
