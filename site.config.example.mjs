@@ -64,6 +64,9 @@ export default {
   links: {
     donate: DONATE,
     boardContacts: BOARD_CONTACTS,
+    // Both on /governance.
+    budget: 'https://drive.google.com/file/d/YOUR_FILE_ID/view',
+    bylaws: 'https://docs.google.com/document/d/YOUR_DOC_ID/edit',
     // Create these under a consumer Google account, not a Workspace one: a
     // Workspace form is sign-in-walled and cannot be transferred out.
     signupForm: 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform',

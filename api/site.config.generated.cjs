@@ -64,6 +64,8 @@ module.exports = {
   "links": {
     "donate": "https://www.zeffy.com/en-US/donation-form/support-the-william-walker-ptc-2026-2027-school-year",
     "boardContacts": "https://docs.google.com/document/d/e/2PACX-1vQ-pL1jFdwij8OOCOEfG4BH_KVyPQ3SDUVQcY4d4Eiat-AR-k8HklbKeQXCJslUfjPuXLG8_ZjuMeQH/pub",
+    "budget": "https://drive.google.com/file/d/1yCWgDmCn_3UWggVhSO8zFdIyxdw3Hjib/view",
+    "bylaws": "https://docs.google.com/document/d/1BeISLnhIkOYCOQjPYCaO9cDS5_YS3RtO/edit",
     "signupForm": "https://docs.google.com/forms/d/e/1FAIpQLSfNI93citktsOnfheZS0rsnjrqqK0z6jfk5rVWvNUqSBJt81g/viewform",
     "grantForm": "https://docs.google.com/forms/d/e/1FAIpQLSe9Yc1CRC0zzSIYoq6HbNlTfdW_F28VtJo3HEHptGVclQe2Bw/viewform",
     "reimbursementForm": "https://docs.google.com/document/d/1b7rg5BazYfhEHk09-JHA3Tnr3dVQA9RfS05Za8tg1Wc/edit?usp=sharing"
@@ -176,6 +178,11 @@ module.exports = {
           "href": "/#about"
         },
         {
+          "key": "governance",
+          "label": "PTC documents",
+          "href": "/governance"
+        },
+        {
           "key": "minutes",
           "label": "Meeting minutes",
           "href": "/minutes"
@@ -236,6 +243,10 @@ module.exports = {
       {
         "label": "News",
         "href": "/blog"
+      },
+      {
+        "label": "PTC documents",
+        "href": "/governance"
       },
       {
         "label": "Meeting minutes",
