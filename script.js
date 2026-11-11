@@ -422,6 +422,24 @@
       .catch(function () { /* keep the generic wording */ });
   })();
 
+  /* ---------- time-limited notices ----------
+     [data-show-from] / [data-show-until] hold inclusive Pacific dates
+     (YYYY-MM-DD). Matching elements are un-hidden while today falls in the
+     window; a [data-now] container is un-hidden only if one of its cards is. */
+  (function timedNotices() {
+    var cards = document.querySelectorAll('[data-show-from], [data-show-until]');
+    if (!cards.length || !window.Intl) return;
+    var today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date());
+    Array.prototype.forEach.call(cards, function (el) {
+      var from = el.getAttribute('data-show-from') || '0000-00-00';
+      var until = el.getAttribute('data-show-until') || '9999-12-31';
+      if (today >= from && today <= until) el.hidden = false;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-now]'), function (box) {
+      box.hidden = !box.querySelector('[data-show-from]:not([hidden]), [data-show-until]:not([hidden])');
+    });
+  })();
+
   /* ---------- footer year ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();

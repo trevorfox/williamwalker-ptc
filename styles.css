@@ -252,6 +252,21 @@ body { top: 0 !important; }
 .hero__next::after { content: " \2192"; }
 .hero__next:hover { color: var(--blue-dark); }
 
+/* ---------- happening now (time-limited notices) ---------- */
+.now { padding: 2.4rem 0; background: var(--green-tint); border-bottom: 1px solid var(--line); }
+.now[hidden], .now-card[hidden] { display: none; }
+.now__title {
+  margin: 0 0 1.1rem; text-align: center; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; font-size: 0.82rem; color: var(--green-dark);
+}
+.now__grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); max-width: 880px; margin-inline: auto; }
+.now-card { background: var(--white); border-radius: var(--radius-sm); padding: 1.3rem 1.4rem; box-shadow: var(--shadow-sm); border-top: 4px solid var(--green); }
+.now-card h3 { font-size: 1.22rem; color: var(--blue-dark); margin: 0 0 0.45rem; }
+.now-card p { font-size: 0.97rem; color: var(--ink-soft); margin: 0; }
+.now-card .now-card__when { font-weight: 700; color: var(--green-dark); font-size: 0.9rem; margin-bottom: 0.35rem; }
+.now-card .now-card__where { margin-top: 0.6rem; color: var(--ink); font-weight: 600; }
+html.hc .now-card h3, html.hc .now__title, html.hc .now-card .now-card__when { color: #000; }
+
 /* ---------- buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;

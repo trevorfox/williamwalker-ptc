@@ -360,7 +360,7 @@ module.exports = {
       },
       {
         "from": "/blog/school-cents",
-        "to": "/blog/school-cents-october"
+        "to": "/blog/school-cents-november"
       },
       {
         "from": "/meeting-link",

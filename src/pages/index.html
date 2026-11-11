@@ -27,6 +27,32 @@ og_description: A parent- and staff-run nonprofit supporting every Wildcat at Wi
       </div>
     </section>
 
+    <!-- ============ HAPPENING NOW ============
+         Time-limited notices. Each card carries its own window in Pacific dates
+         (data-show-from / data-show-until, both inclusive); script.js un-hides
+         the cards whose window includes today, and the section only when at
+         least one card is showing. Without JS nothing shows, so a card can never
+         linger past its end date. Delete cards once they have expired. -->
+    <section class="now" aria-labelledby="now-title" data-now hidden>
+      <div class="wrap">
+        <h2 id="now-title" class="now__title">Happening now</h2>
+        <div class="now__grid">
+          <article class="now-card" data-show-from="2026-11-02" data-show-until="2026-11-20" hidden>
+            <p class="now-card__when"><span aria-hidden="true">🧴</span> Through Friday, November 20</p>
+            <h3>Toiletry Drive</h3>
+            <p>Donate soap, toothpaste, toothbrushes, shampoo, and conditioner for members of the William Walker community.</p>
+            <p class="now-card__where">Drop-off: the collection bin in the school entrance breezeway.</p>
+          </article>
+          <article class="now-card" data-show-from="2026-11-02" data-show-until="2026-12-08" hidden>
+            <p class="now-card__when"><span aria-hidden="true">🎁</span> Through Tuesday, December 8</p>
+            <h3>Holiday Toy Drive</h3>
+            <p>Donate new, unwrapped toys for children ages 4 to 11. Board games, building sets, art kits, puzzles, stuffed animals, dolls, and books are all great choices.</p>
+            <p class="now-card__where">Drop-off: the collection bins in the school entry breezeway.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ABOUT (white) ============ -->
     <section id="about" class="block block--white" aria-labelledby="about-title">
       <div class="wrap">
