@@ -348,8 +348,8 @@ export default {
     redirects: [
       { from: '/parents', to: '/families' },
       // The first School Cents post was published at /blog/school-cents before
-      // the monthly naming scheme; the October post is where that link pointed.
-      { from: '/blog/school-cents', to: '/blog/school-cents-october' },
+      // the monthly naming scheme; it now points at the latest monthly post.
+      { from: '/blog/school-cents', to: '/blog/school-cents-november' },
       // Short link for the monthly meeting's video call. The target changes
       // when the calendar invite does, so it is NOT permanent: a 308 would be
       // cached by browsers and keep sending people to a stale call.
