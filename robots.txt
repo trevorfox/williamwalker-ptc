@@ -1,0 +1,25 @@
+# AI training crawlers and SEO/scraper crawlers are disallowed: they re-fetch
+# the whole site on their own schedule and send no families our way.
+# Search engines, AI answer fetchers (OAI-SearchBot, ChatGPT-User,
+# PerplexityBot, Claude-User) and AhrefsBot fall under the universal rule.
+
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: Amazonbot
+User-agent: Applebot-Extended
+User-agent: cohere-ai
+User-agent: Diffbot
+Disallow: /
+
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: PetalBot
+Disallow: /
